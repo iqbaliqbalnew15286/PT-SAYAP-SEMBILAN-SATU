@@ -2,15 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AdminAuthController;
-use App\Http\Controllers\Admin\{
-    DashboardController,
-    HomeController,
-    AboutController,
-    ProductController,
-    ServiceController,
-    GalleryController,
-    TestimonialController
-};
+use App\Http\Controllers\PublicTestimonialController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\HomeController as AdminHomeController;
+use App\Http\Controllers\Admin\AboutController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\TestimonialController;
 use App\Models\Product;
 use App\Models\Service;
 use App\Models\Gallery;
@@ -42,7 +41,11 @@ Route::get('/', function () {
     ];
 
     return view('welcome', compact(
-        'products','services','testimonials','galleryItems','advantages'
+        'products',
+        'services',
+        'testimonials',
+        'galleryItems',
+        'advantages'
     ));
 })->name('home');
 
@@ -55,9 +58,17 @@ Route::get('/about', function () {
 
 
 // Static Pages
-Route::view('/booking', 'pages.booking')->name('booking');
-Route::view('/contact', 'pages.contact')->name('contact');
+Route::get('/booking', function () {
+    $products = \App\Models\Product::latest()->get();
+    $services = \App\Models\Service::latest()->get();
+    return view('booking', compact('products', 'services'));
+})->name('booking');
+Route::view('/contact', 'contact')->name('contact');
 Route::view('/consult', 'pages.consult')->name('consult');
+
+// Public Testimonial Routes
+Route::get('/testimonial', [PublicTestimonialController::class, 'create'])->name('send.testimonial');
+Route::post('/testimonial', [PublicTestimonialController::class, 'store'])->name('testimonial.store');
 
 // ✅ FAQ & Help Pages
 Route::view('/faq', 'pages.help.faq')->name('faq');
@@ -97,6 +108,15 @@ Route::get('/services/{slug}', function ($slug) {
 
     return view('pages.services.show', compact('service', 'recommended_services'));
 })->name('service.show');
+
+
+// ==================== 🖼️ GALERI ====================
+
+// List Galeri
+Route::get('/gallery', function () {
+    $galleries = Gallery::latest()->get();
+    return view('pages.gallery.gallery', compact('galleries'));
+})->name('gallery.index');
 
 
 // ==================== 🔐 ADMIN AUTH ====================

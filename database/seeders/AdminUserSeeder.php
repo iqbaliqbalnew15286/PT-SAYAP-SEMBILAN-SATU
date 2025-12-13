@@ -12,9 +12,9 @@ class AdminUserSeeder extends Seeder
     {
         // Pastikan admin tidak dobel
         User::updateOrCreate(
-            ['email' => 'admin@bidanfina.test'],
+            ['email' => 'admin@tower.test'],
             [
-                'name' => 'Admin BidanFina',
+                'name' => 'Admin Tower',
                 'password' => Hash::make('password123'), // ganti dengan password yang kuat
                 'email_verified_at' => now(),
             ]

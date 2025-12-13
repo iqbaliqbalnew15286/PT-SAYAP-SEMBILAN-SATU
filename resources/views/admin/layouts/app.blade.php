@@ -1,263 +1,418 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>@yield('title','Dashboard - Bidan Fina')</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>@yield('title','Dashboard - Bidan Fina')</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    {{-- Font Awesome untuk Ikon --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+
+/* ------------------------------
+    COLOR THEME — SOFT LIGHT (CREAMY WHITE & MILD AMBER)
+-------------------------------*/
 :root {
-    --gold: #f8c200;
-    --gold-soft:#fddf7a;
-    --dark:#0b0b0b;
-    --dark-soft:#121212;
-    --text-muted:#a2a2a2;
+    /* Latar Belakang Diredam/Soft */
+    --bg-light-main: #F2F4F8; /* Latar belakang utama (Putih keabu-abuan lembut) */
+    --bg-card: #FCFDFE; /* Latar belakang card/sidebar (Putih mendekati bersih, tapi tidak #FFFFFF) */
+
+    /* Aksen & Teks */
+    --amber-accent: #FFC300; /* Aksen primer (Kuning Emas Cerah) */
+    --text-dark: #2C3E50; /* Teks utama (Biru tua, lebih lembut dari Hitam murni) */
+    --text-muted: #7F8C8D; /* Teks sekunder/muted (Abu-abu sedang) */
+
+    /* Border & Shadow */
+    --border-subtle: #DDE1E8; /* Border yang lebih terlihat, tidak terlalu memudar */
+    --shadow-soft: 0 6px 15px rgba(0, 0, 0, 0.08); /* Bayangan lembut */
+    --hover-bg: #E7EBF1; /* Diperkuat sedikit agar lebih terlihat saat hover */
+    --active-bg: #DCE0E6; /* Warna active sedikit lebih tegas */
 }
 
-/* Body */
-body{
-    font-family:"Poppins",sans-serif;
-    background:var(--dark);
-    color:#fff;
-    overflow-x:hidden;
+/* ------------------------------
+    GLOBAL
+-------------------------------*/
+body {
+    font-family: "Poppins", sans-serif;
+    background: var(--bg-light-main);
+    color: var(--text-dark);
+    overflow-x: hidden;
 }
 
-/* Sidebar */
-.sidebar{
-    background:linear-gradient(180deg,#0d0d0d,#000);
-    width:260px;
-    height:100vh;
-    position:fixed;
-    top:0;left:0;
-    display:flex;
-    flex-direction:column;
-    border-right:1px solid rgba(255,255,255,0.06);
-    box-shadow:8px 0 20px rgba(0,0,0,0.65);
-    z-index:2000;
-    transition:.35s;
+/* Smooth transition for all elements */
+*, *::before, *::after {
+    transition: .25s ease;
 }
 
-/* Sidebar Brand */
-.sidebar .brand{
-    padding:20px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    background:rgba(255,255,255,0.05);
-    border-bottom:1px solid rgba(255,255,255,0.06);
-    backdrop-filter:blur(6px);
-}
-.sidebar .brand img{
-    width:42px;height:42px;border-radius:9px;object-fit:cover;
-}
-.sidebar .brand div{
-    font-weight:700;
-    font-size:1rem;
-}
-
-/* Nav links */
-.nav-link-custom{
-    display:flex;
-    justify-content:space-between;
-    padding:11px 15px;
-    color:var(--text-muted);
-    text-decoration:none;
-    border-radius:8px;
-    margin:4px 8px;
-    transition:.25s;
-    font-weight:500;
-}
-.nav-link-custom:hover{
-    background:rgba(255,215,0,0.09);
-    color:var(--gold);
-    transform:translateX(4px);
-}
-.nav-link-custom.active{
-    background:rgba(255,200,0,0.18);
-    color:var(--gold);
-    font-weight:700;
-    box-shadow:0 0 12px rgba(255,200,0,0.25);
+/* ------------------------------
+    SIDEBAR (Clean White Background)
+-------------------------------*/
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    left: 0; top: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 14px;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-subtle);
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+    z-index: 2000;
 }
 
-/* Submenu */
-.submenu{
-    padding-left:42px;
-    overflow:hidden;
-    max-height:0;
-    opacity:0;
-    transition:.35s;
-    display:flex;
-    flex-direction:column;
+/* BRANDING / ADMIN BOX (Penyempurnaan Tipografi) */
+.brand {
+    padding: 15px;
+    border-radius: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--amber-accent);
+    border-left: 5px solid var(--amber-accent);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--shadow-soft);
 }
-.submenu.show{
-    max-height:350px;
-    opacity:1;
+.brand img {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-.submenu a{
-    font-size:.9rem;color:#d4d4d4;text-decoration:none;
-    padding:6px 8px;border-radius:6px;transition:.25s;
+.brand .title {
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.1;
+    font-size: 1rem;
 }
-.submenu a:hover{
-    background:rgba(255,215,0,0.12);
-    color:var(--gold-soft);
-}
-
-/* Bottom buttons */
-.btn-side{
-    display:block;
-    padding:10px;
-    border-radius:8px;
-    text-align:center;
-    font-weight:700;
-    text-decoration:none;
-    background:var(--gold);
-    color:#000;
-    transition:.25s;
-}
-.btn-side:hover{
-    background:var(--gold-soft);
-    box-shadow:0 0 14px rgba(255,200,0,0.45);
-}
-.btn-side.outline{
-    background:transparent;border:1px solid rgba(255,255,255,0.1);color:#eaeaea;
-}
-.btn-side.outline:hover{
-    border-color:var(--gold);
-    background:rgba(255,215,0,0.1);
+.brand .subtitle {
+    font-size: .75rem;
+    color: var(--text-muted);
+    font-weight: 500;
 }
 
-/* Main content */
-.main{
-    margin-left:260px;
-    padding:30px;
-    min-height:100vh;
-    transition:.35s;
+/* Menu Section Divider (Penyempurnaan Tipografi) */
+.menu-section {
+    color: var(--text-muted);
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 20px 10px 8px 10px;
+    letter-spacing: 0.8px;
 }
 
-/* Topbar */
-.topbar{
-    background:#0f0f0f;
-    border:1px solid rgba(255,255,255,0.05);
-    border-radius:14px;
-    padding:18px 24px;
-    box-shadow:0 0 20px rgba(0,0,0,0.55);
-    margin-bottom:25px;
+/* ------------------------------
+    NAV LINKS (Subtle Hover/Active)
+-------------------------------*/
+.nav-link-custom {
+    padding: 12px 14px;
+    border-radius: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin: 5px 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    transition: background .25s ease, color .25s ease;
 }
-.welcome h3{
-    font-size:1.45rem;margin:0;font-weight:800;color:#fff;
+.nav-link-custom:hover {
+    background: var(--hover-bg);
+    color: var(--text-dark);
 }
-.welcome small{
-    color:var(--text-muted);
+.nav-link-custom.active {
+    background: var(--active-bg);
+    color: var(--text-dark);
+    font-weight: 600;
+    border-left: 4px solid var(--amber-accent);
+    padding-left: 10px;
+}
+/* Warna ikon saat link aktif */
+.nav-link-custom.active i {
+    color: var(--amber-accent);
+}
+.nav-link-custom i {
+    font-size: 1rem;
+    color: var(--text-muted);
+    transition: color .25s ease;
+}
+.nav-link-custom:hover i {
+    color: var(--amber-accent);
 }
 
-/* Date */
-.datebox{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    color:var(--text-muted);
+/* ------------------------------
+    SUBMENU
+-------------------------------*/
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: max-height .45s cubic-bezier(.42, 0, .58, 1),
+                opacity .3s ease;
 }
-.datebox i{
-    color:var(--gold);
+.submenu.show {
+    max-height: 500px;
+    opacity: 1;
+    margin-bottom: 10px;
+}
+.submenu a {
+    padding: 8px 10px;
+    margin: 4px 0;
+    color: var(--text-muted);
+    font-size: .9rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background .2s, color .2s;
+}
+.submenu a:hover {
+    background: var(--hover-bg);
+    color: var(--text-dark);
+}
+.submenu a.text-neon {
+    color: var(--text-dark) !important;
+    font-weight: 500;
+    background: var(--hover-bg);
+    border-left: 3px solid var(--amber-accent);
+    padding-left: 17px;
+}
+.submenu a.text-neon i {
+    color: var(--amber-accent) !important;
 }
 
-/* Mobile toggle */
-.sidebar-toggle{
-    display:none;
-    position:fixed;
-    top:16px;left:16px;
-    z-index:3000;
-    background:var(--gold);
-    border:none;
-    padding:8px 10px;
-    border-radius:8px;
-    font-size:1.3rem;
-    box-shadow:0 0 15px rgba(255,200,0,0.45);
+/* ------------------------------
+    BOTTOM BUTTONS (DIPERBAIKI)
+-------------------------------*/
+.btn-side {
+    display: flex; /* Menggunakan flexbox untuk penataan item */
+    align-items: center; /* Rata vertikal tengah */
+    justify-content: center; /* Rata horizontal tengah */
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    transition: all .25s ease;
 }
-@media(max-width:992px){
-    .sidebar{left:-260px;}
-    .sidebar.show{left:0;}
-    .main{margin-left:0;padding-top:85px;}
-    .sidebar-toggle{display:block;}
+.btn-side.primary-amber {
+    background: var(--amber-accent);
+    color: var(--text-dark);
 }
+.btn-side.primary-amber:hover {
+    background: #FFD700;
+    color: var(--text-dark);
+    box-shadow: 0 4px 8px rgba(255, 195, 0, 0.4);
+}
+.btn-side.outline-subtle {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+}
+.btn-side.outline-subtle:hover {
+    border-color: var(--amber-accent);
+    background: var(--hover-bg);
+    color: var(--amber-accent);
+}
+
+/* ------------------------------
+    MAIN CONTENT
+-------------------------------*/
+.main {
+    margin-left: 260px;
+    padding: 30px;
+    min-height: 100vh;
+}
+
+/* Topbar (Dibiarkan agar halaman Dashboard dapat menggunakannya) */
+.topbar {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeDown .55s ease;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-soft);
+}
+@keyframes fadeDown {
+    from { opacity:0; transform: translateY(-10px); }
+    to   { opacity:1; transform: translateY(0); }
+}
+
+.welcome h3 { font-weight: 700; margin-bottom: 0; font-size: 1.6rem; color: var(--text-dark); }
+.welcome small { color: var(--text-muted); font-size: 0.8rem; }
+.text-neon { color: var(--amber-accent) !important; }
+
+/* Card Styling */
+.card-tower {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+}
+.card-header-tower {
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-light-main);
+    color: var(--text-dark);
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+}
+.table {
+    color: var(--text-dark);
+}
+.table thead th {
+    border-bottom: 2px solid var(--border-subtle);
+    color: var(--text-muted);
+}
+.table tbody tr:hover {
+    background: var(--hover-bg);
+}
+.table th, .table td {
+    border-top: 1px solid #EBEBF0;
+}
+
+/* ------------------------------
+    RESPONSIVE/MOBILE
+-------------------------------*/
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    padding: 9px 11px;
+    border: none;
+    border-radius: 10px;
+    background: var(--amber-accent);
+    color: var(--text-dark);
+    font-size: 1.3rem;
+    z-index: 3000;
+    box-shadow: 0 0 10px rgba(255, 195, 0, 0.3);
+}
+@media(max-width: 991px) {
+    .sidebar { left: -260px; }
+    .sidebar.show { left: 0; }
+    .main { margin-left: 0; padding-top: 30px; }
+    .sidebar-toggle { display: block; }
+    .topbar { margin: 0 15px 30px 15px; }
+}
+
 </style>
 </head>
+
 <body>
 
-<!-- Toggle -->
 <button class="sidebar-toggle" id="sidebarToggle"><i class="bi bi-list"></i></button>
 
-<!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
-<div>
-  <div class="brand">
-    <img src="{{ asset('assets/img/logo.jpg') }}">
-    <div>
-      Bidan Fina<br>
-      <span style="font-size:.7rem;color:var(--text-muted);font-weight:300;">Admin Panel</span>
-    </div>
-  </div>
 
-  <nav>
-    <a href="{{ route('admin.dashboard') }}" class="nav-link-custom {{ request()->routeIs('admin.dashboard') ? 'active':'' }}">
-      <div class="left"><i class="bi bi-speedometer2"></i> Dashboard</div>
+{{-- BRANDING / ADMIN BOX --}}
+<div class="brand mb-4">
+    <img src="{{ asset('assets/img/logotower.png') }}" alt="Admin Profile">
+    <div class="d-flex flex-column">
+        <div class="title">PT Sayap Sembilan Satu</div>
+        <small class="subtitle">Admin Tower</small>
+    </div>
+</div>
+
+
+<nav class="flex-grow-1 overflow-y-auto">
+
+    {{-- MENU UTAMA (Judul diperjelas) --}}
+    <div class="menu-section">Menu Utama</div>
+
+    <a href="{{ route('admin.dashboard') }}"
+       class="nav-link-custom {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+        <div><i class="bi bi-speedometer2 me-2"></i> Dashboard</div>
+        <i class="bi bi-chevron-right"></i>
     </a>
 
+    {{-- MANAJEMEN KONTEN (PENSIL) --}}
     <div class="nav-link-custom" id="editorToggle">
-      <div class="left"><i class="bi bi-pencil-square"></i> Konten Website</div>
-      <i id="editorIcon" class="bi bi-chevron-right"></i>
+        <div><i class="bi bi-pencil-square me-2"></i> Editor Konten</div>
+        <i id="editorIcon" class="bi bi-chevron-right"></i>
     </div>
 
-    <div class="submenu" id="editorSubmenu">
-      <a href="{{ route('admin.abouts.index') }}"><i class="bi bi-person-vcard me-2"></i> Tentang Kami</a>
-      <a href="{{ route('admin.products.index') }}"><i class="bi bi-bag-heart me-2"></i> Produk</a>
-      <a href="{{ route('admin.services.index') }}"><i class="bi bi-activity me-2"></i> Layanan</a>
-      <a href="{{ route('admin.galleries.index') }}"><i class="bi bi-images me-2"></i> Galeri</a>
-      <a href="{{ route('admin.testimonials.index') }}"><i class="bi bi-chat-quote me-2"></i> Testimoni</a>
+    <div class="submenu @if(request()->routeIs('admin.products.*') || request()->routeIs('admin.services.*') || request()->routeIs('admin.galleries.*') || request()->routeIs('admin.testimonials.*') || request()->routeIs('admin.abouts.*')) show @endif" id="editorSubmenu">
+        <a href="{{ route('admin.abouts.index') }}" class="{{ request()->routeIs('admin.abouts.index') ? 'text-neon' : '' }}"><i class="bi bi-person-vcard me-2"></i> Tentang Kami</a>
+        <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.index') ? 'text-neon' : '' }}"><i class="bi bi-bag-heart me-2"></i> Produk</a>
+        <a href="{{ route('admin.services.index') }}" class="{{ request()->routeIs('admin.services.index') ? 'text-neon' : '' }}"><i class="bi bi-activity me-2"></i> Layanan</a>
+        <a href="{{ route('admin.galleries.index') }}" class="{{ request()->routeIs('admin.galleries.index') ? 'text-neon' : '' }}"><i class="bi bi-images me-2"></i> Galeri</a>
+        <a href="{{ route('admin.testimonials.index') }}" class="{{ request()->routeIs('admin.testimonials.index') ? 'text-neon' : '' }}"><i class="bi bi-chat-quote me-2"></i> Testimoni</a>
     </div>
 
-    <a class="nav-link-custom"><div class="left"><i class="bi bi-calendar-check"></i> Reservasi</div></a>
-    <a class="nav-link-custom"><div class="left"><i class="bi bi-gear"></i> Pengaturan</div></a>
-  </nav>
+    {{-- MENU FUNGSIONAL --}}
+    <div class="menu-section mt-3">Fungsionalitas</div>
+
+    <a class="nav-link-custom"><i class="bi bi-calendar-check me-2"></i> Reservasi</a>
+    <a class="nav-link-custom"><i class="bi bi-people me-2"></i> Pengguna</a>
+    <a class="nav-link-custom"><i class="bi bi-gear me-2"></i> Pengaturan Sistem</a>
+
+</nav>
+
+{{-- BOTTOM BUTTONS (Diperbaiki rata tengah) --}}
+<div class="mt-auto p-2">
+    <div class="menu-section mb-2">Aksi Cepat</div>
+
+    <a href="{{ url('/') }}" class="btn-side primary-amber" target="_blank">
+        Lihat Website <i class="bi bi-arrow-up-right-square ms-2"></i>
+    </a>
+
+    <form action="{{ route('logout') }}" method="POST">@csrf
+        <button class="btn-side outline-subtle w-100">
+            <i class="bi bi-box-arrow-right me-2"></i> Log Out
+        </button>
+    </form>
 </div>
 
-<div class="bottom p-3">
-  <a href="{{ url('/') }}" class="btn-side mb-2">Lihat Website</a>
-  <form action="{{ route('logout') }}" method="POST">@csrf
-    <button class="btn-side outline w-100"><i class="bi bi-box-arrow-right me-2"></i>Log Out</button>
-  </form>
-</div>
 </aside>
 
-<!-- Main -->
 <main class="main">
-<div class="topbar">
-  <div class="welcome">
-    <h3>Selamat datang, <span style="color:var(--gold)">{{ Auth::user()->name }}</span></h3>
-    <small>Kelola website dengan sempurna ✨</small>
-  </div>
-
-  <div class="datebox">
-    <i class="bi bi-calendar-week"></i>
-    <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
-  </div>
-</div>
-
-@yield('content')
-
+    @yield('content')
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-const editorToggle=document.getElementById('editorToggle');
-const editorSub=document.getElementById('editorSubmenu');
-const icon=document.getElementById('editorIcon');
-editorToggle.onclick=()=>{editorSub.classList.toggle('show');icon.classList.toggle('bi-chevron-down');icon.classList.toggle('bi-chevron-right');}
+// Logic untuk Submenu Accordion
+const editorToggle = document.getElementById("editorToggle");
+const submenu = document.getElementById("editorSubmenu");
+const icon = document.getElementById("editorIcon");
 
-document.getElementById('sidebarToggle').onclick=()=>document.getElementById('sidebar').classList.toggle('show');
+// Fungsi untuk mengatur ikon berdasarkan status submenu
+function setIconState() {
+    const isShow = submenu.classList.contains("show");
+    if (isShow) {
+        icon.classList.remove("bi-chevron-right");
+        icon.classList.add("bi-chevron-down");
+    } else {
+        icon.classList.remove("bi-chevron-down");
+        icon.classList.add("bi-chevron-right");
+    }
+}
+
+// Inisialisasi ikon saat load
+document.addEventListener('DOMContentLoaded', setIconState);
+
+editorToggle.onclick = (e) => {
+    e.preventDefault();
+    submenu.classList.toggle("show");
+    setIconState();
+};
+
+// Logic untuk Sidebar Toggle di Mobile
+document.getElementById("sidebarToggle").onclick = () => {
+    document.getElementById("sidebar").classList.toggle("show");
+};
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
