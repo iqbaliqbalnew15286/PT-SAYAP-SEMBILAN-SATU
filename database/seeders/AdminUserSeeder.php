@@ -15,7 +15,7 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@tower.test'],
             [
                 'name' => 'Admin Tower',
-                'password' => Hash::make('password123'), // ganti dengan password yang kuat
+                'password' => Hash::make('tower123'), // ganti dengan password yang kuat
                 'email_verified_at' => now(),
             ]
         );
