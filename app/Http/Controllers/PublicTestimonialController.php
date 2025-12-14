@@ -29,6 +29,6 @@ class PublicTestimonialController extends Controller
      */
     public function create()
     {
-        return view('testimonial.create'); // if needed
+        return view('pages.testimonial.create'); // if needed
     }
 }

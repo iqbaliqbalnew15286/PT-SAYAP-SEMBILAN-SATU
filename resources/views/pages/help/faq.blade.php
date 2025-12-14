@@ -1,18 +1,24 @@
 @extends('layouts.app')
-@section('title','FAQ - Tower Management & Service')
+@section('title')
+FAQ - Tower Management & Service
+@endsection
 
 @push('styles')
+{{-- Memastikan Font Awesome dan AOS dimuat (Karena ada atribut data-aos-*) --}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
 <style>
 /* -------------------------------------
    COLOR THEME: MODERN LIGHT MODE (WHITE & AMBER)
 ---------------------------------------*/
 :root {
-    --accent: #FFC300;
-    --bg-light: #F8F9FB;
-    --bg-card: #FFFFFF;
-    --text-dark: #2C3E50;
-    --text-muted: #7F8C8D;
-    --border-subtle: #E9ECEF;
+    --accent: #FFC300; /* Kuning Amber */
+    --bg-light: #F8F9FB; /* Light Background */
+    --bg-card: #FFFFFF; /* White Card */
+    --text-dark: #2C3E50; /* Navy/Dark Text */
+    --text-muted: #7F8C8D; /* Muted Gray */
+    --border-subtle: #E9ECEF; /* Border Gray */
 }
 
 body {
@@ -28,11 +34,14 @@ body {
     background: linear-gradient(to bottom, var(--bg-light), #F1F3F7);
 }
 .faq-hero h1 {
-    font-weight: 800; /* Lebih tebal */
+    font-weight: 800;
     color: var(--text-dark);
 }
 .faq-hero p {
     color: var(--text-muted);
+    max-width: 600px; /* Batasi lebar teks paragraf */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .badge-custom {
@@ -41,7 +50,8 @@ body {
     color: var(--text-dark) !important;
     font-weight: 600;
     padding: 8px 16px;
-    border-radius: 8px; /* Lebih kotak */
+    border-radius: 8px;
+    display: inline-block; /* Agar margin-bottom berfungsi */
 }
 
 .divider {
@@ -56,7 +66,7 @@ body {
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
     margin-bottom: 15px;
-    border-radius: 12px; /* Lebih minimalis */
+    border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0,0,0,.05);
 }
@@ -69,6 +79,8 @@ body {
     letter-spacing: normal;
     font-size: 1.05rem;
     transition: background .3s, color .3s;
+    width: 100%; /* Memastikan tombol memenuhi lebar */
+    text-align: left;
 }
 .accordion-button:focus { box-shadow:none !important; }
 
@@ -84,27 +96,28 @@ body {
 }
 
 .accordion-body {
-    background: #F4F6F9; /* Background body sedikit abu-abu muda */
+    background: #F4F6F9;
     color: var(--text-dark);
     padding: 20px 25px;
     line-height: 1.6;
     font-size: 0.95rem;
 }
 
-/* Custom icon (Menggunakan Bootstrap Icons jika tersedia) */
+/* Custom icon */
 .accordion-button::after { display:none; }
 .custom-icon {
     font-size: 1.2rem;
     margin-left: auto;
     transition: .3s ease;
     color: var(--accent);
+    flex-shrink: 0; /* Agar tidak terpotong */
 }
 .accordion-button.collapsed .custom-icon {
     color: var(--text-muted);
 }
 .accordion-button:not(.collapsed) .custom-icon {
     transform: rotate(45deg);
-    color: var(--text-dark); /* Ikon jadi gelap saat aktif */
+    color: var(--text-dark);
 }
 
 /* KEPADATAN */
@@ -114,12 +127,14 @@ section { padding: 50px 0; }
 
 @section('content')
 
-{{-- ✅ HERO --}}
+{{-- ✅ HERO SECTION --}}
 <section class="faq-hero" data-aos="fade-down">
-    <span class="badge-custom mb-2">Pusat Bantuan</span>
-    <h1>Pertanyaan yang Sering Diajukan (FAQ)</h1>
-    <div class="divider"></div>
-    <p>Kami telah mengumpulkan jawaban atas pertanyaan umum terkait layanan, produk, dan operasional Tower Management.</p>
+    <div class="container">
+        <span class="badge-custom mb-2">Pusat Bantuan</span>
+        <h1>Pertanyaan yang Sering Diajukan (FAQ)</h1>
+        <div class="divider"></div>
+        <p>Kami telah mengumpulkan jawaban atas pertanyaan umum terkait layanan, produk, dan operasional Tower Management.</p>
+    </div>
 </section>
 
 {{-- ✅ FAQ CONTENT --}}
@@ -217,4 +232,25 @@ section { padding: 50px 0; }
 </div>
 </section>
 
+{{-- ✅ AOS Initialization Script --}}
+@push('scripts')
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inisialisasi AOS (Animate On Scroll)
+        AOS.init({
+            duration: 800, // Durasi animasi
+            once: true // Animasi hanya terjadi sekali saat scroll
+        });
+
+        // Menambahkan fungsionalitas untuk memastikan AOS bekerja saat accordion dibuka/ditutup
+        var accordions = document.querySelectorAll('.accordion-item');
+        accordions.forEach(function(item) {
+            item.addEventListener('shown.bs.collapse', function () {
+                AOS.refresh();
+            });
+        });
+    });
+</script>
+@endpush
 @endsection

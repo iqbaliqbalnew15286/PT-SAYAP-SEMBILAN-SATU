@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\PublicTestimonialController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -30,6 +31,15 @@ Route::get('/', function () {
     $services = Service::latest()->take(4)->get();
     $testimonials = Testimonial::latest()->take(3)->get();
     $galleryItems = Gallery::latest()->take(4)->get();
+    $partners = \App\Models\Partner::latest()->get();
+    $facilities = \App\Models\Facility::latest()->take(5)->get();
+
+    // Additional variables for the view
+    $latestNews = collect(); // Placeholder, add News model if exists
+    $mainImages = collect(); // Placeholder
+    $gridImages = collect(); // Placeholder
+    $majors = collect(); // Placeholder
+    $majorGridImages = collect(); // Placeholder
 
     $advantages = [
         'Tenaga Profesional & Bersertifikasi',
@@ -45,9 +55,35 @@ Route::get('/', function () {
         'services',
         'testimonials',
         'galleryItems',
+        'partners',
+        'facilities',
+        'latestNews',
+        'mainImages',
+        'gridImages',
+        'majors',
+        'majorGridImages',
         'advantages'
     ));
 })->name('home');
+
+// Search Route
+Route::get('/search', function (Request $request) {
+    $query = $request->get('query');
+
+    if (!$query) {
+        return redirect()->back()->with('error', 'Please enter a search term.');
+    }
+
+    $products = Product::where('name', 'like', '%' . $query . '%')
+        ->orWhere('description', 'like', '%' . $query . '%')
+        ->get();
+
+    $services = Service::where('name', 'like', '%' . $query . '%')
+        ->orWhere('description', 'like', '%' . $query . '%')
+        ->get();
+
+    return view('pages.search.results', compact('products', 'services', 'query'));
+})->name('search');
 
 
 // ✅ Dynamic About (Visi, Misi, Tujuan dari CMS)
@@ -119,6 +155,39 @@ Route::get('/gallery', function () {
 })->name('gallery.index');
 
 
+// ==================== 🤝 PARTNERS ====================
+
+// List Partners
+Route::get('/partners', function () {
+    $partners = \App\Models\Partner::latest()->get();
+    return view('pages.partners.index', compact('partners'));
+})->name('partners');
+
+// Detail Partner
+Route::get('/partners/{id}', function ($id) {
+    $partner = \App\Models\Partner::findOrFail($id);
+    return view('pages.partners.show', compact('partner'));
+})->name('partners.show');
+
+
+// ==================== 🏢 FACILITIES ====================
+
+// List Facilities
+Route::get('/facilities', function () {
+    $facilities = \App\Models\Facility::latest()->get();
+    $groupedFacilities = $facilities->groupBy('type');
+    $facilityImages = collect(); // Placeholder, add FacilityImage model if exists
+    $gridImages = collect(); // Placeholder
+    return view('pages.facilities.index', compact('facilities', 'groupedFacilities', 'facilityImages', 'gridImages'));
+})->name('facilities');
+
+// Detail Facility
+Route::get('/facilities/{id}', function ($id) {
+    $facility = \App\Models\Facility::findOrFail($id);
+    return view('pages.facilities.show', compact('facility'));
+})->name('facilities.show');
+
+
 // ==================== 🔐 ADMIN AUTH ====================
 
 Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
@@ -131,12 +200,14 @@ Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('home', HomeController::class);
+    Route::resource('home', AdminHomeController::class);
     Route::resource('abouts', AboutController::class); // ✅ sudah termasuk show
     Route::resource('products', ProductController::class);
     Route::resource('services', ServiceController::class);
     Route::resource('galleries', GalleryController::class);
     Route::resource('testimonials', TestimonialController::class);
+    Route::resource('partners', \App\Http\Controllers\Admin\PartnerController::class);
+    Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class);
 });
 
 

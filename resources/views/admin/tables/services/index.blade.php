@@ -1,124 +1,169 @@
-@extends('admin.layouts.app')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('title', 'Layanan - Admin')
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="{{ asset('assets/logo/am.png') }}">
+    <title>@yield('title', 'Perusahaan')</title>
 
-@section('content')
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<div class="container-fluid">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-    {{-- Header Halaman --}}
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        {{-- Menggunakan warna teks gelap dari variabel CSS --}}
-        <h1 class="h3 mb-0" style="color: var(--text-dark);">Tabel Layanan</h1>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
-        {{-- Tombol Tambah Layanan, menggunakan aksen Kuning Emas (primary-amber) --}}
-        <a href="{{ route('admin.services.create') }}" class="btn primary-amber" style="font-weight:700; border-radius: 8px; color: var(--text-dark);">
-            <i class="bi bi-plus-circle me-1"></i> Tambah Layanan
-        </a>
-    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    {{-- Alert sukses (Disesuaikan dengan Soft Light) --}}
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert"
-             style="background-color: rgba(28, 200, 138, 0.15); border: 1px solid #1cc88a; color: #1cc88a;">
-            {{ session('success') }}
-            {{-- Tombol close standar dari Bootstrap --}}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .nav-link {
+            @apply text-white px-4 py-2 flex items-center gap-1 text-sm font-medium transition;
+        }
+
+        .nav-link:hover {
+            color: #F97316;
+        }
+
+        .dropdown {
+            @apply absolute mt-2 bg-white rounded-lg shadow-lg w-52 opacity-0 invisible transition-all;
+        }
+
+        .group:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- ================= HEADER ================= -->
+    <header x-data="{ mobile:false }" class="sticky top-0 z-50">
+
+        <!-- TOP -->
+        <div class="bg-[#020617]">
+            <div class="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="{{ asset('assets/logo/amaliah.png') }}" class="h-10">
+                    <span class="text-white font-semibold text-lg">Perusahaan</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden lg:flex items-center gap-8">
+
+                    <a href="/" class="nav-link">Home</a>
+
+                    <!-- Discover -->
+                    <div class="relative group">
+                        <button class="nav-link">
+                            Discover Perusahaan <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </button>
+                        <div class="dropdown">
+                            <a href="{{ route('about') }}" class="block px-4 py-3 hover:bg-gray-100">About</a>
+                            <a href="#" class="block px-4 py-3 hover:bg-gray-100">Gallery</a>
+                            <a href="{{ route('partners') }}" class="block px-4 py-3 hover:bg-gray-100">Partners</a>
+                            <a href="{{ route('send.testimonial') }}" class="block px-4 py-3 hover:bg-gray-100">Testimonial</a>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('facilities') }}" class="nav-link">Facilities</a>
+
+                    <!-- Produk -->
+                    <div class="relative group">
+                        <button class="nav-link">
+                            Produk Perusahaan <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </button>
+                        <div class="dropdown">
+                            <a href="#" class="block px-4 py-3 hover:bg-gray-100">Produk Barang</a>
+                            <a href="#" class="block px-4 py-3 hover:bg-gray-100">Produk Jasa</a>
+                        </div>
+                    </div>
+
+                    <!-- Help -->
+                    <div class="relative group">
+                        <button class="nav-link">
+                            Help Center <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </button>
+                        <div class="dropdown">
+                            <a href="{{ route('faq') }}" class="block px-4 py-3 hover:bg-gray-100">FAQ</a>
+                            <a href="#" class="block px-4 py-3 hover:bg-gray-100">Kontak</a>
+                            <a href="#" class="block px-4 py-3 hover:bg-gray-100">Syarat & Ketentuan</a>
+                            <a href="https://forms.gle/sveGZa9nd9uX62YE9" class="block px-4 py-3 hover:bg-gray-100">Feedback</a>
+                        </div>
+                    </div>
+
+                </nav>
+
+                <!-- Mobile Button -->
+                <button @click="mobile = !mobile" class="lg:hidden text-white text-2xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
         </div>
-    @endif
 
-    {{-- Tabel Konten (Menggunakan card-tower) --}}
-    <div class="card card-tower mb-4">
-        <div class="card-body table-responsive p-0">
+        <!-- MOBILE MENU -->
+        <div x-show="mobile" x-cloak class="bg-white shadow-lg lg:hidden">
+            <div class="flex flex-col p-4 text-sm space-y-1">
+                <a href="/" class="px-4 py-3 hover:bg-gray-100 rounded">Home</a>
 
-            {{-- Menggunakan table-hover dan align-middle --}}
-            <table class="table table-hover align-middle">
-                <thead>
-                    <tr>
-                        {{-- Header menggunakan muted color dan border pemisah vertikal --}}
-                        <th class="text-center py-3" style="width: 5%; color: var(--text-muted); border-right: 1px solid var(--border-subtle);">No</th>
-                        <th class="text-start py-3" style="width: 20%; color: var(--text-muted); border-right: 1px solid var(--border-subtle);">Nama Layanan</th>
-                        <th class="text-start py-3" style="width: 40%; color: var(--text-muted); border-right: 1px solid var(--border-subtle);">Deskripsi</th>
-                        <th class="text-start py-3" style="width: 15%; color: var(--text-muted); border-right: 1px solid var(--border-subtle);">Harga</th>
-                        <th class="text-center py-3" style="width: 10%; color: var(--text-muted); border-right: 1px solid var(--border-subtle);">Gambar</th>
-                        <th class="text-center py-3" style="width: 10%; color: var(--text-muted);">Aksi</th>
-                    </tr>
-                </thead>
+                <details class="px-4 py-2">
+                    <summary class="cursor-pointer">Discover Perusahaan</summary>
+                    <div class="ml-4 mt-2 space-y-1">
+                        <a href="{{ route('about') }}" class="block py-2">About</a>
+                        <a href="#" class="block py-2">Gallery</a>
+                        <a href="{{ route('partners') }}" class="block py-2">Partners</a>
+                        <a href="{{ route('send.testimonial') }}" class="block py-2">Testimonial</a>
+                    </div>
+                </details>
 
-                <tbody>
-                    @forelse($services as $index => $service)
-                    <tr>
-                        {{-- No. menggunakan text-muted, dengan garis vertikal lembut --}}
-                        <td class="text-center" style="color:var(--text-muted); border-right: 1px solid var(--border-subtle);">{{ $index + 1 }}</td>
+                <a href="{{ route('facilities') }}" class="px-4 py-3 hover:bg-gray-100 rounded">Facilities</a>
 
-                        {{-- Nama Layanan (Teks Gelap) --}}
-                        <td class="text-start fw-semibold" style="color: var(--text-dark); border-right: 1px solid var(--border-subtle);">{{ $service->name }}</td>
+                <details class="px-4 py-2">
+                    <summary class="cursor-pointer">Produk Perusahaan</summary>
+                    <div class="ml-4 mt-2">
+                        <a href="#" class="block py-2">Produk Barang</a>
+                        <a href="#" class="block py-2">Produk Jasa</a>
+                    </div>
+                </details>
 
-                        {{-- Deskripsi (Teks Gelap) --}}
-                        <td class="text-start" style="font-size: 0.9rem; color: var(--text-dark); border-right: 1px solid var(--border-subtle);">{{ Str::limit($service->description, 70) }}</td>
-
-                        {{-- Harga (Menggunakan warna aksen Succes/Hijau) --}}
-                        <td class="text-start fw-bold" style="color: #1cc88a; border-right: 1px solid var(--border-subtle);">
-                            @if($service->price)
-                                Rp {{ number_format($service->price, 0, ',', '.') }}
-                            @else
-                                <span style="color:var(--text-muted);">-</span>
-                            @endif
-                        </td>
-
-                        {{-- Gambar --}}
-                        <td class="text-center" style="border-right: 1px solid var(--border-subtle);">
-                            @if($service->image)
-                                <img src="{{ asset('storage/'.$service->image) }}" width="45" height="45"
-                                    class="rounded" style="object-fit: cover; border: 1px solid var(--border-subtle);" alt="Gambar Layanan">
-                            @else
-                                <span style="color:var(--text-muted); font-size: 0.8rem;">Tidak ada</span>
-                            @endif
-                        </td>
-
-                        {{-- Aksi --}}
-                        <td class="text-center">
-                            <div class="btn-group" role="group">
-                                {{-- Show (Biru Muda/Info) --}}
-                                <a href="{{ route('admin.services.show', $service->id) }}"
-                                   class="btn btn-sm btn-icon-action" title="Detail"
-                                   style="color: #36b9cc; padding: 5px 8px;">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-
-                                {{-- Edit (Kuning/Warning) --}}
-                                <a href="{{ route('admin.services.edit', $service->id) }}"
-                                   class="btn btn-sm btn-icon-action" title="Edit"
-                                   style="color: #f6c23e; padding: 5px 8px;">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-
-                                {{-- Delete (Merah/Danger) --}}
-                                <form action="{{ route('admin.services.destroy', $service->id) }}" method="POST" class="d-inline">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-icon-action" title="Hapus"
-                                        style="color: #e74a3b; padding: 5px 8px;"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus layanan ini secara permanen?')">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-5" style="color:var(--text-muted);">
-                                {{-- Ikon menggunakan aksen Kuning Emas (text-neon) --}}
-                                <i class="bi bi-info-circle-fill fa-2x mb-3 text-neon"></i>
-                                <h4 style="color: var(--text-dark);">Belum ada Layanan yang ditambahkan.</h4>
-                                <p>Silakan klik tombol 'Tambah Layanan' di atas untuk menambahkan data.</p>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                <details class="px-4 py-2">
+                    <summary class="cursor-pointer">Help Center</summary>
+                    <div class="ml-4 mt-2">
+                        <a href="{{ route('faq') }}" class="block py-2">FAQ</a>
+                        <a href="#" class="block py-2">Kontak</a>
+                        <a href="#" class="block py-2">Syarat & Ketentuan</a>
+                        <a href="#" class="block py-2">Feedback</a>
+                    </div>
+                </details>
+            </div>
         </div>
-    </div>
-</div>
 
-@endsection
+    </header>
+
+    <!-- ================= CONTENT ================= -->
+    <main>
+        @yield('content')
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-[#0F172A] text-gray-400 mt-20">
+        <div class="max-w-screen-xl mx-auto px-6 py-12 text-center text-sm">
+            © {{ date('Y') }} Perusahaan. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+
+</html>

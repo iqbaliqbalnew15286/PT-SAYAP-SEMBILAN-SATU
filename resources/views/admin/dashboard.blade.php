@@ -1,211 +1,236 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Dashboard Admin - Bidan Fina')
-
 @section('content')
-    <div class="container-fluid">
+    {{-- Memastikan skrip Tailwind di-load (Biasanya di-load di admin-app, tapi disertakan jika ada kebutuhan kustom) --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
 
-        {{-- TOPBAR SELAMAT DATANG (KHUSUS DASHBOARD) --}}
-        {{-- Menggunakan style dari .topbar yang ada di layout CSS --}}
-        <div class="topbar">
-            {{-- Header lebih ringkas dan profesional --}}
-            <div class="welcome">
-                <h3 style="color: var(--text-dark);">Selamat Datang, Admin!</h3>
-                <small style="color: var(--text-muted);">Sistem Manajemen Tower.</small>
+    {{-- Gaya Kustom (Injeksi warna Tower) --}}
+    <style>
+        :root {
+            --primary-accent: #FF8C00; /* Oranye/Emas */
+            --text-dark: #2C3E50; /* Biru Tua */
+        }
+        .text-accent-tower {
+            color: var(--primary-accent);
+        }
+        .hover\:border-accent-tower:hover {
+            border-color: var(--primary-accent);
+        }
+        .bg-page {
+            background-color: #f0f2f5;
+            color: var(--text-dark);
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+
+    <div class="bg-page min-h-screen p-6 md:p-10">
+        <div class="max-w-7xl mx-auto">
+
+            {{-- HEADER / TOPBAR --}}
+            <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 p-4 bg-white rounded-xl shadow-md border border-[#D9D9D9]">
+                <div>
+                    <h1 class="text-xl font-bold mb-1 text-[var(--text-dark)]">
+                        Selamat Datang,
+                        <span class="text-accent-tower">
+                            {{ Auth::user()->name ?? 'Admin' }}
+                        </span>
+                    </h1>
+                    <p class="text-sm font-normal text-gray-600">
+                        Kelola data properti Anda <span class="text-accent-tower">di sini</span>.
+                    </p>
+                </div>
+                <div class="flex items-center space-x-2 text-gray-600 mt-3 sm:mt-0 text-sm">
+                    <i class="fas fa-calendar-alt text-lg"></i>
+                    <span id="current-date" class="font-semibold"></span>
+                </div>
+            </header>
+
+            {{-- BANNER VIEW --}}
+            <div class="mb-8">
+                <div class="w-full rounded-lg overflow-hidden border border-[#D9D9D9] shadow-lg">
+                    <img alt="Panoramic aerial view of modern building complex with glass and greenery"
+                        class="w-full h-40 object-cover object-center" src="{{ asset('assets/image/DroneView.jpg') }}" />
+                </div>
             </div>
 
-            <div class="datebox d-none d-sm-flex align-items-center">
-                <i class="bi bi-calendar-week me-2 text-neon"></i>
-                <span style="color:var(--text-muted)">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
-            </div>
+            <main>
+                {{-- JUDUL SEKSI --}}
+                <h2 class="text-xl font-bold mb-5 text-[var(--text-dark)]">Kontrol Konten Properti</h2>
+
+                {{-- GRID KARTU AKSI CEPAT --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                    {{-- 1. Gambar Utama --}}
+                    <a href="{{ route('admin.home.index') }}"
+                        class="bg-white rounded-lg p-5 flex flex-col space-y-3 shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-accent-tower">
+                        <div class="text-accent-tower text-2xl">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <h2 class="font-semibold text-lg text-[var(--text-dark)]">Gambar Utama Properti</h2>
+                        <p class="text-sm text-gray-600 leading-snug flex-grow">Kelola gambar utama (hero section) yang tampil di
+                            halaman depan website Tower.</p>
+                        <span class="text-sm text-accent-tower font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-xs ml-1"></i>
+                        </span>
+                    </a>
+
+                    {{-- 2. Profil & Deskripsi --}}
+                    <a href="{{ route('admin.abouts.index') }}"
+                        class="bg-white rounded-lg p-5 flex flex-col space-y-3 shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-accent-tower">
+                        <div class="text-accent-tower text-2xl">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <h2 class="font-semibold text-lg text-[var(--text-dark)]">Profil & Deskripsi</h2>
+                        <p class="text-sm text-gray-600 leading-snug flex-grow">Atur tulisan seperti profil PT/developer, sejarah pembangunan, dan visi & misi Tower.</p>
+                        <span class="text-sm text-accent-tower font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-xs ml-1"></i>
+                        </span>
+                    </a>
+
+                    {{-- 3. Testimoni --}}
+                    <a href="{{ route('admin.testimonials.index') }}"
+                        class="bg-white rounded-lg p-5 flex flex-col space-y-3 shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-accent-tower">
+                        <div class="text-accent-tower text-2xl">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                        <h2 class="font-semibold text-lg text-[var(--text-dark)]">Testimoni Penghuni</h2>
+                        <p class="text-sm text-gray-600 leading-snug flex-grow">Kelola ulasan dan pengalaman positif dari penghuni atau klien properti.</p>
+                        <span class="text-sm text-accent-tower font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-xs ml-1"></i>
+                        </span>
+                    </a>
+
+                    {{-- 4. Fasilitas --}}
+                    <a href="{{ route('admin.facilities.index') }}"
+                        class="bg-white rounded-lg p-5 flex flex-col space-y-3 shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-accent-tower">
+                        <div class="text-accent-tower text-2xl">
+                            <i class="fas fa-swimming-pool"></i>
+                        </div>
+                        <h2 class="font-semibold text-lg text-[var(--text-dark)]">Fasilitas Properti</h2>
+                        <p class="text-sm text-gray-600 leading-snug flex-grow">Perbarui informasi dan galeri foto fasilitas atau *amenities* yang tersedia di Tower.</p>
+                        <span class="text-sm text-accent-tower font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-xs ml-1"></i>
+                        </span>
+                    </a>
+
+                    {{-- 5. Unit & Tipe Properti --}}
+                    <a href="{{ route('admin.products.index') }}"
+                        class="bg-white rounded-lg p-5 flex flex-col space-y-3 shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-accent-tower">
+                        <div class="text-accent-tower text-2xl">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h2 class="font-semibold text-lg text-[var(--text-dark)]">Unit & Tipe Properti</h2>
+                        <p class="text-sm text-gray-600 leading-snug flex-grow">Sesuaikan daftar dan detail spesifikasi tipe unit (apartemen, kantor) yang dijual/disewakan.</p>
+                        <span class="text-sm text-accent-tower font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-xs ml-1"></i>
+                        </span>
+                    </a>
+
+                    {{-- 6. Galeri Foto & Video --}}
+                    <a href="{{ route('admin.galleries.index') }}"
+                        class="bg-white rounded-lg p-5 flex flex-col space-y-3 shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-accent-tower">
+                        <div class="text-accent-tower text-2xl">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <h2 class="font-semibold text-lg text-[var(--text-dark)]">Galeri Foto & Video</h2>
+                        <p class="text-sm text-gray-600 leading-snug flex-grow">Kelola galeri foto dan video Tower untuk keperluan *marketing* dan visual.</p>
+                        <span class="text-sm text-accent-tower font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-xs ml-1"></i>
+                        </span>
+                    </a>
+
+
+                    {{-- 8. Mitra & Klien Utama --}}
+                    <a href="{{ route('admin.partners.index') }}"
+                        class="bg-white rounded-lg p-5 flex flex-col space-y-3 shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-accent-tower">
+                        <div class="text-accent-tower text-2xl">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h2 class="font-semibold text-lg text-[var(--text-dark)]">Mitra & Klien Utama</h2>
+                        <p class="text-sm text-gray-600 leading-snug flex-grow">Kelola dan tampilkan daftar mitra, investor, atau klien korporat utama Tower.</p>
+                        <span class="text-sm text-accent-tower font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-xs ml-1"></i>
+                        </span>
+                    </a>
+
+                    {{-- 9. Tim Manajemen --}}
+                    <a href="{{ route('admin.abouts.index') }}"
+                        class="bg-white rounded-lg p-5 flex flex-col space-y-3 shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-accent-tower">
+                        <div class="text-accent-tower text-2xl">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h2 class="font-semibold text-lg text-[var(--text-dark)]">Tim Manajemen</h2>
+                        <p class="text-sm text-gray-600 leading-snug flex-grow">Kelola data dan profil tim manajemen properti serta kontak penting.</p>
+                        <span class="text-sm text-accent-tower font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-xs ml-1"></i>
+                        </span>
+                    </a>
+
+                    {{-- 10. Dokumen & Sertifikasi --}}
+                    <a href="{{ route('admin.galleries.index') }}"
+                        class="bg-white rounded-lg p-5 flex flex-col space-y-3 shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-accent-tower">
+                        <div class="text-accent-tower text-2xl">
+                            <i class="fas fa-scroll"></i>
+                        </div>
+                        <h2 class="font-semibold text-lg text-[var(--text-dark)]">Dokumen & Sertifikasi</h2>
+                        <p class="text-sm text-gray-600 leading-snug flex-grow">Publikasikan dan kelola daftar dokumen hukum, perizinan, dan sertifikasi properti.</p>
+                        <span class="text-sm text-accent-tower font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-xs ml-1"></i>
+                        </span>
+                    </a>
+
+                    {{-- 11. Kontak & Lokasi --}}
+                    <a href="{{ route('admin.partners.index') }}"
+                        class="bg-white rounded-lg p-5 flex flex-col space-y-3 shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:border-accent-tower">
+                        <div class="text-accent-tower text-2xl">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h2 class="font-semibold text-lg text-[var(--text-dark)]">Kontak & Lokasi</h2>
+                        <p class="text-sm text-gray-600 leading-snug flex-grow">Kelola informasi kontak, alamat kantor, dan koordinat Google Maps Tower.</p>
+                        <span class="text-sm text-accent-tower font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-xs ml-1"></i>
+                        </span>
+                    </a>
+
+                </div>
+            </main>
         </div>
 
-        {{-- Header & Tombol Export --}}
-        <div class="d-sm-flex align-items-center justify-content-between mb-4 mt-4">
-            {{-- Menggunakan warna teks gelap dari variabel CSS --}}
-            <h1 class="h3 mb-0" style="color: var(--text-dark);">Ringkasan Statistik</h1>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm primary-amber"
-               style="font-weight:700; border-radius: 8px; color: var(--text-dark);">
-                <i class="fas fa-file-export fa-sm me-2"></i> Export Laporan
-            </a>
-        </div>
+        {{-- JAVASCRIPT --}}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const dateSpan = document.getElementById('current-date');
 
-        {{-- ROW STATISTIC CARDS --}}
-        <div class="row">
+                function updateDate() {
+                    const now = new Date();
+                    const options = {
+                        timeZone: 'Asia/Jakarta',
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    };
+                    // Menggunakan Intl.DateTimeFormat untuk format lokal Indonesia (hari, dd bulan yyyy)
+                    const formattedDate = new Intl.DateTimeFormat('id-ID', options).format(now);
+                    dateSpan.textContent = formattedDate;
+                }
 
-            {{-- Produk Card (Aksen Amber) --}}
-            <div class="col-xl-3 col-md-6 mb-4">
-                {{-- Menggunakan card-tower dan aksen amber --}}
-                <div class="card card-tower h-100 py-2" style="border-left: 4px solid var(--amber-accent);">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                {{-- Menggunakan warna aksen dan teks dark --}}
-                                <div class="text-xs font-weight-bold text-uppercase mb-1 text-neon">
-                                    Total Produk
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold" style="color: var(--text-dark);">{{ $products }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-box fa-2x text-neon" style="opacity: 0.35;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Layanan Card (Aksen Hijau) --}}
-            <div class="col-xl-3 col-md-6 mb-4">
-                {{-- Kita pertahankan warna Hijau (Success) sebagai variasi --}}
-                <div class="card card-tower h-100 py-2" style="border-left: 4px solid #1cc88a;">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-uppercase mb-1" style="color:#1cc88a;">
-                                    Total Layanan
-                                </div>
-                                {{-- Menggunakan $items->count() sesuai kode Anda. Asumsi $items berisi daftar layanan. --}}
-                                <div class="h5 mb-0 font-weight-bold" style="color: var(--text-dark);">{{ $items->count() }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-stethoscope fa-2x" style="color:#1cc88a; opacity: 0.35;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Reservasi Card (Aksen Biru Muda) --}}
-            <div class="col-xl-3 col-md-6 mb-4">
-                {{-- Kita pertahankan warna Biru Muda (Info) sebagai variasi --}}
-                <div class="card card-tower h-100 py-2" style="border-left: 4px solid #36b9cc;">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-uppercase mb-1" style="color:#36b9cc;">
-                                    Total Reservasi
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold" style="color: var(--text-dark);">{{ $reservations }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-calendar-check fa-2x" style="color:#36b9cc; opacity: 0.35;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Testimoni Card (Aksen Kuning) --}}
-            <div class="col-xl-3 col-md-6 mb-4">
-                {{-- Kita pertahankan warna Kuning (Warning) sebagai variasi --}}
-                <div class="card card-tower h-100 py-2" style="border-left: 4px solid #f6c23e;">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-uppercase mb-1" style="color:#f6c23e;">
-                                    Total Testimoni
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold" style="color: var(--text-dark);">{{ $testimonials }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-star fa-2x" style="color:#f6c23e; opacity: 0.35;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{-- END ROW STATISTIC CARDS --}}
-
-        {{-- ROW LAYANAN TERBARU & AKSI CEPAT --}}
-        <div class="row">
-            {{-- Layanan Terbaru (Tabel) --}}
-            <div class="col-xl-8 col-lg-7">
-                <div class="card card-tower mb-4">
-                    {{-- Card Header: Menggunakan card-header-tower dari layout --}}
-                    <div class="card-header card-header-tower py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-neon">Layanan Terbaru</h6>
-                        {{-- Tombol Lihat Semua, menggunakan border-subtle --}}
-                        <a href="{{ route('admin.services.index') }}" class="btn btn-sm text-neon" style="border: 1px solid var(--border-subtle); border-radius: 6px; font-weight: 500;">Lihat Semua <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                    <div class="card-body">
-                        @if ($items->count() > 0)
-                            <div class="table-responsive">
-                                {{-- Table Styling akan otomatis mengikuti CSS di layout --}}
-                                <table class="table table-borderless table-hover" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            {{-- Warna header tabel disesuaikan --}}
-                                            <th style="width: 50%; color: var(--text-muted);">Nama Layanan</th>
-                                            <th style="width: 30%; color: var(--text-muted);">Harga</th>
-                                            <th style="width: 20%; color: var(--text-muted);">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($items->take(5) as $service)
-                                            <tr>
-                                                <td><strong style="color: var(--text-dark);">{{ $service->name }}</strong></td>
-                                                {{-- Badge Harga disesuaikan dengan skema warna hijau --}}
-                                                <td><span class="badge" style="background-color: rgba(28, 200, 138, 0.15); color: #1cc88a; padding: 7px 10px; font-weight: 600;">Rp {{ number_format($service->price ?? 0, 0, ',', '.') }}</span></td>
-                                                <td>
-                                                    {{-- Tombol Detail menggunakan aksen Kuning Emas --}}
-                                                    <a href="{{ route('admin.services.show', $service) }}"
-                                                        class="btn btn-sm rounded-circle primary-amber" title="Detail" style="width: 30px; height: 30px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
-                                                        <i class="fas fa-eye text-dark fa-sm"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="text-center py-5">
-                                <i class="fas fa-stethoscope fa-2x mb-3 text-neon"></i>
-                                <p style="color: var(--text-muted); padding: 0 20px;">Belum ada layanan yang ditambahkan. Tambahkan layanan baru untuk melihat ringkasan di sini.</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            {{-- Aksi Cepat --}}
-            <div class="col-xl-4 col-lg-5">
-                <div class="card card-tower mb-4">
-                    <div class="card-header card-header-tower py-3">
-                        <h6 class="m-0 font-weight-bold text-neon">Aksi Cepat</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-grid gap-3">
-                            {{-- Quick Action Buttons --}}
-                            <a href="{{ route('admin.products.create') }}" class="btn btn-quick-action btn-lg btn-block text-left"
-                               style="display: flex; align-items: center; justify-content: start; background:var(--bg-light-main); border-left: 4px solid var(--amber-accent); box-shadow: none; color: var(--text-dark); border-radius: 8px;">
-                                <i class="fas fa-box fa-lg me-3 text-neon"></i>
-                                <div class="ms-3" style="font-weight: 500;">Tambah Produk</div>
-                            </a>
-
-                            <a href="{{ route('admin.services.create') }}" class="btn btn-quick-action btn-lg btn-block text-left"
-                               style="display: flex; align-items: center; justify-content: start; background:var(--bg-light-main); border-left: 4px solid #1cc88a; box-shadow: none; color: var(--text-dark); border-radius: 8px;">
-                                <i class="fas fa-stethoscope fa-lg me-3" style="color:#1cc88a;"></i>
-                                <div class="ms-3" style="font-weight: 500;">Tambah Layanan</div>
-                            </a>
-
-                            <a href="{{ route('admin.galleries.create') }}" class="btn btn-quick-action btn-lg btn-block text-left"
-                               style="display: flex; align-items: center; justify-content: start; background:var(--bg-light-main); border-left: 4px solid #36b9cc; box-shadow: none; color: var(--text-dark); border-radius: 8px;">
-                                <i class="fas fa-image fa-lg me-3" style="color:#36b9cc;"></i>
-                                <div class="ms-3" style="font-weight: 500;">Tambah Galeri</div>
-                            </a>
-
-                            <a href="{{ route('admin.testimonials.create') }}" class="btn btn-quick-action btn-lg btn-block text-left"
-                               style="display: flex; align-items: center; justify-content: start; background:var(--bg-light-main); border-left: 4px solid #f6c23e; box-shadow: none; color: var(--text-dark); border-radius: 8px;">
-                                <i class="fas fa-star fa-lg me-3" style="color:#f6c23e;"></i>
-                                <div class="ms-3" style="font-weight: 500;">Tambah Testimoni</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{-- END ROW LAYANAN TERBARU & AKSI CEPAT --}}
+                updateDate();
+                // Opsional: update date every minute (60000ms)
+                setInterval(updateDate, 60000);
+            });
+        </script>
     </div>
 @endsection

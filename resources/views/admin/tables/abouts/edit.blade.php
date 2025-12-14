@@ -20,11 +20,6 @@
         <textarea name="mission" class="form-control" rows="5" required>{{ $about->mission }}</textarea>
       </div>
 
-      <div class="col-md-4">
-        <label class="form-label fw-semibold">Tujuan</label>
-        <textarea name="goal" class="form-control" rows="5" required>{{ $about->goal }}</textarea>
-      </div>
-
     </div>
 
     <div class="mt-4">

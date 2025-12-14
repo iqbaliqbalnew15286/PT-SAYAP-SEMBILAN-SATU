@@ -19,10 +19,6 @@
         <textarea name="mission" class="form-control" rows="4" required></textarea>
       </div>
 
-      <div class="col-md-4">
-        <label class="form-label fw-semibold">Tujuan</label>
-        <textarea name="goal" class="form-control" rows="4" required></textarea>
-      </div>
 
       <div class="col-12">
         <label class="form-label fw-semibold">Gambar (Opsional)</label>

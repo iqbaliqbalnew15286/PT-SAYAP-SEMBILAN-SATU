@@ -21,10 +21,6 @@
           <p class="text-muted">{{ $about->mission ?? '-' }}</p>
         </div>
 
-        <div class="col-md-4">
-          <h6 class="fw-bold">Tujuan</h6>
-          <p class="text-muted">{{ $about->goal ?? '-' }}</p>
-        </div>
 
       </div>
 
