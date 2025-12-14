@@ -82,45 +82,60 @@
                 </div>
             @endif
 
-            {{-- Menghitung statistik --}}
+            {{-- Menghitung statistik berdasarkan kategori baru --}}
             @php
                 $totalFacilities = $facilities->count();
-                $mainFacilityCount = $facilities->filter(fn($f) => strcasecmp(trim($f->type), 'Utama') === 0)->count();
-                $supportingFacilityCount = $facilities->filter(fn($f) => strcasecmp(trim($f->type), 'Pendukung') === 0)->count();
+                $pabrikasCount = $facilities->filter(fn($f) => strcasecmp(trim($f->type), 'Peralatan Pabrikas') === 0)->count();
+                $maintenanceCount = $facilities->filter(fn($f) => strcasecmp(trim($f->type), 'Peralatan Maintenance') === 0)->count();
+                $kendaraanCount = $facilities->filter(fn($f) => strcasecmp(trim($f->type), 'Kendaraan Operasional') === 0)->count();
+                // Hitungan untuk jenis yang tidak terdefinisi/lama
+                $otherCount = $totalFacilities - ($pabrikasCount + $maintenanceCount + $kendaraanCount);
             @endphp
 
-            {{-- Bagian Statistik Ringkas --}}
-            <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {{-- Bagian Statistik Ringkas (Disesuaikan dengan 4 kategori: Total, Pabrikas, Maintenance, Kendaraan) --}}
+            <div class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+
                 {{-- Card Total --}}
                 <div class="bg-gray-50 p-4 rounded-xl shadow-sm flex items-center space-x-4 border border-gray-200 transition duration-200 hover:shadow-md">
                     <div class="bg-dark-tower text-white rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-building fa-lg"></i>
+                        <i class="fas fa-cubes fa-lg"></i>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Total Fasilitas</p>
-                        <p class="text-2xl font-bold text-dark-tower">{{ $totalFacilities }}</p>
+                        <p class="text-xs sm:text-sm text-gray-500">Total Fasilitas</p>
+                        <p class="text-xl sm:text-2xl font-bold text-dark-tower">{{ $totalFacilities }}</p>
                     </div>
                 </div>
 
-                {{-- Card Fasilitas Utama (Menggunakan Aksen Oranye) --}}
+                {{-- Card Peralatan Pabrikas (Menggunakan Aksen Oranye) --}}
                 <div class="bg-gray-50 p-4 rounded-xl shadow-sm flex items-center space-x-4 border border-accent-tower/50 transition duration-200 hover:shadow-md">
                     <div class="bg-accent-tower text-white rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-star fa-lg"></i>
+                        <i class="fas fa-hammer fa-lg"></i>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Fasilitas Utama</p>
-                        <p class="text-2xl font-bold text-dark-tower">{{ $mainFacilityCount }}</p>
+                        <p class="text-xs sm:text-sm text-gray-500">Peralatan Pabrikas</p>
+                        <p class="text-xl sm:text-2xl font-bold text-dark-tower">{{ $pabrikasCount }}</p>
                     </div>
                 </div>
 
-                {{-- Card Fasilitas Pendukung (Menggunakan Aksen Biru) --}}
+                {{-- Card Peralatan Maintenance (Menggunakan Aksen Biru) --}}
                 <div class="bg-gray-50 p-4 rounded-xl shadow-sm flex items-center space-x-4 border border-blue-500/50 transition duration-200 hover:shadow-md">
                     <div class="bg-blue-500 text-white rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-plus-circle fa-lg"></i>
+                        <i class="fas fa-wrench fa-lg"></i>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Fasilitas Pendukung</p>
-                        <p class="text-2xl font-bold text-dark-tower">{{ $supportingFacilityCount }}</p>
+                        <p class="text-xs sm:text-sm text-gray-500">Peralatan Maintenance</p>
+                        <p class="text-xl sm:text-2xl font-bold text-dark-tower">{{ $maintenanceCount }}</p>
+                    </div>
+                </div>
+
+                {{-- Card Kendaraan Operasional (Menggunakan Aksen Hijau) --}}
+                <div class="bg-gray-50 p-4 rounded-xl shadow-sm flex items-center space-x-4 border border-green-500/50 transition duration-200 hover:shadow-md">
+                    <div class="bg-green-500 text-white rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-truck fa-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs sm:text-sm text-gray-500">Kendaraan Operasional</p>
+                        <p class="text-xl sm:text-2xl font-bold text-dark-tower">{{ $kendaraanCount }}</p>
                     </div>
                 </div>
             </div>
@@ -152,8 +167,15 @@
                                     <p class="line-clamp-3 text-xs text-gray-600">{{ $facility->description }}</p>
                                 </td>
                                 <td class="py-4 px-6 text-left break-words">
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full
-                                        {{ strcasecmp(trim($facility->type), 'Utama') === 0 ? 'bg-accent-tower/20 text-accent-tower' : 'bg-blue-100 text-blue-700' }}">
+                                    @php
+                                        $badgeClass = match(trim($facility->type)) {
+                                            'Peralatan Pabrikas' => 'bg-accent-tower/20 text-accent-tower', // Oranye
+                                            'Peralatan Maintenance' => 'bg-blue-100 text-blue-700', // Biru
+                                            'Kendaraan Operasional' => 'bg-green-100 text-green-700', // Hijau
+                                            default => 'bg-gray-100 text-gray-500', // Default
+                                        };
+                                    @endphp
+                                    <span class="px-3 py-1 text-xs font-medium rounded-full {{ $badgeClass }}">
                                         {{ $facility->type }}
                                     </span>
                                 </td>
