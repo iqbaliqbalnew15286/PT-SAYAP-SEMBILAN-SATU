@@ -4,98 +4,124 @@
 
 @section('content')
 
-<div class="container-fluid">
+{{-- Inisialisasi Kustom Tailwind CSS --}}
+<style>
+    /* Definisi Warna Kustom (Tower Theme - Dark Blue/Orange) */
+    .text-dark-tower { color: #2C3E50; } /* Biru Tua/Primary */
+    .bg-dark-tower { background-color: #2C3E50; }
+    .text-accent-tower { color: #FF8C00; } /* Oranye/Accent */
+    .bg-accent-tower { background-color: #FF8C00; }
+    .hover\:bg-accent-dark:hover { background-color: #E67E22; }
+    .shadow-soft { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
 
-    {{-- Header Halaman --}}
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        {{-- Menggunakan warna teks gelap dari variabel CSS --}}
-        <h1 class="h3 mb-0" style="color: var(--text-dark);"> Galeri Foto</h1>
+    /* Warna tambahan */
+    .border-subtle-gray { border-color: #e0e0e0; }
+</style>
 
-        {{-- Tombol Tambah, menggunakan aksen Kuning Emas (primary-amber) --}}
-        <a href="{{ route('admin.galleries.create') }}" class="btn primary-amber" style="font-weight:700; border-radius: 8px; color: var(--text-dark);">
-            <i class="bi bi-plus-circle me-1"></i> Tambah Gambar
+<div class="container mx-auto p-6">
+
+    {{-- Header Halaman & Tombol Aksi --}}
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-3xl font-bold text-dark-tower">Galeri Foto</h1>
+
+        {{-- Tombol Tambah --}}
+        <a href="{{ route('admin.galleries.create') }}"
+           class="bg-accent-tower hover:bg-accent-dark text-dark-tower px-4 py-2 rounded-lg font-semibold transition duration-200 shadow-md flex items-center space-x-2 text-sm">
+            <i class="fas fa-plus-circle mr-1"></i> <span>Tambah Gambar</span>
         </a>
     </div>
 
-    {{-- Alert sukses (Disesuaikan dengan Soft Light) --}}
+    {{-- Informasi Jumlah Data --}}
+    <div class="flex flex-wrap mb-4">
+        <div class="w-full md:w-1/3 pr-2">
+            <div class="bg-white p-4 rounded-xl shadow-soft border-l-4 border-accent-tower">
+                @php
+                    // Pastikan $galleries adalah Collection atau memiliki method count()
+                    $totalGalleries = $galleries->count() ?? 0;
+                @endphp
+                <p class="text-sm font-medium text-accent-tower uppercase">Total Gambar di Galeri</p>
+                <p class="text-2xl font-bold text-dark-tower">{{ $totalGalleries }}</p>
+            </div>
+        </div>
+        {{-- Anda bisa menambahkan informasi lain di sini --}}
+    </div>
+
+    {{-- Alert sukses --}}
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert"
-             style="background-color: rgba(28, 200, 138, 0.15); border: 1px solid #1cc88a; color: #1cc88a;">
-            {{ session('success') }}
-            {{-- Tombol close standar dari Bootstrap --}}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative mb-4 shadow-md" role="alert">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle mr-2"></i>
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
         </div>
     @endif
 
-    {{-- Tabel Galeri (Menggunakan card-tower) --}}
-    <div class="card card-tower mb-4">
-        <div class="card-body table-responsive p-0">
+    {{-- Tabel Galeri --}}
+    <div class="bg-white rounded-xl shadow-soft overflow-hidden">
+        <div class="overflow-x-auto">
 
-            {{-- Menggunakan table-hover dan align-middle --}}
-            <table class="table table-hover align-middle">
-                <thead>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
                     <tr>
-                        {{-- Header menggunakan muted color dan border pemisah vertikal --}}
-                        <th class="text-center py-3" style="width: 5%; color: var(--text-muted); border-right: 1px solid var(--border-subtle);">No</th>
-                        <th class="text-center py-3" style="width: 70%; color: var(--text-muted); border-right: 1px solid var(--border-subtle);">Gambar</th>
-                        <th class="text-center py-3" style="width: 25%; color: var(--text-muted);">Aksi</th>
+                        <th class="py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 border-r border-subtle-gray" style="width: 5%;">No</th>
+                        <th class="py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 border-r border-subtle-gray" style="width: 70%;">Gambar</th>
+                        <th class="py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500" style="width: 25%;">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200">
                     @forelse($galleries as $index => $gallery)
-                    <tr>
-                        {{-- No. menggunakan text-muted, dengan garis vertikal lembut --}}
-                        <td class="text-center" style="color:var(--text-muted); border-right: 1px solid var(--border-subtle);">{{ $index + 1 }}</td>
+                        <tr class="hover:bg-gray-50 transition duration-150">
+                            {{-- No. --}}
+                            <td class="px-4 py-3 text-center text-sm text-gray-500 border-r border-subtle-gray">{{ $index + 1 }}</td>
 
-                        {{-- Gambar --}}
-                        <td class="text-center" style="border-right: 1px solid var(--border-subtle);">
-                            @if($gallery->image)
-                                {{-- Ukuran gambar sedikit dibesarkan dan styling border Soft Light --}}
-                                <img src="{{ asset('storage/'.$gallery->image) }}" width="150" height="100"
-                                     class="rounded" style="object-fit: cover; border: 1px solid var(--border-subtle); box-shadow: 0 1px 3px rgba(0,0,0,0.1);" alt="Galeri Foto">
-                            @else
-                                <span style="color:var(--text-muted); font-size: 0.8rem;">Tidak ada gambar</span>
-                            @endif
-                        </td>
+                            {{-- Gambar --}}
+                            <td class="px-4 py-3 text-center border-r border-subtle-gray">
+                                @if($gallery->image)
+                                    <img src="{{ asset('storage/'.$gallery->image) }}"
+                                         class="rounded shadow-sm mx-auto object-cover border border-gray-200"
+                                         style="width: 150px; height: 100px;"
+                                         alt="Galeri Foto">
+                                @else
+                                    <span class="text-sm text-gray-500">Tidak ada gambar</span>
+                                @endif
+                            </td>
 
-                        {{-- Aksi --}}
-                        <td class="text-center">
-                            <div class="btn-group" role="group">
-                                {{-- Show (Biru Muda/Info) --}}
-                                <a href="{{ route('admin.galleries.show', $gallery->id) }}"
-                                   class="btn btn-sm btn-icon-action" title="Detail"
-                                   style="color: #36b9cc; padding: 5px 8px;">
-                                    <i class="bi bi-eye"></i>
-                                </a>
+                            {{-- Aksi --}}
+                            <td class="px-4 py-3 text-center">
+                                <div class="flex justify-center space-x-3">
 
-                                {{-- Edit (Kuning/Warning) --}}
-                                <a href="{{ route('admin.galleries.edit', $gallery->id) }}"
-                                   class="btn btn-sm btn-icon-action" title="Edit"
-                                   style="color: #f6c23e; padding: 5px 8px;">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
+                                    {{-- Show (Menggunakan Icon Mata, warna abu-abu minimalis) --}}
+                                    <a href="{{ route('admin.galleries.show', $gallery->id) }}"
+                                       class="text-gray-500 hover:text-dark-tower transition duration-150" title="Detail">
+                                        <i class="fas fa-eye text-lg"></i>
+                                    </a>
 
-                                {{-- Delete (Merah/Danger) --}}
-                                <form action="{{ route('admin.galleries.destroy', $gallery->id) }}" method="POST" class="d-inline">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-icon-action" title="Hapus"
-                                        style="color: #e74a3b; padding: 5px 8px;"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus gambar ini secara permanen?')">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
+                                    {{-- Edit (Menggunakan Icon Pensil, warna abu-abu minimalis) --}}
+                                    <a href="{{ route('admin.galleries.edit', $gallery->id) }}"
+                                       class="text-gray-500 hover:text-accent-tower transition duration-150" title="Edit">
+                                        <i class="fas fa-edit text-lg"></i>
+                                    </a>
+
+                                    {{-- Delete (Menggunakan Icon Tong Sampah, warna abu-abu minimalis) --}}
+                                    <form action="{{ route('admin.galleries.destroy', $gallery->id) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-gray-500 hover:text-red-600 transition duration-150" title="Hapus"
+                                            onclick="return confirm('Apakah Anda yakin ingin menghapus gambar ini secara permanen?')">
+                                            <i class="fas fa-trash-alt text-lg"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="3" class="text-center py-5" style="color:var(--text-muted);">
-                            {{-- Ikon menggunakan aksen Kuning Emas (text-neon) --}}
-                            <i class="bi bi-camera-fill fa-2x mb-3 text-neon"></i>
-                            <h4 style="color: var(--text-dark);">Belum ada Gambar di Galeri.</h4>
-                            <p>Silakan klik tombol 'Tambah Gambar' di atas untuk mengunggah foto.</p>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="3" class="text-center py-12 bg-gray-50">
+                                <i class="fas fa-camera text-5xl mb-3 text-accent-tower"></i>
+                                <h4 class="text-xl font-semibold text-dark-tower">Belum ada Gambar di Galeri.</h4>
+                                <p class="text-gray-500 mt-2">Silakan klik tombol 'Tambah Gambar' di atas untuk mengunggah foto.</p>
+                            </td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>

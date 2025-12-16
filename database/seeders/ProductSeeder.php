@@ -13,6 +13,7 @@ class ProductSeeder extends Seeder
         Product::create([
             'name' => 'Sabun Bayi Organik',
             'description' => 'Sabun alami lembut untuk kulit bayi, tanpa bahan kimia berbahaya.',
+            'type' => 'barang',
             'price' => 25000,
             'image' => 'uploads/products/sample1.jpg',
         ]);
@@ -20,6 +21,7 @@ class ProductSeeder extends Seeder
         Product::create([
             'name' => 'Minyak Telon Hangat',
             'description' => 'Minyak telon dengan aroma lembut dan menenangkan.',
+            'type' => 'barang',
             'price' => 32000,
             'image' => 'uploads/products/sample2.jpg',
         ]);

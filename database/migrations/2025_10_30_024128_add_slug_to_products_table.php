@@ -7,19 +7,27 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Jalankan migrasi.
      */
-   public function up()
-{
-    Schema::table('products', function (Blueprint $table) {
-        $table->string('slug')->unique()->nullable()->after('name');
-    });
-}
+    public function up(): void
+    {
+        Schema::table('products', function (Blueprint $table) {
+            // Menambahkan kolom 'slug' dengan batasan unique,
+            // dan ditempatkan setelah kolom 'name'.
+            // Slug dibuat nullable karena kita akan mengisinya melalui Model/Controller,
+            // tidak melalui input user secara langsung, dan mungkin ada data lama.
+            $table->string('slug')->unique()->nullable()->after('name');
+        });
+    }
 
-public function down()
-{
-    Schema::table('products', function (Blueprint $table) {
-        $table->dropColumn('slug');
-    });
-}
+    /**
+     * Batalkan migrasi.
+     */
+    public function down(): void
+    {
+        Schema::table('products', function (Blueprint $table) {
+            // Menghapus kolom 'slug'
+            $table->dropColumn('slug');
+        });
+    }
 };

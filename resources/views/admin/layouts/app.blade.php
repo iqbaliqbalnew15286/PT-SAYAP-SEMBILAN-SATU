@@ -111,7 +111,7 @@
             {{-- Ganti path logo jika diperlukan --}}
             <img src="{{ asset('assets/img/image.png') }}" alt="Admin Profile" class="w-11 h-11 rounded-xl object-cover shadow-sm">
             <div class="flex flex-col">
-                <div class="font-bold text-[var(--text-dark)] leading-tight text-base">PT. RIZQALLAH BOER MAKMUR</div>
+                <div class="font-bold text-[var(--text-dark)] leading-tight text-base">PT RIZQALLAH</div>
                 <small class="text-xs text-[var(--text-muted)] font-medium">Admin Panel Tower</small>
             </div>
         </div>
@@ -140,7 +140,7 @@
         {{-- MANAJEMEN KONTEN (ACCORDION) --}}
         @php
             // Tentukan rute mana yang termasuk dalam submenu Editor Konten
-            $editorRoutes = ['admin.products.*', 'admin.services.*', 'admin.galleries.*', 'admin.testimonials.*', 'admin.abouts.*', 'admin.partners.*', 'admin.facilities.*'];
+            $editorRoutes = ['admin.products.*', 'admin.galleries.*', 'admin.testimonials.*', 'admin.abouts.*', 'admin.partners.*', 'admin.facilities.*'];
             $isEditorActive = collect($editorRoutes)->contains(fn($route) => request()->routeIs($route));
         @endphp
 
@@ -175,15 +175,6 @@
                    text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)]
                @endif">
                  <i class="bi bi-bag-heart me-2 @if(request()->routeIs('admin.products.index')) text-[var(--primary-accent)] @endif"></i> Produk
-            </a>
-             <a href="{{ route('admin.services.index') }}"
-               class="flex items-center py-2 px-3 my-1 rounded-lg text-sm transition-colors duration-200
-               @if(request()->routeIs('admin.services.index'))
-                   text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-3 border-[var(--primary-accent)] pl-4
-               @else
-                   text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)]
-               @endif">
-                 <i class="bi bi-activity me-2 @if(request()->routeIs('admin.services.index')) text-[var(--primary-accent)] @endif"></i> Layanan
             </a>
              <a href="{{ route('admin.galleries.index') }}"
                class="flex items-center py-2 px-3 my-1 rounded-lg text-sm transition-colors duration-200
