@@ -1,363 +1,170 @@
 @extends('layouts.app')
-@section('title', 'Fasilitas - PT. Rizqallah Boer Makmur')
 
-@push('styles')
-    {{-- Memastikan Font Awesome dimuat --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <style>
-        /* -------------------------------------
-           CATATAN: SKEMA WARNA RBM DI DEFINISIKAN
-           rbm-dark: #161f36 (Navy)
-           rbm-accent: #FF7518 (Orange)
-        ---------------------------------------*/
-
-        /* Memastikan gambar slider tampil optimal */
-        .slider-image {
-            object-fit: cover;
-        }
-
-        /* Memastikan card ditampilkan sebagai flex untuk layout yang konsisten */
-        .facility-card {
-            display: flex;
-            flex-direction: column;
-        }
-    </style>
-@endpush
-
-@php
-    // Variabel warna RBM yang telah disepakati
-    $rbmDark = '#161f36';
-    $rbmAccent = '#FF7518';
-    $rbmLightText = '#b3b9c6';
-
-    // Cek Variabel
-    $hasImages = isset($facilityImages) && $facilityImages->isNotEmpty();
-
-    // Mapping ikon untuk fasilitas (bisa disesuaikan lebih lanjut di model atau database)
-    $iconMap = [
-        'Akademik' => 'fa-book-open',
-        'Olahraga' => 'fa-futbol',
-        'Umum' => 'fa-building',
-        'Workshop' => 'fa-screwdriver-wrench',
-        'Lab' => 'fa-flask',
-        'Kesehatan' => 'fa-hospital-user',
-    ];
-@endphp
+@section('title', 'Katalog Fasilitas - PT. RBM')
 
 @section('content')
+{{-- Load Scripts --}}
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    {{-- ✅ SLIDER GAMBAR DINAMIS (Header) --}}
-    <section class="relative max-w-full">
-        @if ($hasImages)
-            {{-- Menggunakan AlpineJS untuk Slider Gambar Dinamis --}}
-            <div x-data="{ activeSlide: 1, totalSlides: {{ $facilityImages->count() }} }"
-                x-init="setInterval(() => { activeSlide = activeSlide % totalSlides + 1 }, 5000)">
-                <div class="relative w-full h-[300px] overflow-hidden">
-                    @foreach ($facilityImages as $image)
-                        <div x-show="activeSlide === {{ $loop->iteration }}"
-                            x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
-                            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
-                            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                            class="absolute inset-0">
+<div class="bg-[#F9FBFF] min-h-screen font-['Poppins'] text-[#1A202C]"
+     x-data="{ activeTab: 'all', search: '' }">
 
-                            <img src="{{ Storage::url($image->path) }}" alt="{{ $image->description ?? $image->filename }}"
-                                class="w-full h-full slider-image">
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        @else
-            {{-- Fallback: Background Biru Tua Navy --}}
-            <div style="background-color: {{ $rbmDark }};">
-                <div class="relative h-[250px] overflow-hidden">
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <i class="fas fa-tools fa-4x text-white opacity-20"></i>
-                    </div>
-                </div>
-            </div>
-        @endif
+    {{-- 🌌 HERO SECTION --}}
+    @php
+        $heroBg = $facilities->count() > 0 ? Storage::url($facilities->first()->image) : 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070';
+    @endphp
+
+    <section class="relative h-[35vh] lg:h-[45vh] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="{{ $heroBg }}" class="w-full h-full object-cover scale-105 animate-slow-zoom" alt="Hero">
+            <div class="absolute inset-0 bg-gradient-to-b from-[#161f36]/90 via-[#161f36]/70 to-[#F9FBFF]"></div>
+        </div>
+        <div class="relative z-10 text-center px-6" data-aos="fade-up">
+            <span class="inline-block py-1 px-4 rounded-full bg-[#FF7518] text-white font-bold text-[9px] tracking-[0.3em] uppercase mb-4 shadow-lg shadow-orange-500/20">
+                Infrastruktur & Aset
+            </span>
+            <h1 class="text-3xl md:text-6xl font-black text-white mb-2 tracking-tight uppercase">
+                Our <span class="text-[#FF7518]">Facilities</span>
+            </h1>
+        </div>
     </section>
 
-    {{-- ✅ BREADCRUMB (Menggunakan Biru Tua RBM) --}}
-    <div style="background-color: {{ $rbmDark }};">
-        <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="h-full flex items-center">
-                <nav class="flex" aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
-                        <li class="inline-flex items-center">
-                            <a href="/"
-                                class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
-                                Home
-                            </a>
-                        </li>
-                        <li>
-                            <div class="flex items-center">
-                                <i class="fas fa-chevron-right text-gray-400 text-xs mx-1"></i>
-                                {{-- Link Aktif (Teks Putih) --}}
-                                <a href="{{ route('facilities') }}"
-                                    class="ml-2 font-medium text-white md:ml-3 transition-colors">Facilities</a>
-                            </div>
-                        </li>
-                    </ol>
-                </nav>
+    {{-- 🏷️ STICKY FILTER & SEARCH BAR (Sinkron dengan Form Input) --}}
+    <div class="sticky top-16 lg:top-20 z-40 max-w-6xl mx-auto px-4 -mt-8">
+        <div class="bg-white/95 backdrop-blur-xl p-2 rounded-2xl lg:rounded-[2.5rem] shadow-2xl border border-white/50 flex flex-col md:flex-row gap-2">
+
+            {{-- Search Input --}}
+            <div class="relative flex-1 group">
+                <span class="absolute inset-y-0 left-5 flex items-center text-[#FF7518]">
+                    <i class="fas fa-search text-sm"></i>
+                </span>
+                <input type="text" x-model="search" placeholder="Cari nama alat atau spesifikasi..."
+                       class="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-xl lg:rounded-3xl text-sm focus:ring-2 focus:ring-[#FF7518]/20 transition-all font-medium text-[#161f36]">
+            </div>
+
+            {{-- Tab Buttons (Sesuaikan dengan value di Form) --}}
+            <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl lg:rounded-3xl overflow-x-auto no-scrollbar">
+                <button @click="activeTab = 'all'"
+                    :class="activeTab === 'all' ? 'bg-[#161f36] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
+                    class="whitespace-nowrap px-5 lg:px-8 py-2.5 rounded-lg lg:rounded-[2rem] text-[10px] lg:text-xs font-black transition-all duration-300 uppercase tracking-widest">
+                    Semua
+                </button>
+                <button @click="activeTab = 'Peralatan Pabrikas'"
+                    :class="activeTab === 'Peralatan Pabrikas' ? 'bg-[#FF7518] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
+                    class="whitespace-nowrap px-5 lg:px-8 py-2.5 rounded-lg lg:rounded-[2rem] text-[10px] lg:text-xs font-black transition-all duration-300 uppercase tracking-widest">
+                    Pabrikasi
+                </button>
+                <button @click="activeTab = 'Peralatan Maintenance'"
+                    :class="activeTab === 'Peralatan Maintenance' ? 'bg-[#FF7518] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
+                    class="whitespace-nowrap px-5 lg:px-8 py-2.5 rounded-lg lg:rounded-[2rem] text-[10px] lg:text-xs font-black transition-all duration-300 uppercase tracking-widest">
+                    Maintenance
+                </button>
+                <button @click="activeTab = 'Kendaraan Operasional'"
+                    :class="activeTab === 'Kendaraan Operasional' ? 'bg-[#FF7518] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
+                    class="whitespace-nowrap px-5 lg:px-8 py-2.5 rounded-lg lg:rounded-[2rem] text-[10px] lg:text-xs font-black transition-all duration-300 uppercase tracking-widest">
+                    Kendaraan
+                </button>
             </div>
         </div>
     </div>
 
-    {{-- ========================================================== --}}
-    {{-- BAGIAN 1: INTRO FASILITAS & GALLERY GRID (Gambar dari $gridImages) --}}
-    {{-- ========================================================== --}}
-    <section class="bg-white py-20 sm:py-24">
-        <div class="container mx-auto max-w-7xl px-6 lg:px-8">
-            <div class="grid grid-cols-1 items-center gap-y-16 gap-x-8 lg:grid-cols-2">
+    {{-- 🏗️ CONTENT SECTION --}}
+    <section class="py-12 lg:py-20">
+        <div class="max-w-7xl mx-auto px-6 space-y-20">
 
-                {{-- Kolom Kiri: Image Gallery Grid --}}
-                <div class="flex items-end justify-center gap-4 lg:justify-start">
-                    @php $count = 0; @endphp
-                    @foreach ($gridImages as $image)
-                        @php
-                            $count++;
-                            // Logika untuk ukuran dinamis
-                            $sizeClasses = [
-                                1 => 'h-48 w-28 shadow-lg',
-                                2 => 'h-64 w-32 shadow-xl',
-                                3 => 'h-80 w-36 shadow-2xl',
-                            ][$count] ?? 'h-48 w-28 shadow-lg';
+            @php
+                $categories = [
+                    'Peralatan Pabrikasi' => 'Peralatan Pabrikas',
+                    'Peralatan Maintenance' => 'Peralatan Maintenance',
+                    'Kendaraan Operasional' => 'Kendaraan Operasional'
+                ];
+            @endphp
 
-                            // Hentikan setelah 3 gambar agar grid tetap cantik
-                            if ($count > 3) continue;
-                        @endphp
+            @foreach($categories as $displayTitle => $dbValue)
+                @php $items = $facilities->where('type', $dbValue); @endphp
 
-                        <div
-                            class="rounded-xl bg-gray-100 {{ $sizeClasses }} overflow-hidden transform transition-transform duration-500 hover:scale-[1.05]">
-                            <img src="{{ Storage::url($image->path) }}"
-                                alt="{{ $image->alt_text ?? $image->title ?? 'Facility Image' }}"
-                                class="h-full w-full rounded-xl object-cover">
+                @if($items->count() > 0)
+                <div x-show="activeTab === 'all' || activeTab === '{{ $dbValue }}'"
+                     class="space-y-8"
+                     x-transition:enter="transition ease-out duration-500">
+
+                    {{-- Judul Kategori Otomatis --}}
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="h-8 w-1.5 bg-[#FF7518] rounded-full"></div>
+                            <h2 class="text-xl md:text-2xl font-black text-[#161f36] uppercase tracking-tight">{{ $displayTitle }}</h2>
                         </div>
-                    @endforeach
-                </div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-gray-100">
+                            {{ $items->count() }} Unit
+                        </span>
+                    </div>
 
-                {{-- Kolom Kanan: Teks & Key Features --}}
-                <div class="text-center lg:text-left">
-                    <h2 class="text-3xl font-bold tracking-tight text-rbm-dark sm:text-4xl">
-                        Fasilitas Modern untuk Kualitas Terbaik
-                    </h2>
-                    <p class="mt-4 text-lg leading-8 text-gray-600">
-                        Kami menyediakan perangkat dan infrastruktur terkini untuk memastikan setiap proyek
-                        dilakukan dengan presisi dan standar kualitas tertinggi.
-                    </p>
+                    {{-- Grid Kartu --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                        @foreach($items as $facility)
+                        <div x-show="search === '' || '{{ strtolower($facility->name . ' ' . $facility->description) }}'.includes(search.toLowerCase())"
+                             class="group bg-white rounded-[2rem] overflow-hidden border border-gray-50 shadow-sm hover:shadow-2xl transition-all duration-500"
+                             data-aos="fade-up">
 
-                    <ul class="mt-8 space-y-4">
-                        {{-- Menggunakan warna rbm-accent untuk poin --}}
-                        <li class="flex items-start justify-center lg:justify-start">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-check-circle text-xl text-rbm-accent"></i>
+                            {{-- Foto --}}
+                            <div class="relative aspect-square overflow-hidden bg-gray-100">
+                                <img src="{{ Storage::url($facility->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                <div class="absolute top-4 left-4">
+                                    <span class="bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest text-[#FF7518] border border-orange-100">
+                                        {{ $facility->type }}
+                                    </span>
+                                </div>
                             </div>
-                            <span class="ml-3 text-base text-gray-700 font-semibold">Infrastruktur Berstandar Internasional</span>
-                        </li>
-                        <li class="flex items-start justify-center lg:justify-start">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-check-circle text-xl text-rbm-accent"></i>
+
+                            {{-- Info --}}
+                            <div class="p-6">
+                                <h3 class="text-base font-black text-[#161f36] mb-2 group-hover:text-[#FF7518] transition-colors uppercase leading-tight">
+                                    {{ $facility->name }}
+                                </h3>
+                                <p class="text-gray-500 text-xs leading-relaxed mb-6 line-clamp-2 italic">
+                                    "{{ $facility->description }}"
+                                </p>
+                                <div class="pt-5 border-t border-gray-50 flex items-center justify-between">
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                                        ID: {{ str_pad($facility->id, 3, '0', STR_PAD_LEFT) }}
+                                    </span>
+                                    <a href="{{ route('facilities.show', $facility->id) }}" class="w-8 h-8 bg-[#161f36] text-white rounded-lg flex items-center justify-center hover:bg-[#FF7518] transition-all">
+                                        <i class="fas fa-arrow-right text-[10px]"></i>
+                                    </a>
+                                </div>
                             </div>
-                            <span class="ml-3 text-base text-gray-700 font-semibold">Sistem Keamanan dan Kontrol Mutu Ketat</span>
-                        </li>
-                        <li class="flex items-start justify-center lg:justify-start">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-check-circle text-xl text-rbm-accent"></i>
-                            </div>
-                            <span class="ml-3 text-base text-gray-700 font-semibold">Perawatan Berkala dan Teknologi Terbaru</span>
-                        </li>
-                    </ul>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    {{-- ========================================================== --}}
-    {{-- BAGIAN 2: DAFTAR FASILITAS DENGAN TAB --}}
-    {{-- ========================================================== --}}
-    <section class="bg-gray-50 py-16 sm:py-24">
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            {{-- KEPALA BAGIAN (JUDUL DI KIRI, TAB DI KANAN) --}}
-            <div class="flex flex-col md:flex-row justify-between md:items-end gap-8 mb-12">
-
-                {{-- Kolom Kiri: Judul dan Deskripsi --}}
-                <div class="md:w-1/2 lg:w-2/3">
-                    <h2 class="text-3xl lg:text-4xl font-extrabold text-rbm-dark tracking-tight">
-                        Fasilitas Unggulan Kami
-                    </h2>
-                    <p class="mt-4 text-lg text-gray-600">
-                        Jelajahi beragam sarana dan prasarana modern yang kami sediakan.
-                    </p>
-                </div>
-
-                {{-- Kolom Kanan: Tombol Tab Filter --}}
-                <div class="flex-shrink-0">
-                    {{-- Container untuk tombol tab --}}
-                    <div id="tabs-container" class="flex flex-wrap items-center justify-start md:justify-end gap-3">
-                        @foreach ($groupedFacilities->keys() as $type)
-                            <button data-tab="{{ Str::slug($type) }}"
-                                class="tab-button px-4 py-2 text-sm font-semibold rounded-full transition-colors duration-200">
-                                {{ $type }}
-                            </button>
+                        </div>
                         @endforeach
                     </div>
                 </div>
-            </div>
-
-
-            {{-- KONTEN TAB (GRID FASILITAS) --}}
-            @foreach ($groupedFacilities as $type => $facilities)
-                <div id="{{ Str::slug($type) }}" class="tab-content hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        @forelse($facilities as $facility)
-                            {{-- KARTU FASILITAS --}}
-                            @php
-                                // Ambil ikon dari mapping, fallback ke fa-star jika tidak ada
-                                $iconClass = $iconMap[$facility->type] ?? 'fa-star';
-                            @endphp
-
-                            <div
-                                class="facility-card group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-                                {{-- GAMBAR FASILITAS --}}
-                                <div class="relative h-56 w-full">
-                                    <img src="{{ $facility->image ? Storage::url($facility->image) : 'https://placehold.co/600x400/e2e8f0/64748b?text=Image' }}"
-                                        alt="Gambar {{ $facility->name }}" class="w-full h-full object-cover">
-                                </div>
-
-                                {{-- KONTEN CARD --}}
-                                <div class="p-6 flex flex-col flex-grow">
-                                    {{-- TIPE & IKON (Menggunakan RBM Accent) --}}
-                                    <div class="flex items-center text-sm font-semibold text-rbm-accent mb-2">
-                                        <i class="fas {{ $iconClass }} mr-2 w-4 text-center"></i>
-                                        <span>{{ $facility->type }}</span>
-                                    </div>
-                                    {{-- NAMA FASILITAS --}}
-                                    <h3 class="text-xl font-bold text-rbm-dark mb-2 leading-tight">
-                                        {{ $facility->name }}
-                                    </h3>
-                                    {{-- DESKRIPSI SINGKAT --}}
-                                    <p class="text-gray-600 text-sm flex-grow mb-6">
-                                        {{ Str::limit($facility->description, 100) }}
-                                    </p>
-                                    {{-- TOMBOL AKSI --}}
-                                    <div class="mt-auto">
-                                        <a href="{{ route('facilities.show', $facility) }}"
-                                            class="inline-flex items-center font-bold text-rbm-dark hover:text-rbm-accent group/link transition-colors duration-300">
-                                            Baca Selengkapnya
-                                            <i
-                                                class="fas fa-arrow-right ml-2 text-xs transition-transform duration-300 group-hover/link:translate-x-1"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            {{-- TAMPILAN JIKA TIDAK ADA FASILITAS PADA TIPE INI --}}
-                            <div class="col-span-full border-2 border-dashed border-gray-300 rounded-xl p-12 text-center">
-                                <p class="text-gray-500 font-medium">Fasilitas untuk kategori **"{{ $type }}"** tidak
-                                    ditemukan.</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
+                @endif
             @endforeach
-        </div>
 
-        {{-- SCRIPT UNTUK MEKANISME TAB --}}
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const tabsContainer = document.getElementById('tabs-container');
-
-                if (tabsContainer) {
-                    const tabButtons = tabsContainer.querySelectorAll('.tab-button');
-                    const tabContents = document.querySelectorAll('.tab-content');
-                    const firstTabName = tabButtons.length > 0 ? tabButtons[0].dataset.tab : null;
-
-                    // Ganti warna aktif/non-aktif sesuai RBM Theme
-                    const activeClasses = ['bg-rbm-accent', 'text-white', 'shadow-md'];
-                    const inactiveClasses = ['bg-gray-100', 'text-gray-700', 'hover:bg-gray-200'];
-
-                    function switchTab(tabName) {
-                        if (!tabName) return;
-
-                        // Sembunyikan semua konten dan atur style tombol
-                        tabButtons.forEach(button => {
-                            const contentId = button.dataset.tab;
-                            const content = document.getElementById(contentId);
-
-                            // Atur tombol
-                            if (contentId === tabName) {
-                                button.classList.add(...activeClasses);
-                                button.classList.remove(...inactiveClasses);
-                            } else {
-                                button.classList.add(...inactiveClasses);
-                                button.classList.remove(...activeClasses);
-                            }
-
-                            // Atur konten
-                            if (content) {
-                                content.classList.add('hidden');
-                            }
-                        });
-
-                        // Tampilkan konten yang dipilih
-                        const activeContent = document.getElementById(tabName);
-                        if (activeContent) {
-                            activeContent.classList.remove('hidden');
-                        }
-                    }
-
-                    // Tambahkan event listener ke setiap tombol
-                    tabButtons.forEach(button => {
-                        button.addEventListener('click', () => {
-                            switchTab(button.dataset.tab);
-                        });
-                    });
-
-                    // Atur tab default saat halaman dimuat (tab pertama)
-                    if (firstTabName) {
-                        switchTab(firstTabName);
-                    } else {
-                        // Jika tidak ada tab sama sekali, pastikan semua konten tersembunyi
-                        tabContents.forEach(content => {
-                            content.classList.add('hidden');
-                        });
-                    }
-                }
-            });
-        </script>
-    </section>
-
-
-    {{-- ========================================================== --}}
-    {{-- BAGIAN 3: VIDEO FASILITAS (YouTube) --}}
-    {{-- ========================================================== --}}
-    <section class="bg-white py-16 sm:py-24">
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            <div class="max-w-3xl mx-auto text-center">
-                <h2 class="text-3xl font-bold text-rbm-dark sm:text-4xl">
-                    Jelajahi Fasilitas Kami dalam Video
-                </h2>
-                <p class="mt-4 text-lg text-gray-600">
-                    Saksikan video di bawah ini untuk melihat lebih dekat lingkungan kerja dan fasilitas yang kami miliki.
-                </p>
-            </div>
-
-            <div class="mt-12 max-w-4xl mx-auto">
-                <div class="relative w-full" style="padding-top: 56.25%;">
-                    <iframe class="absolute top-0 left-0 w-full h-full rounded-xl shadow-2xl" width="560"
-                        height="315"
-                        src="https://www.youtube-nocookie.com/embed/V1itS-cUH4M?si=uZIO58_CPQb9nwDA&amp;controls=1"
-                        title="YouTube video player" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-in; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                </div>
+            {{-- 🔍 EMPTY SEARCH STATE --}}
+            <div x-show="search !== '' && !document.querySelector('.group:not([style*=\'display: none\'])')"
+                 class="py-20 text-center bg-white rounded-[3rem] shadow-sm border border-dashed border-gray-200">
+                <i class="fas fa-search-minus fa-3x text-gray-200 mb-4"></i>
+                <h3 class="text-lg font-bold text-gray-400 italic">Data tidak ditemukan untuk "<span x-text="search" class="text-[#FF7518]"></span>"</h3>
             </div>
 
         </div>
     </section>
+</div>
 
+<style>
+    @keyframes slow-zoom { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+    .animate-slow-zoom { animation: slow-zoom 20s infinite ease-in-out; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    html { scroll-behavior: smooth; }
+</style>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({ duration: 1000, once: true });
+    });
+</script>
 @endsection

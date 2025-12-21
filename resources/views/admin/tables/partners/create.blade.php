@@ -3,169 +3,134 @@
 @section('title', 'Tambah Mitra Industri')
 
 @section('content')
+<div class="p-6 font-['Poppins']">
+    {{-- Header Card --}}
+    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Tambah Mitra Industri</h1>
+            <p class="text-sm text-slate-500">Tambahkan partner baru ke dalam jaringan ekosistem perusahaan.</p>
+        </div>
+        <a href="{{ route('admin.partners.index') }}"
+            class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+            <i class="fas fa-arrow-left mr-2 text-xs"></i>
+            Kembali ke Daftar
+        </a>
+    </div>
 
-    <!DOCTYPE html>
-    <html lang="id">
+    {{-- Form Card --}}
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <form action="{{ route('admin.partners.store') }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
+            @csrf
 
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Tambah Mitra Industri</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-        <style>
-            /* Definisi Warna Kustom (Tower Theme) */
-            .text-dark-tower { color: #2C3E50; } /* Biru Tua/Dark Blue */
-            .bg-dark-tower { background-color: #2C3E50; }
-            .text-accent-tower { color: #FF8C00; } /* Oranye/Emas */
-            .bg-accent-tower { background-color: #FF8C00; }
-            .hover\:bg-accent-dark:hover { background-color: #E67E22; } /* Hover gelap */
-            .focus\:ring-accent-tower:focus { --tw-ring-color: #FF8C00; }
-            .shadow-soft { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+                {{-- Left Column: Basic Info --}}
+                <div class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-semibold text-slate-700 mb-2">Nama Perusahaan / Mitra <span class="text-red-500">*</span></label>
+                        <input type="text" name="name" id="name" required
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#FF8C00]/20 focus:border-[#FF8C00] outline-none transition-all @error('name') border-red-500 @enderror"
+                            placeholder="Contoh: PT. Tower Bersama" value="{{ old('name') }}">
+                        @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
 
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: #f0f2f5;
-            }
+                    <div>
+                        <label for="sector" class="block text-sm font-semibold text-slate-700 mb-2">Sektor Industri <span class="text-red-500">*</span></label>
+                        <select name="sector" id="sector" required
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#FF8C00]/20 focus:border-[#FF8C00] outline-none transition-all appearance-none @error('sector') border-red-500 @enderror">
+                            <option value="" disabled {{ !old('sector') ? 'selected' : '' }}>-- Pilih Kategori --</option>
+                            <option value="TOWER PROVIDER" {{ old('sector') == 'TOWER PROVIDER' ? 'selected' : '' }}>TOWER PROVIDER</option>
+                            <option value="NON TOWER PROVIDER" {{ old('sector') == 'NON TOWER PROVIDER' ? 'selected' : '' }}>NON TOWER PROVIDER</option>
+                        </select>
+                        @error('sector') <p class="text-red-500 text-xs mt-1">{{ $message }} @enderror
+                    </div>
 
-            /* Gaya khusus untuk input file */
-            input[type="file"]::file-selector-button {
-                background-color: #e0e0e0;
-                color: #333;
-                border: none;
-                padding: 0.5rem 1rem;
-                margin-right: 1rem;
-                border-radius: 0.375rem;
-                cursor: pointer;
-                transition: background-color 0.2s;
-            }
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="city" class="block text-sm font-semibold text-slate-700 mb-2">Kota / Lokasi</label>
+                            <input type="text" name="city" id="city"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#FF8C00]/20 focus:border-[#FF8C00] outline-none transition-all"
+                                placeholder="Jakarta, Surabaya, dll" value="{{ old('city') }}">
+                        </div>
+                        <div>
+                            <label for="partnership_date" class="block text-sm font-semibold text-slate-700 mb-2">Tanggal Kerja Sama <span class="text-red-500">*</span></label>
+                            <input type="date" name="partnership_date" id="partnership_date" required
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#FF8C00]/20 focus:border-[#FF8C00] outline-none transition-all"
+                                value="{{ old('partnership_date') }}">
+                        </div>
+                    </div>
 
-            input[type="file"]::file-selector-button:hover {
-                background-color: #d0d0d0;
-            }
-        </style>
-    </head>
-
-    <body class="bg-gray-100">
-
-        <div class="main-content flex-1 p-6">
-            <div class="bg-white rounded-xl shadow-soft p-6 md:p-8">
-                <div class="flex justify-between items-center mb-8 border-b pb-4 border-gray-100">
-                    <h1 class="text-3xl font-bold text-dark-tower flex items-center">
-                        <i class="fas fa-handshake text-accent-tower mr-3"></i> Tambah Mitra Industri
-                    </h1>
-                    <a href="{{ route('admin.partners.index') }}"
-                        class="bg-gray-200 text-dark-tower px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2 text-sm shadow-sm">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Kembali ke Daftar</span>
-                    </a>
+                    <div>
+                        <label for="company_contact" class="block text-sm font-semibold text-slate-700 mb-2">Kontak / Website (Opsional)</label>
+                        <input type="text" name="company_contact" id="company_contact"
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#FF8C00]/20 focus:border-[#FF8C00] outline-none transition-all"
+                            placeholder="Email atau link website" value="{{ old('company_contact') }}">
+                    </div>
                 </div>
 
-                {{-- PASTIKAN ROUTE DAN METHOD BENAR UNTUK UPDATE --}}
-                <form action="{{ route('admin.partners.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-
-                    {{-- Nama Mitra --}}
-                    <div class="mb-5">
-                        <label for="name" class="block text-sm font-medium text-dark-tower mb-1">Nama Mitra <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" id="name" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('name') border-red-500 @enderror"
-                            value="{{ old('name') }}">
-                        @error('name')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
+                {{-- Right Column: Media & Description --}}
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2 text-center lg:text-left">Logo Mitra</label>
+                        <div class="relative group">
+                            <div class="w-full h-48 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center bg-slate-50 group-hover:bg-slate-100 transition-all overflow-hidden relative">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-slate-300 mb-2 group-hover:text-[#FF8C00] transition-colors"></i>
+                                <span class="text-xs text-slate-400 font-medium">Klik untuk upload logo (PNG/JPG)</span>
+                                <input type="file" name="logo" id="logo" onchange="previewImage(this)"
+                                    class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                                <img id="imgPreview" class="absolute inset-0 w-full h-full object-contain p-4 bg-white hidden z-0">
+                            </div>
+                        </div>
+                        @error('logo') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    {{-- Logo Mitra --}}
-                    <div class="mb-5">
-                        <label for="logo" class="block text-sm font-medium text-dark-tower mb-1">Logo Mitra</label>
-                        <input type="file" name="logo" id="logo"
-                            class="w-full border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('logo') border-red-500 @enderror">
-                        @error('logo')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Deskripsi --}}
-                    <div class="mb-5">
-                        <label for="description" class="block text-sm font-medium text-dark-tower mb-1">Deskripsi</label>
+                    <div>
+                        <label for="description" class="block text-sm font-semibold text-slate-700 mb-2">Deskripsi Singkat</label>
                         <textarea name="description" id="description" rows="5"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
-                        @error('description')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#FF8C00]/20 focus:border-[#FF8C00] outline-none transition-all"
+                            placeholder="Jelaskan peran mitra ini dalam pengerjaan proyek...">{{ old('description') }}</textarea>
                     </div>
-
-                    {{-- Sektor (Dropdown Hanya 2 Pilihan) --}}
-                    <div class="mb-5">
-                        <label for="sector" class="block text-sm font-medium text-dark-tower mb-1">Sektor <span class="text-red-500">*</span></label>
-                        <select name="sector" id="sector" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('sector') border-red-500 @enderror">
-
-                            {{-- Mengambil nilai lama dari database atau dari session old() --}}
-                            @php
-                                $currentSector = old('sector');
-                            @endphp
-
-                            <option value="" disabled {{ !$currentSector ? 'selected' : '' }}>Pilih Kategori Mitra</option>
-                            <option value="TOWER PROVIDER" {{ $currentSector == 'TOWER PROVIDER' ? 'selected' : '' }}>TOWER PROVIDER</option>
-                            <option value="NON TOWER PROVIDER" {{ $currentSector == 'NON TOWER PROVIDER' ? 'selected' : '' }}>NON TOWER PROVIDER</option>
-
-                        </select>
-                        @error('sector')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Kota --}}
-                    <div class="mb-5">
-                        <label for="city" class="block text-sm font-medium text-dark-tower mb-1">Kota</label>
-                        <input type="text" name="city" id="city"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('city') border-red-500 @enderror"
-                            value="{{ old('city') }}">
-                        @error('city')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Kontak Perusahaan --}}
-                    <div class="mb-5">
-                        <label for="company_contact" class="block text-sm font-medium text-dark-tower mb-1">Kontak Perusahaan</label>
-                        <input type="text" name="company_contact" id="company_contact"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('company_contact') border-red-500 @enderror"
-                            value="{{ old('company_contact') }}">
-                        @error('company_contact')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-
-
-                    {{-- Tanggal Kerja Sama --}}
-                    <div class="mb-6">
-                        <label for="partnership_date" class="block text-sm font-medium text-dark-tower mb-1">Tanggal Kerja Sama</label>
-                        <input type="date" name="partnership_date" id="partnership_date" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('partnership_date') border-red-500 @enderror"
-                            value="{{ old('partnership_date') }}">
-                        @error('partnership_date')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="flex items-center justify-end pt-4 border-t border-gray-100">
-                        <button type="submit"
-                            class="bg-accent-tower text-white px-8 py-2 rounded-lg font-semibold hover:bg-accent-dark transition-colors duration-200 shadow-md flex items-center space-x-2">
-                            <i class="fas fa-save mr-2"></i> Tambah Mitra
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
 
-    </body>
+            {{-- Form Actions --}}
+            <div class="mt-10 pt-6 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center text-slate-400 text-xs italic">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Pastikan logo mitra memiliki background transparan untuk hasil terbaik.
+                </div>
+                <button type="submit"
+                    class="w-full md:w-auto px-10 py-3.5 bg-[#FF8C00] text-white rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:bg-[#e67e00] active:scale-95 transition-all flex items-center justify-center">
+                    <i class="fas fa-plus-circle mr-2"></i>
+                    Simpan Mitra Baru
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
-    </html>
+{{-- Preview Image Script --}}
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('imgPreview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 
+<style>
+    /* Custom Select Styling */
+    select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 1rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+    }
+</style>
 @endsection

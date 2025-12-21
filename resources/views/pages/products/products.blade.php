@@ -1,316 +1,215 @@
 @extends('layouts.app')
 
-@section('title', 'Katalog Produk & Solusi - Tower Management')
-
-@push('styles')
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<style>
-    /* -------------------------------------
-        COLOR THEME: MODERN LIGHT MODE (WHITE & AMBER)
-    ---------------------------------------*/
-    :root {
-        --accent: #FFC300;
-        /* Kuning Emas */
-        --accent-dark: #FFAA00;
-        /* Kuning Lebih Gelap */
-        --bg-light: #F8F9FB;
-        /* Latar Belakang Utama */
-        --bg-card: #FFFFFF;
-        /* Latar Belakang Card */
-        --text-dark: #2C3E50;
-        /* Teks Utama (Dark Accent) */
-        --text-muted: #7F8C8D;
-        /* Teks Sekunder */
-        --border-subtle: #E9ECEF;
-        /* Border tipis */
-        --shadow-subtle: 0 6px 20px rgba(0, 0, 0, 0.08);
-        /* Shadow yang lebih halus */
-    }
-
-    body {
-        background: var(--bg-light);
-        color: var(--text-dark);
-        font-family: 'Poppins', sans-serif;
-    }
-
-    /* HERO SECTION (PREMIUM LOOK) */
-    .hero-products {
-        padding: 140px 0 80px;
-        background: var(--bg-card); /* Putih bersih */
-        text-align: center;
-        border-bottom: 5px solid var(--accent);
-    }
-
-    .hero-products .tagline {
-        color: var(--accent);
-        font-weight: 700;
-        font-size: 1rem;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        display: block;
-    }
-
-    .hero-products h1 {
-        font-weight: 800;
-        font-size: 3.5rem;
-        color: var(--text-dark);
-        margin-top: 10px;
-        margin-bottom: 20px;
-    }
-
-    .hero-products p {
-        color: var(--text-muted);
-        max-width: 700px;
-        margin: 0 auto;
-        font-size: 1.1rem;
-    }
-
-    /* PRODUCT GRID SECTION */
-    .product-section {
-        padding: 80px 0 100px;
-        background: var(--bg-light);
-    }
-
-    .section-header {
-        margin-bottom: 50px;
-        text-align: center;
-    }
-    .section-header h2 {
-        font-weight: 800;
-        color: var(--text-dark);
-    }
-    .section-header p {
-        color: var(--text-muted);
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-
-    /* PRODUCT CARD (ELEGANT MINIMALIST) */
-    .product-card {
-        background: var(--bg-card);
-        border-radius: 12px;
-        border: 1px solid var(--border-subtle);
-        overflow: hidden;
-        transition: transform .35s ease, box-shadow .35s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        display: flex;
-        flex-direction: column;
-        height: 100%; /* Penting untuk grid yang rata */
-    }
-
-    .product-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-    }
-
-    .product-card img {
-        height: 250px;
-        object-fit: cover;
-        width: 100%;
-        transition: .4s ease-in-out;
-    }
-
-    .product-card:hover img {
-        transform: scale(1.05);
-    }
-
-    .product-info {
-        padding: 25px;
-        flex-grow: 1; /* Agar info mengisi ruang sisa */
-        display: flex;
-        flex-direction: column;
-    }
-
-    .product-info h5 {
-        font-weight: 700;
-        font-size: 1.25rem;
-        color: var(--text-dark);
-        margin-bottom: 8px;
-    }
-
-    .product-info .product-meta {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        font-weight: 500;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-    }
-
-    .product-info .product-meta i {
-        font-size: 1rem;
-        margin-right: 6px;
-        color: var(--accent);
-    }
-
-    .product-info p {
-        color: var(--text-muted);
-        font-size: .9rem;
-        /* Hapus min-height/height agar tidak membatasi deskripsi */
-        overflow: hidden;
-        margin-top: 5px;
-        margin-bottom: 15px;
-    }
-
-    .price-box {
-        margin-top: auto; /* Push ke bawah */
-        padding-top: 15px;
-        border-top: 1px dashed var(--border-subtle);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .price {
-        font-size: 1.4rem;
-        font-weight: 800;
-        color: var(--accent);
-        line-height: 1.1;
-    }
-
-    .price small {
-        font-size: 0.75rem;
-        font-weight: 500;
-        color: var(--text-muted);
-        display: block;
-    }
-
-    /* CTA Button (Primary Style, Amber) */
-    .btn-detail {
-        background: var(--accent);
-        color: var(--text-dark);
-        font-weight: 600;
-        border-radius: 8px;
-        padding: 10px 15px;
-        border: 1px solid var(--accent);
-        transition: .3s;
-    }
-
-    .btn-detail:hover {
-        background: var(--accent-dark);
-        color: var(--text-dark);
-        border-color: var(--accent-dark);
-        box-shadow: 0 4px 10px rgba(255, 195, 0, 0.3);
-    }
-
-    /* LOAD MORE (New Style: Button Outline) */
-    .load-more-btn {
-        border: 2px solid var(--accent);
-        color: var(--text-dark);
-        background: var(--bg-card);
-        padding: 12px 45px;
-        border-radius: 8px;
-        font-weight: 700;
-        transition: .3s ease;
-    }
-
-    .load-more-btn:hover {
-        background: var(--accent);
-        color: var(--text-dark);
-        box-shadow: 0 0 20px rgba(255, 195, 0, 0.35);
-        transform: translateY(-3px);
-    }
-
-    @media(max-width: 768px) {
-        .hero-products h1 {
-            font-size: 2.5rem;
-        }
-    }
-</style>
-@endpush
+@section('title', 'Katalog Premium - Tower Management')
 
 @section('content')
+    {{-- Load Scripts --}}
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-{{-- HERO SECTION --}}
-<section class="hero-products" data-aos="fade-down">
-    <div class="container">
-        <span class="tagline">TEKNOLOGI & INFRASTRUKTUR</span>
-        <h1>Solusi Rekayasa Presisi</h1>
-        <p>Tower Management menyediakan produk engineering dan manufaktur berstandar tinggi yang disesuaikan untuk memenuhi kebutuhan spesifik industri dan korporasi Anda.</p>
-    </div>
-</section>
+    <div class="bg-[#F9FBFF] min-h-screen font-['Poppins'] text-[#1A202C]" x-data="{ activeTab: 'all', search: '' }">
 
-{{-- PRODUCT GRID SECTION --}}
-<section class="product-section">
-    <div class="container">
+        {{-- 🌌 HERO SECTION: Disesuaikan tingginya agar konten cepat terlihat --}}
+        @php
+            $heroBg =
+                $items->count() > 0
+                    ? asset('storage/' . $items->first()->image)
+                    : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80';
+        @endphp
 
-        {{-- Section Header (Ganti Filter Bar) --}}
-        <div class="section-header" data-aos="fade-up">
-            <h2 class="h3">Katalog Produk Unggulan</h2>
-            <p class="text-muted">Jelajahi berbagai produk dan solusi teknis kami. Temukan inovasi yang Anda butuhkan.</p>
-        </div>
+        <section class="relative h-[40vh] lg:h-[50vh] flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img src="{{ $heroBg }}" class="w-full h-full object-cover scale-105 animate-slow-zoom"
+                    alt="Hero Background">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#2C3E50]/90 via-[#2C3E50]/70 to-[#F9FBFF]"></div>
+            </div>
 
-        <div class="row g-4">
-            @forelse ($items as $product)
-            {{-- Asumsi $product memiliki 'id', 'slug', 'image', 'name', 'description', 'price', dan 'category' --}}
-            <div class="col-lg-3 col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                <div class="product-card">
+            <div class="relative z-10 max-w-7xl mx-auto px-6 text-center" data-aos="fade-up">
+                <span
+                    class="inline-block py-1 px-4 rounded-full bg-[#FF8C00] text-white font-bold text-[9px] tracking-[0.3em] uppercase mb-4 shadow-lg shadow-orange-500/20">
+                    Official Catalog
+                </span>
+                <h1 class="text-3xl md:text-6xl font-black text-white mb-2 tracking-tight leading-tight">
+                    Our <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300">Collections</span>
+                </h1>
+                <p
+                    class="text-gray-300 text-xs md:text-sm font-light max-w-md mx-auto italic uppercase tracking-widest opacity-80">
+                    Premium Solutions for Industry & Infrastructure
+                </p>
+            </div>
+        </section>
 
-                    <a href="{{ route('product.show', $product->slug ?? $product->id) }}">
-                        {{-- Gunakan Div untuk Image Wrapper agar efek zoom lebih mulus --}}
-                        <div style="overflow: hidden;">
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
-                        </div>
-                    </a>
+        {{-- 🏷️ STICKY FILTER & SEARCH BAR: UX Inti --}}
+        <div class="sticky top-20 z-40 max-w-5xl mx-auto px-4 -mt-8">
+            <div
+                class="bg-white/90 backdrop-blur-xl p-2 rounded-2xl lg:rounded-3xl shadow-2xl border border-white/50 flex flex-col md:flex-row gap-2">
 
-                    <div class="product-info">
-                        <div class="product-meta">
-                            {{-- Ikon kategori disesuaikan berdasarkan data --}}
-                            <i class="{{ $product->category == 'Engineering' ? 'bi bi-lightning-charge-fill' : ($product->category == 'Konstruksi' ? 'bi bi-hammer' : 'bi bi-tag-fill') }}"></i>
-                            {{ $product->category ?? 'Manufaktur' }}
-                        </div>
+                {{-- Search Input --}}
+                <div class="relative flex-1 group">
+                    <span
+                        class="absolute inset-y-0 left-4 flex items-center text-gray-400 group-focus-within:text-[#FF8C00] transition-colors">
+                        <i class="fas fa-search text-sm"></i>
+                    </span>
+                    <input type="text" x-model="search" placeholder="Cari barang atau jasa..."
+                        class="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-xl lg:rounded-2xl text-sm focus:ring-2 focus:ring-[#FF8C00]/20 transition-all font-medium">
+                </div>
 
-                        <h5>{{ $product->name }}</h5>
-
-                        <p>{{ Str::limit($product->description ?? 'Solusi rekayasa dan produk B2B dengan standar kualitas internasional.', 80) }}</p>
-
-                        <div class="price-box">
-                            <div class="price">
-                                <small>Mulai dari</small>
-                                Rp {{ number_format($product->price, 0, ',', '.') }}
-                            </div>
-
-                            <a href="{{ route('product.show', $product->slug ?? $product->id) }}" class="btn btn-detail btn-sm">
-                                Detail <i class="bi bi-arrow-right-short"></i>
-                            </a>
-                        </div>
-                    </div>
+                {{-- Tab Buttons --}}
+                <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl lg:rounded-2xl">
+                    <button @click="activeTab = 'all'"
+                        :class="activeTab === 'all' ? 'bg-[#2C3E50] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
+                        class="flex-1 md:flex-none px-4 lg:px-8 py-2.5 rounded-lg lg:rounded-xl text-[11px] lg:text-xs font-black transition-all duration-300 uppercase tracking-wider">
+                        All
+                    </button>
+                    <button @click="activeTab = 'barang'"
+                        :class="activeTab === 'barang' ? 'bg-[#FF8C00] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
+                        class="flex-1 md:flex-none px-4 lg:px-8 py-2.5 rounded-lg lg:rounded-xl text-[11px] lg:text-xs font-black transition-all duration-300 uppercase tracking-wider">
+                        Barang
+                    </button>
+                    <button @click="activeTab = 'jasa'"
+                        :class="activeTab === 'jasa' ? 'bg-[#FF8C00] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
+                        class="flex-1 md:flex-none px-4 lg:px-8 py-2.5 rounded-lg lg:rounded-xl text-[11px] lg:text-xs font-black transition-all duration-300 uppercase tracking-wider">
+                        Jasa
+                    </button>
                 </div>
             </div>
-            @empty
-            <div class="col-12 text-center py-5">
-                <i class="bi bi-box-seam-fill fs-1 mb-3" style="color: var(--accent);"></i>
-                <h5 class="text-dark">Katalog Sedang Diperbarui</h5>
-                <p class="text-muted">Silakan hubungi tim sales kami untuk informasi produk terbaru.</p>
+        </div>
+
+        {{-- 📦 MAIN CONTENT --}}
+        <div class="max-w-7xl mx-auto px-6 py-12 space-y-20">
+
+            {{-- SECTION: BARANG --}}
+            <section x-show="(activeTab === 'all' || activeTab === 'barang')"
+                x-transition:enter="transition ease-out duration-500" class="space-y-8">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="h-8 w-1.5 bg-[#FF8C00] rounded-full"></div>
+                        <h2 class="text-xl md:text-2xl font-black text-[#2C3E50] tracking-tight uppercase">Produk Barang
+                        </h2>
+                    </div>
+                    <span
+                        class="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-gray-100">
+                        {{ $items->where('type', 'barang')->count() }} Items
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                    @forelse ($items->where('type', 'barang') as $item)
+                        <div x-show="search === '' || '{{ strtolower($item->name) }}'.includes(search.toLowerCase())">
+                            {{-- Gunakan path include yang benar (sesuai saran sebelumnya) --}}
+                            @include('product.partials.card', ['item' => $item])
+                        </div>
+                    @empty
+                        <div
+                            class="col-span-full py-10 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
+                            <p class="text-gray-400 text-sm italic">Belum ada produk barang.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </section>
+
+            {{-- SECTION: JASA --}}
+            <section x-show="(activeTab === 'all' || activeTab === 'jasa')"
+                x-transition:enter="transition ease-out duration-500" class="space-y-8">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="h-8 w-1.5 bg-[#2C3E50] rounded-full"></div>
+                        <h2 class="text-xl md:text-2xl font-black text-[#2C3E50] tracking-tight uppercase">Layanan Jasa</h2>
+                    </div>
+                    <span
+                        class="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-gray-100">
+                        {{ $items->where('type', 'jasa')->count() }} Items
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                    @forelse ($items->where('type', 'jasa') as $item)
+                        <div x-show="search === '' || '{{ strtolower($item->name) }}'.includes(search.toLowerCase())">
+                            @include('product.partials.card', ['item' => $item])
+                        </div>
+                    @empty
+                        <div
+                            class="col-span-full py-10 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
+                            <p class="text-gray-400 text-sm italic">Belum ada layanan jasa.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </section>
+
+            {{-- Empty Search State --}}
+            <div x-show="search !== '' && !document.querySelector('.grid > div:not([style*=\'display: none\'])')"
+                class="text-center py-20 bg-white rounded-[3rem] shadow-sm">
+                <i class="fas fa-search fa-3x text-gray-100 mb-4"></i>
+                <h3 class="text-lg font-bold text-gray-400 italic">Pencarian "<span x-text="search"></span>" tidak ditemukan
+                </h3>
             </div>
-            @endforelse
+
         </div>
 
-        {{-- Tombol Load More hanya jika jumlah item lebih dari 8 --}}
-        @if(count($items) > 8)
-        <div class="text-center mt-5 pt-3">
-            <button class="load-more-btn">Muat Lebih Banyak</button>
-        </div>
-        @endif
+        {{-- 📞 CONTACT CTA: Lebih Ringkas di Mobile --}}
+        <section class="py-16 px-6">
+            <div
+                class="max-w-4xl mx-auto rounded-[2.5rem] bg-[#2C3E50] p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-[#FF8C00] opacity-10 rounded-full blur-3xl"></div>
+                <div class="relative z-10">
+                    <h2 class="text-2xl md:text-4xl font-black mb-4 tracking-tight leading-tight">Solusi Khusus Untuk Bisnis
+                        Anda</h2>
+                    <p class="text-gray-400 text-sm md:text-base mb-8 max-w-lg mx-auto leading-relaxed font-light">
+                        Diskusikan kebutuhan teknis Anda dengan tim ahli kami untuk mendapatkan penawaran investasi terbaik.
+                    </p>
+                    <a href="https://wa.me/your-number"
+                        class="group inline-flex items-center gap-3 bg-[#FF8C00] px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 hover:bg-orange-500 shadow-xl shadow-orange-500/30">
+                        <i class="fab fa-whatsapp text-lg"></i> Hubungi Sales
+                    </a>
+                </div>
+            </div>
+        </section>
     </div>
-</section>
 
-@endsection
+    <style>
+        @keyframes slow-zoom {
+            0% {
+                transform: scale(1);
+            }
 
-@push('scripts')
-<script>
-    // Tambahkan logika untuk Load More di sini jika Anda ingin mengimplementasikannya
-    // Contoh:
-    document.addEventListener('DOMContentLoaded', function () {
-        const loadMoreBtn = document.querySelector('.load-more-btn');
-        if (loadMoreBtn) {
-            loadMoreBtn.addEventListener('click', function() {
-                alert('Fungsi memuat lebih banyak akan dimuat menggunakan AJAX.');
-                // Di sini Anda akan menambahkan logika AJAX untuk mengambil data produk berikutnya
-            });
+            50% {
+                transform: scale(1.08);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
-    });
-</script>
-@endpush
+
+        .animate-slow-zoom {
+            animation: slow-zoom 20s infinite ease-in-out;
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Menyembunyikan scrollbar tapi tetap bisa scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 1000,
+                once: true
+            });
+        });
+    </script>
+@endsection

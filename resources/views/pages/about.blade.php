@@ -1,195 +1,169 @@
 @extends('layouts.app')
 @section('title', 'Tentang Kami - PT. Rizqallah Boer Makmur')
 
-@push('styles')
-    {{-- Memastikan ikon Font Awesome dimuat, menggantikan Bootstrap Icons --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <style>
-        /* -------------------------------------
-           CATATAN: SKEMA WARNA RBM DI DEFINISIKAN
-           DI tailwind.config.js (atau di kode Navbar sebelumnya)
-           Warna utama: rbm-dark (#161f36 - Navy), rbm-accent (#FF7518 - Orange)
-        ---------------------------------------*/
-        .fade-content {
-            /* Transisi sederhana untuk konten tab */
-            transition: opacity 0.4s ease-in-out;
-        }
-
-        /*    AlpineJS tab button styling (tidak perlu banyak custom CSS
-           karena sudah dihandle oleh Tailwind classes)
-        */
-
-        .tab-icon {
-            /* Ikon Visi Misi */
-            @apply text-5xl mb-4 block mx-auto;
-            color: #FF7518; /* Menggunakan RBM Accent */
-        }
-
-        /* AOS Animation Library (jika digunakan) */
-        [data-aos] {
-            transition-property: all;
-            transition-duration: 0.8s;
-        }
-    </style>
-@endpush
-
-
 @section('content')
+{{-- Google Fonts, Alpine.js, & AOS --}}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    {{-- AlpineJS untuk Tabs (diambil dari CDN) --}}
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<div class="bg-[#F4F7FA] min-h-screen font-['Poppins'] text-[#161f36] overflow-x-hidden">
 
     @php
-        // Variabel model (diasumsikan About berisi data Visi/Misi/Deskripsi)
         $about = \App\Models\About::first();
-        // Fallback untuk konten
         $vision = $about?->vision ?? 'Menjadi perusahaan manajemen dan layanan teknis terdepan di Asia Tenggara yang dikenal atas keunggulan dan integritas.';
-        $mission = $about?->mission ?? '1. Menyediakan solusi yang inovatif dan terintegrasi. 2. Membangun kemitraan jangka panjang berbasis kepercayaan. 3. Mendorong pertumbuhan berkelanjutan bagi klien dan perusahaan.';
-        $goal = $about?->goal ?? 'Integritas | Inovasi | Kualitas Premium | Fokus pada Klien.';
+        $mission = $about?->mission ?? 'Menyediakan solusi yang inovatif dan terintegrasi. Membangun kemitraan jangka panjang berbasis kepercayaan. Mendorong pertumbuhan berkelanjutan bagi klien dan perusahaan.';
+        $goal = $about?->goal ?? 'Integritas | Inovasi | Kualitas Premium | Fokus pada Klien';
         $title = $about?->title ?? 'Mitra Solusi Manajemen Terpercaya';
-        $description = $about?->description ?? 'PT. Rizqallah Boer Makmur (RBM) hadir sebagai penyedia layanan dan produk premium yang berfokus pada efisiensi, inovasi, dan hasil yang optimal. Didukung oleh tim yang berpengalaman dan berdedikasi, kami berkomitmen untuk memberikan nilai tambah nyata bagi setiap proyek dan kemitraan yang kami jalani, menjadikan kesuksesan klien sebagai prioritas utama kami.';
+        $description = $about?->description ?? 'PT. Rizqallah Boer Makmur (RBM) hadir sebagai penyedia layanan dan produk premium yang berfokus pada efisiensi, inovasi, dan hasil yang optimal. Didukung oleh tim yang berpengalaman dan berdedikasi, kami berkomitmen untuk memberikan nilai tambah nyata bagi setiap proyek.';
     @endphp
 
-    {{-- ✅ HERO (Menggunakan warna background terang) --}}
-    <section class="bg-gray-50 pt-32 pb-20 text-center" data-aos="fade-down">
-        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {{-- Badge menggunakan background Putih dan border tipis --}}
-            <span
-                class="inline-flex items-center rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-gray-700 shadow-md border border-gray-200">
-                Tentang Tower Management
-            </span>
-
-            <h1 class="mt-4 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-rbm-dark">
-                Dedikasi, Inovasi, dan Kualitas Tak Tertandingi
-            </h1>
-            {{-- Teks Muted menggunakan warna abu-abu yang soft --}}
-            <p class="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-                “Membangun masa depan layanan premium bersama Anda.”
-            </p>
-        </div>
-    </section>
-
-    {{-- ✅ MAIN IMAGE --}}
-    <section class="py-10">
-        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="rounded-2xl overflow-hidden shadow-2xl border border-gray-100" data-aos="zoom-in">
-                <img src="{{ $about?->image ? asset('storage/'.$about->image) : asset('assets/img/staff_kolase.jpg') }}"
-                    class="w-full object-cover"
-                    alt="Tim Tower Management Profesional"
-                    style="height:480px; filter: grayscale(10%);">
-            </div>
-        </div>
-    </section>
-
-    {{-- ✅ DESCRIPTION (Card Putih Profesional) --}}
-    <section class="py-10 pt-0">
-        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-2xl p-8 sm:p-10 shadow-xl border border-gray-100" data-aos="fade-up">
-                {{-- Judul tebal, menggunakan warna dark navy --}}
-                <h3 class="text-3xl font-bold text-rbm-dark mb-4">
-                    {{ $title }}
-                </h3>
-
-                {{-- Konten teks --}}
-                <p class="text-lg text-gray-700 leading-relaxed">
-                    {{ $description }}
+    {{-- 🌌 HERO SECTION: BOLD & CLEAN --}}
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-[#161f36] text-white overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-[#FF7518]/10 -skew-x-12 translate-x-1/3"></div>
+        <div class="container mx-auto px-6 relative z-10 text-center lg:text-left">
+            <div class="max-w-4xl">
+                <span class="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-[#FF7518] text-[10px] font-black uppercase tracking-[0.3em] mb-6" data-aos="fade-right">
+                    Establish in 2025
+                </span>
+                <h1 class="text-4xl md:text-6xl font-black uppercase tracking-tight leading-tight mb-6" data-aos="fade-up">
+                    Dedikasi, Inovasi & <span class="text-[#FF7518]">Kualitas Premium</span>
+                </h1>
+                <p class="text-gray-400 text-sm md:text-lg max-w-2xl leading-relaxed font-medium uppercase tracking-widest" data-aos="fade-up" data-aos-delay="100">
+                    “Membangun masa depan layanan manajemen dan teknis bersama Anda.”
                 </p>
             </div>
         </div>
     </section>
 
-    {{-- ✅ VISI MISI TUJUAN (Tabs Modern) --}}
-    <section class="py-10">
-        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+    {{-- 🏗️ STORY SECTION: SPLIT LAYOUT --}}
+    <section class="py-20 -mt-10 relative z-20">
+        <div class="container mx-auto px-6">
+            <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-gray-100 flex flex-col lg:flex-row">
+                {{-- Image Part --}}
+                <div class="lg:w-1/2 relative group" data-aos="fade-right">
+                    <img src="{{ $about?->image ? asset('storage/'.$about->image) : asset('assets/img/staff_kolase.jpg') }}"
+                         class="w-full h-[400px] lg:h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="RBM Team">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#161f36]/60 to-transparent opacity-60"></div>
+                </div>
+                {{-- Text Part --}}
+                <div class="lg:w-1/2 p-10 lg:p-20 flex flex-col justify-center" data-aos="fade-left">
+                    <h2 class="text-[10px] font-black text-[#FF7518] uppercase tracking-[0.4em] mb-4">Profil Perusahaan</h2>
+                    <h3 class="text-3xl font-black text-[#161f36] uppercase leading-tight mb-8">
+                        {{ $title }}
+                    </h3>
+                    <p class="text-gray-500 text-sm md:text-base leading-relaxed mb-10">
+                        {{ $description }}
+                    </p>
+                    {{-- Quick Stats --}}
+                    <div class="grid grid-cols-2 gap-8 border-t border-gray-100 pt-10">
+                        <div>
+                            <p class="text-3xl font-black text-[#161f36]">100%</p>
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Kualitas Terjamin</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[#FF7518]">24/7</p>
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Dukungan Teknis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <h2 class="text-4xl font-bold text-rbm-dark mb-10">Visi, Misi & Nilai Inti</h2>
+    {{-- 🎯 VISI MISI: INTERACTIVE TABS --}}
+    <section class="py-20 bg-white" x-data="{ tab: 'visi' }">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-black text-[#161f36] uppercase tracking-tight mb-16" data-aos="fade-up">Arah & <span class="text-[#FF7518]">Filosofi</span> Kami</h2>
 
-            {{-- Container Tab Box --}}
-            <div x-data="{ tab: 'visi' }" class="bg-white rounded-2xl p-6 sm:p-12 shadow-xl border border-gray-100 mx-auto max-w-4xl" data-aos="fade-up">
-
-                {{-- Tabs Button --}}
-                <div class="flex justify-center gap-3 mb-10 flex-wrap">
-                    {{-- Tombol Visi --}}
-                    <button @click="tab='visi'"
-                        :class="tab=='visi' ? 'bg-rbm-accent text-rbm-dark shadow-lg shadow-rbm-accent/20 border-rbm-accent' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'"
-                        class="px-6 py-2.5 rounded-lg font-semibold border transition-all duration-300 transform hover:translate-y-[-2px]">
-                        Visi Kami
+            <div class="max-w-5xl mx-auto">
+                {{-- Tabs Header --}}
+                <div class="flex justify-center gap-2 md:gap-6 mb-12 p-2 bg-[#F4F7FA] rounded-2xl md:rounded-full w-fit mx-auto" data-aos="fade-up">
+                    <button @click="tab = 'visi'"
+                        :class="tab === 'visi' ? 'bg-[#161f36] text-white shadow-xl' : 'text-gray-400 hover:text-[#161f36]'"
+                        class="px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">
+                        Visi
                     </button>
-                    {{-- Tombol Misi --}}
-                    <button @click="tab='misi'"
-                        :class="tab=='misi' ? 'bg-rbm-accent text-rbm-dark shadow-lg shadow-rbm-accent/20 border-rbm-accent' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'"
-                        class="px-6 py-2.5 rounded-lg font-semibold border transition-all duration-300 transform hover:translate-y-[-2px]">
-                        Misi Kami
+                    <button @click="tab = 'misi'"
+                        :class="tab === 'misi' ? 'bg-[#161f36] text-white shadow-xl' : 'text-gray-400 hover:text-[#161f36]'"
+                        class="px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">
+                        Misi
                     </button>
-                    {{-- Tombol Nilai Inti --}}
-                    <button @click="tab='nilai'"
-                        :class="tab=='nilai' ? 'bg-rbm-accent text-rbm-dark shadow-lg shadow-rbm-accent/20 border-rbm-accent' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'"
-                        class="px-6 py-2.5 rounded-lg font-semibold border transition-all duration-300 transform hover:translate-y-[-2px]">
+                    <button @click="tab = 'nilai'"
+                        :class="tab === 'nilai' ? 'bg-[#161f36] text-white shadow-xl' : 'text-gray-400 hover:text-[#161f36]'"
+                        class="px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">
                         Nilai Inti
                     </button>
                 </div>
 
-                {{-- Content Area --}}
-                <div class="fade-content min-h-[150px] flex items-center justify-center">
+                {{-- Tab Panels --}}
+                <div class="relative min-h-[300px]" data-aos="zoom-in">
                     {{-- Visi --}}
-                    <template x-if="tab==='visi'">
-                        <div x-transition>
-                            <i class="tab-icon fas fa-flag"></i>
-                            <p class="text-xl text-gray-700 italic max-w-3xl mx-auto">
-                                {{ $vision }}
-                            </p>
-                        </div>
-                    </template>
+                    <div x-show="tab === 'visi'" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" class="bg-[#F4F7FA] p-10 lg:p-16 rounded-[3rem] relative overflow-hidden">
+                        <i class="fas fa-eye absolute -right-4 -bottom-4 text-[150px] text-gray-200 opacity-20"></i>
+                        <p class="text-xl md:text-3xl font-medium italic text-[#161f36] leading-relaxed relative z-10 text-center">
+                            "{{ $vision }}"
+                        </p>
+                    </div>
 
                     {{-- Misi --}}
-                    <template x-if="tab==='misi'">
-                        <div x-transition>
-                            <i class="tab-icon fas fa-cogs"></i>
-                            <div class="text-left max-w-3xl mx-auto">
-                                <ul class="list-disc list-inside text-lg text-gray-700 space-y-2 font-medium">
-                                    @foreach (explode('.', $mission) as $item)
-                                        @if (trim($item))
-                                            <li>{{ trim($item, ' ') }}</li>
-                                        @endif
-                                    @endforeach
-                                </ul>
-                            </div>
+                    <div x-show="tab === 'misi'" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" class="bg-[#F4F7FA] p-10 lg:p-16 rounded-[3rem] text-left">
+                        <div class="grid md:grid-cols-2 gap-6 relative z-10">
+                            @foreach (explode('.', $mission) as $index => $item)
+                                @if (trim($item))
+                                <div class="flex gap-4 p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                                    <span class="w-8 h-8 rounded-lg bg-[#FF7518] text-white flex items-center justify-center font-black text-xs">{{ $index + 1 }}</span>
+                                    <p class="text-sm text-gray-600 font-medium">{{ trim($item) }}</p>
+                                </div>
+                                @endif
+                            @endforeach
                         </div>
-                    </template>
+                    </div>
 
                     {{-- Nilai Inti --}}
-                    <template x-if="tab==='nilai'">
-                        <div x-transition>
-                            <i class="tab-icon fas fa-gem"></i>
-                            <p class="text-xl text-gray-700 italic max-w-3xl mx-auto font-semibold">
-                                {{ $goal }}
-                            </p>
-                        </div>
-                    </template>
+                    <div x-show="tab === 'nilai'" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" class="bg-[#F4F7FA] p-10 lg:p-16 rounded-[3rem]">
+                         <div class="flex flex-wrap justify-center gap-4">
+                            @foreach(explode('|', $goal) as $val)
+                                <div class="px-8 py-6 bg-white rounded-2xl shadow-sm border-b-4 border-[#FF7518] group hover:-translate-y-2 transition-all">
+                                    <p class="text-sm font-black text-[#161f36] uppercase tracking-widest">{{ trim($val) }}</p>
+                                </div>
+                            @endforeach
+                         </div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </section>
 
-    {{-- ✅ CTA (Menggunakan warna Biru Tua Navy sebagai background) --}}
-    <section class="py-12">
-        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="bg-rbm-dark p-10 sm:p-16 rounded-2xl text-center shadow-2xl" data-aos="fade-up">
-                {{-- Teks Putih --}}
-                <h2 class="text-4xl font-extrabold text-white mb-3">Mari Mulai Proyek Anda Sekarang!</h2>
-                {{-- Teks Abu-abu Terang --}}
-                <p class="text-lg text-rbm-light-text mb-8 max-w-2xl mx-auto">
-                    PT. RBM siap menjadi mitra Anda. Hubungi kami untuk konsultasi gratis dan dapatkan penawaran terbaik.
-                </p>
+    {{-- 📞 FINAL CTA --}}
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="relative bg-[#161f36] rounded-[3rem] p-10 md:p-20 text-center overflow-hidden shadow-2xl shadow-navy-900/40" data-aos="zoom-in">
+                <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#FF7518 1px, transparent 1px); background-size: 30px 30px;"></div>
 
-                {{-- Tombol CTA (Oranye Terang) --}}
-                <a href="{{ route('contact') }}"
-                    class="inline-flex items-center bg-rbm-accent text-rbm-dark font-bold text-lg px-8 py-3 rounded-xl shadow-lg transition-all duration-300 hover:bg-opacity-90 hover:scale-[1.02] transform">
-                    Jadwalkan Konsultasi <i class="fas fa-headset ms-2"></i>
-                </a>
+                <div class="relative z-10">
+                    <h2 class="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-6">Mulai Transformasi <span class="text-[#FF7518]">Hari Ini</span></h2>
+                    <p class="text-gray-400 text-sm md:text-base max-w-2xl mx-auto mb-12 uppercase tracking-widest leading-relaxed">
+                        Siap melangkah bersama mitra manajemen terbaik? Tim ahli kami siap mendiskusikan visi proyek Anda.
+                    </p>
+                    <a href="{{ route('contact') }}" class="inline-flex items-center gap-4 bg-[#FF7518] text-white px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-orange-500/20 hover:bg-orange-600 hover:scale-105 transition-all">
+                        Hubungi Tim Ahli <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
+</div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({ duration: 1000, once: true });
+    });
+</script>
+
+<style>
+    [x-cloak] { display: none !important; }
+</style>
 @endsection

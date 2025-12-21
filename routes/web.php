@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\PublicTestimonialController;
@@ -29,44 +30,7 @@ use App\Models\About;
 // ==================== FRONTEND / PUBLIC ====================
 
 // Home Page
-Route::get('/', function () {
-    $products = Product::latest()->take(4)->get();
-    // $services = Service::latest()->take(4)->get(); // DIHAPUS
-    $testimonials = Testimonial::latest()->take(3)->get();
-    $galleryItems = Gallery::latest()->take(4)->get();
-    $partners = \App\Models\Partner::latest()->get();
-    $facilities = \App\Models\Facility::latest()->take(5)->get();
-
-    // Placeholder variables
-    $latestNews = collect();
-    $mainImages = collect();
-    $gridImages = collect();
-    $majors = collect();
-    $majorGridImages = collect();
-
-    $advantages = [
-        'Tenaga Profesional & Bersertifikasi',
-        'Pelayanan Homecare & Onsite',
-        'Fasilitas Lengkap & Nyaman',
-        'Prioritas Keamanan dan Higienitas',
-        'Konsultasi Gratis Sebelum Tindakan',
-        'Buka Setiap Hari (By Appointment)',
-    ];
-
-    return view('welcome', compact(
-        'products',
-        'testimonials',
-        'galleryItems',
-        'partners',
-        'facilities',
-        'latestNews',
-        'mainImages',
-        'gridImages',
-        'majors',
-        'majorGridImages',
-        'advantages'
-    ));
-})->name('home');
+Route::get('/', [AdminHomeController::class, 'index'])->name('home');
 
 // Search Route
 Route::get('/search', function (Request $request) {
@@ -95,9 +59,9 @@ Route::get('/about', function () {
 
 // Static Pages
 Route::get('/booking', function () {
-    $products = \App\Models\Product::latest()->get();
-    // Menghapus variabel 'services' dari compact
-    return view('booking', compact('products'));
+    $products = \App\Models\Product::where('type', 'barang')->latest()->get();
+    $services = \App\Models\Product::where('type', 'jasa')->latest()->get();
+    return view('booking', compact('products', 'services'));
 })->name('booking');
 
 Route::view('/contact', 'contact')->name('contact');
@@ -170,7 +134,8 @@ Route::get('/facilities', function () {
 // Detail Facility
 Route::get('/facilities/{id}', function ($id) {
     $facility = \App\Models\Facility::findOrFail($id);
-    return view('pages.facilities.show', compact('facility'));
+    $otherFacilities = \App\Models\Facility::where('id', '!=', $facility->id)->latest()->take(4)->get();
+    return view('pages.facilities.show', compact('facility', 'otherFacilities'));
 })->name('facilities.show');
 
 

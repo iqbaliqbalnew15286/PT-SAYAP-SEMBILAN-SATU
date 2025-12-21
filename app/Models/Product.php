@@ -21,6 +21,7 @@ class Product extends Model
         'price',
         'image',
         'type', // 🛑 KOREKSI: Tambahkan 'type' agar bisa disimpan
+        'slug',
     ];
 
     /**

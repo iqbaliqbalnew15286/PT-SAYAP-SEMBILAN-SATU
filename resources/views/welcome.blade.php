@@ -1,622 +1,758 @@
 @extends('layouts.app')
 
-@section('title', 'PROJECT TOWER')
+@section('title', 'PT SAYAP SEMBILAN SATU | Tower Infrastructure')
 
 @section('content')
-    <!DOCTYPE html>
-    <html lang="en">
 
-    <head>
-        {{-- 1. SEO: Meta Description --}}
-        <meta name="description"
-            content="Selamat datang di SMK Amaliah 1 & 2 Ciawi, Sekolah Pusat Keunggulan. Temukan program keahlian unggulan, fasilitas modern, dan berita terbaru kami. Daftar online sekarang!">
+{{-- ================= MODAL SEARCH ================= --}}
+<div x-show="searchModalOpen" x-cloak class="fixed inset-0 z-[100] overflow-y-auto">
+    <div @click="searchModalOpen = false" class="fixed inset-0 bg-[#161f36]/80 backdrop-blur-sm"></div>
+    <div class="relative min-h-screen flex items-start justify-center pt-24 px-4">
+        <div @click.away="searchModalOpen = false"
+            class="bg-white w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden">
+            <form action="{{ route('search') }}" method="GET" class="relative">
+                <input type="text" name="query"
+                    class="w-full text-lg py-5 pl-14 pr-6 outline-none"
+                    placeholder="Cari layanan / produk..." autofocus>
+                <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </form>
+        </div>
+    </div>
+</div>
 
-        {{-- 2. PERFORMA: Preconnect ke domain penting untuk mempercepat handshake DNS, TCP, dan TLS --}}
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="preconnect" href="https://cdn.curator.io">
-        <link rel="preconnect" href="https://www.youtube-nocookie.com">
+@push('heads')
+<meta name="description" content="PT SAYAP SEMBILAN SATU - Solusi infrastruktur menara telekomunikasi profesional dan inovatif.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+@endpush
 
-        {{-- 3. PERFORMA: Memuat CSS non-kritis secara asinkron untuk menghilangkan render-blocking --}}
-        {{-- Font Awesome --}}
-        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-            as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        </noscript>
+<style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    html { scroll-behavior: smooth; }
 
-        {{-- Google Fonts: Poppins --}}
-        <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
-            as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript>
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
-        </noscript>
+    /* Scroll Reveal */
+    .reveal { opacity: 0; transform: translateY(40px); transition: all .8s ease; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
 
-        {{-- Splide CSS --}}
-        <link rel="preload" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css"
-            as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript>
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
-        </noscript>
+    /* Modern Card */
+    .modern-card {
+        background: white;
+        border-radius: 32px;
+        border: 1px solid #f1f5f9;
+        transition: all .4s ease;
+    }
+    .modern-card:hover {
+        transform: translateY(-8px);
+        border-color: #FF7518;
+        box-shadow: 0 20px 40px -15px rgba(0,0,0,.15);
+    }
 
-        {{-- 4. PERFORMA: Muat semua skrip dengan 'defer' agar tidak memblokir parsing HTML --}}
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-        <script defer src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-    </head>
+    [x-cloak]{display:none!important;}
+</style>
+
+<script>
+    document.addEventListener('scroll', () => {
+        document.querySelectorAll('.reveal').forEach(el => {
+            const top = el.getBoundingClientRect().top;
+            if (top < window.innerHeight - 100) el.classList.add('active');
+        });
+    });
+</script>
+
+@php
+    $amaliahDark = '#161f36';
+    $amaliahOrange = '#FF7518';
+
+    $sliderImages = [
+        'https://images.unsplash.com/photo-1520640193369-2213303b19cd?w=1600',
+        'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?w=1600',
+        'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600'
+    ];
+@endphp
+
+{{-- ================= HERO ================= --}}
+<section class="relative h-[75vh] min-h-[520px] overflow-hidden bg-[#161f36]">
+    <div x-data="{ activeSlide:1, total:{{ count($sliderImages) }} }"
+        x-init="setInterval(()=> activeSlide = activeSlide===total?1:activeSlide+1,5000)"
+        class="relative h-full">
+
+        @foreach ($sliderImages as $i => $img)
+        <div x-show="activeSlide==={{ $i+1 }}"
+            x-transition.opacity.duration.1000
+            class="absolute inset-0">
+            <img src="{{ $img }}" class="w-full h-full object-cover brightness-[0.35]">
+        </div>
+        @endforeach
+
+        <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
+
+        <div class="absolute inset-0 flex flex-col justify-center px-8 md:px-24">
+            <h1 class="text-white text-4xl md:text-5xl font-bold leading-tight mb-4 reveal">
+                Elevating <br> Connectivity
+            </h1>
+            <p class="text-gray-300 max-w-md text-sm md:text-base reveal">
+                Solusi pembangunan menara telekomunikasi dengan standar profesional dan inovasi berkelanjutan.
+            </p>
+        </div>
+
+        <div class="absolute bottom-10 right-10 flex gap-2">
+            @for($i=1;$i<=count($sliderImages);$i++)
+            <button @click="activeSlide={{$i}}"
+                :class="activeSlide==={{$i}}?'w-8 bg-[#FF7518]':'w-3 bg-white/30'"
+                class="h-1.5 rounded-full transition-all"></button>
+            @endfor
+        </div>
+    </div>
+</section>
+
+{{-- ================= FEATURE FLOAT ================= --}}
+<section class="relative -mt-20 z-30 px-6">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+        @php
+        $fitur = [
+            ['icon'=>'fa-calendar-check','title'=>'Project Booking','desc'=>'Atur jadwal survei proyek','link'=>route('booking'),'color'=>$amaliahOrange],
+            ['icon'=>'fa-file-pdf','title'=>'E-Catalogue','desc'=>'Spesifikasi teknis material','link'=>'#','color'=>$amaliahDark],
+            ['icon'=>'fa-project-diagram','title'=>'Tracking','desc'=>'Pantau progres proyek','link'=>'#','color'=>$amaliahOrange],
+            ['icon'=>'fa-comments','title'=>'Consultation','desc'=>'Diskusi kebutuhan tower','link'=>route('consult'),'color'=>$amaliahDark],
+            ['icon'=>'fa-images','title'=>'Gallery','desc'=>'Dokumentasi proyek','link'=>route('gallery.index'),'color'=>$amaliahOrange],
+        ];
+        @endphp
+
+        @foreach($fitur as $f)
+        <a href="{{ $f['link'] }}" class="modern-card p-8 text-center reveal">
+            <div class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-6"
+                style="background:{{ $f['color'] }}">
+                <i class="fas {{ $f['icon'] }} text-white text-xl"></i>
+            </div>
+            <h3 class="text-sm font-bold tracking-wide mb-2">{{ strtoupper($f['title']) }}</h3>
+            <p class="text-xs text-gray-500">{{ $f['desc'] }}</p>
+        </a>
+        @endforeach
+    </div>
+</section>
+
+<div class="h-32"></div>
+
+{{-- ================= CTA ================= --}}
+<section class="max-w-6xl mx-auto px-6 mb-32 reveal">
+    <div class="bg-[#161f36] rounded-[3rem] p-10 md:p-14 flex flex-col lg:flex-row items-center justify-between relative overflow-hidden">
+
+        <div class="absolute -top-20 -right-20 w-64 h-64 bg-[#FF7518]/10 rounded-full blur-3xl"></div>
+
+        <div>
+            <h2 class="text-white text-2xl md:text-4xl font-semibold mb-4">
+                Mulai Proyek <span class="text-[#FF7518]">Tower Anda</span>
+            </h2>
+            <p class="text-gray-400 text-sm max-w-md">
+                Tim profesional kami siap membantu kebutuhan infrastruktur Anda.
+            </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-6 mt-8 lg:mt-0">
+            <a href="{{ route('kontak') }}"
+                class="px-8 py-4 bg-[#FF7518] text-white rounded-xl font-semibold hover:scale-105 transition">
+                Hubungi Kami
+            </a>
+
+            <div class="flex items-center gap-3">
+                <div class="flex -space-x-3">
+                    <img src="https://www.google.com/favicon.ico" class="w-10 h-10 bg-white rounded-full p-2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" class="w-10 h-10 bg-white rounded-full p-2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" class="w-10 h-10 bg-white rounded-full p-2">
+                </div>
+                <span class="text-xs text-gray-300">100+ Mitra</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{{-- ================= INTELLIGENT SOLUTION ================= --}}
+<section class="max-w-7xl mx-auto px-6 lg:px-12 mb-40 reveal">
+
+    {{-- Header --}}
+    <div class="mb-16">
+        <h2 class="text-3xl md:text-5xl font-bold text-[#161f36] tracking-tight uppercase leading-tight">
+            Intelligent <span class="text-[#FF7518]">Solution</span><br>
+            For Your Infrastructure
+        </h2>
+
+        <div class="flex items-center gap-2 mt-5">
+            <span class="w-16 h-[3px] bg-[#FF7518] rounded-full"></span>
+            <span class="w-4 h-[3px] bg-[#161f36] rounded-full"></span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
+
+        {{-- Left Content --}}
+        <div class="space-y-10 reveal">
+            <div class="relative pl-6 border-l-4 border-[#FF7518]">
+                <h3 class="text-xl font-bold text-[#161f36] mb-4">
+                    PT SAYAP SEMBILAN SATU
+                </h3>
+
+                <p class="text-gray-700 text-base leading-relaxed">
+                    Penyedia infrastruktur menara telekomunikasi di bawah naungan
+                    <span class="px-2 py-0.5 bg-[#161f36] text-white rounded-md font-semibold">YPSPIAI</span>
+                    dengan pengawasan teknis
+                    <span class="text-[#FF7518] font-semibold">Universitas Djuanda (UNIDA)</span>.
+                </p>
+
+                <p class="mt-4 text-gray-500 text-sm leading-relaxed">
+                    Solusi infrastruktur profesional untuk mendukung konektivitas digital
+                    yang stabil, aman, dan berkelanjutan di seluruh Indonesia.
+                </p>
+            </div>
+
+            {{-- CTA --}}
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="{{ route('products') }}"
+                    class="group inline-flex items-center justify-center px-8 py-4 rounded-xl bg-[#161f36] text-white font-semibold transition-all duration-300 hover:bg-[#FF7518] hover:shadow-lg hover:shadow-orange-500/30">
+                    <span>CEK PRODUK</span>
+                    <span class="ml-4 p-2 rounded-lg bg-white/20 group-hover:bg-white group-hover:text-[#FF7518] transition">
+                        <i class="fas fa-arrow-right text-sm"></i>
+                    </span>
+                </a>
+
+                <a href="{{ route('about') }}"
+                    class="inline-flex items-center justify-center px-8 py-4 rounded-xl border border-[#161f36] text-[#161f36] font-semibold transition-all hover:bg-[#161f36] hover:text-white">
+                    TENTANG KAMI
+                </a>
+            </div>
+        </div>
+
+        {{-- Right Product Grid --}}
+        <div class="grid grid-cols-2 md:grid-cols-3 auto-rows-[160px] gap-4 reveal">
+
+            @php
+                $gridProducts = isset($products) ? $products->take(5) : collect();
+            @endphp
+
+            @for ($i = 0; $i < 5; $i++)
+                @php
+                    $product = $gridProducts->get($i);
+                    $class =
+                        $i === 0 ? 'md:row-span-2' :
+                        ($i === 1 ? 'md:col-span-2 md:row-span-2' : '');
+                @endphp
+
+                <div class="{{ $class }} relative overflow-hidden rounded-2xl bg-[#161f36] group border border-transparent hover:border-[#FF7518] transition-all duration-500">
+
+                    @if ($product && $product->image)
+                        <img src="{{ asset('storage/' . $product->image) }}"
+                             alt="{{ $product->name }}"
+                             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-5">
+                            <h4 class="text-white text-sm font-bold uppercase tracking-tight">
+                                {{ $product->name }}
+                            </h4>
+                            <span class="w-8 h-[2px] bg-[#FF7518] mt-2"></span>
+                        </div>
+
+                        <a href="{{ route('product.show', $product->slug) }}" class="absolute inset-0 z-10"></a>
+                    @else
+                        <div class="w-full h-full flex flex-col items-center justify-center border border-dashed border-white/20">
+                            <i class="fas fa-tower-broadcast text-[#FF7518] text-xl opacity-40 mb-2"></i>
+                            <span class="text-white/40 text-[10px] uppercase font-semibold">Waiting for Data</span>
+                        </div>
+                    @endif
+                </div>
+            @endfor
+        </div>
+    </div>
+</section>
+{{-- ================= PARTNER SECTION (FIXED & STABLE) ================= --}}
+<section class="bg-white py-20 reveal">
+    <div class="max-w-screen-xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+
+        {{-- Left --}}
+        <div>
+            <h2 class="text-3xl md:text-4xl font-bold text-[#161f36] leading-tight">
+                Industry <br> Partner
+            </h2>
+
+            <div class="flex items-center gap-2 mt-4">
+                <span class="w-16 h-1 bg-[#FF7518] rounded-full"></span>
+                <span class="w-3 h-1 bg-[#FF7518] rounded-full"></span>
+            </div>
+
+            <p class="mt-6 text-gray-600 text-sm leading-relaxed max-w-md">
+                Kami bekerja sama dengan mitra industri untuk memberikan pengalaman nyata,
+                pengembangan skill, dan peluang profesional jangka panjang.
+            </p>
+
+            <a href="{{ route('partners') }}"
+               class="inline-flex items-center gap-4 mt-8 px-6 py-3 rounded-lg bg-[#FF7518] text-white font-semibold transition hover:scale-105">
+                Selengkapnya
+                <i class="fas fa-arrow-right text-sm"></i>
+            </a>
+        </div>
+
+        {{-- Right Logos --}}
+        <div class="relative h-[30rem] overflow-hidden rounded-3xl">
+
+            {{-- Fade --}}
+            <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-white to-transparent z-10"></div>
+            <div class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent z-10"></div>
+
+            {{-- Scroll Container --}}
+            <div class="animate-scroll flex flex-col gap-12">
+
+                {{-- BLOK 1 --}}
+                <div class="grid grid-cols-2 gap-10">
+                    @forelse ($partners as $partner)
+                        <div class="flex flex-col items-center transition-transform duration-300 hover:scale-110">
+                            <img
+                                src="{{ asset('storage/' . $partner->logo) }}"
+                                alt="{{ $partner->name }}"
+                                class="max-h-20 object-contain"
+                            >
+                            <span class="mt-2 text-[10px] text-gray-400 uppercase tracking-widest text-center">
+                                {{ $partner->name }}
+                            </span>
+                        </div>
+                    @empty
+                        <div class="col-span-2 text-center text-gray-400 italic">
+                            Belum ada mitra.
+                        </div>
+                    @endforelse
+                </div>
+
+                {{-- BLOK 2 (DUPLIKASI AMAN) --}}
+                <div class="grid grid-cols-2 gap-10" aria-hidden="true">
+                    @foreach ($partners as $partner)
+                        <div class="flex flex-col items-center transition-transform duration-300 hover:scale-110">
+                            <img
+                                src="{{ asset('storage/' . $partner->logo) }}"
+                                alt="{{ $partner->name }}"
+                                class="max-h-20 object-contain"
+                            >
+                            <span class="mt-2 text-[10px] text-gray-400 uppercase tracking-widest text-center">
+                                {{ $partner->name }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- ================= STYLE ================= --}}
+<style>
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all .8s ease;
+}
+.reveal.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes scroll {
+    from { transform: translateY(0); }
+    to { transform: translateY(-50%); }
+}
+.animate-scroll {
+    animation: scroll 18s linear infinite;
+}
+.animate-scroll:hover {
+    animation-play-state: paused;
+}
+</style>
+
+<script>
+document.addEventListener('scroll', () => {
+    document.querySelectorAll('.reveal').forEach(el => {
+        if (el.getBoundingClientRect().top < window.innerHeight - 100) {
+            el.classList.add('show');
+        }
+    });
+});
+</script>
+
+
+
+    <section class="py-16 sm:py-24 animate-on-scroll" style="background-color: {{ $amaliahDark }};">
+        {{-- Container Utama --}}
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+
+            {{-- Dekorasi Titik --}}
+            <div class="absolute top-8 left-8 md:left-12 flex items-center space-x-2 custom-none">
+                <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
+                <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
+                <div class="w-3 h-3 bg-white rounded-full"></div>
+            </div>
+
+            {{-- Header Section --}}
+            <div class="text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-white">Fasilitas</h2>
+                <p class="mt-2 text-gray-400">Stay in the know with insights from industry experts.</p>
+                <div class="w-24 h-px bg-gray-600 mx-auto mt-4"></div>
+            </div>
+
+            {{-- Galeri Gambar Mozaik Dinamis --}}
+            <div class="mt-12 w-full h-[30rem] md:h-[32rem] grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-4">
+
+                {{-- Gambar 1 (Tinggi di Kiri) --}}
+                <div class="col-span-1 row-span-2 rounded-xl overflow-hidden">
+                    @if (isset($facilities[0]) && $facilities[0]->image)
+                        <img src="{{ asset('storage/' . $facilities[0]->image) }}" alt="{{ $facilities[0]->name }}"
+                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                    @else
+                        <div class="w-full h-full bg-black"></div>
+                    @endif
+                </div>
+
+                {{-- Gambar 2 (Tengah Atas) --}}
+                <div class="col-span-1 row-span-1 rounded-xl overflow-hidden">
+                    @if (isset($facilities[1]) && $facilities[1]->image)
+                        <img src="{{ asset('storage/' . $facilities[1]->image) }}" alt="{{ $facilities[1]->name }}"
+                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                    @else
+                        <div class="w-full h-full bg-black"></div>
+                    @endif
+                </div>
+
+                {{-- Gambar 3 (Kanan Atas) --}}
+                <div class="col-span-1 md:col-span-2 row-span-1 rounded-xl overflow-hidden">
+                    @if (isset($facilities[2]) && $facilities[2]->image)
+                        <img src="{{ asset('storage/' . $facilities[2]->image) }}" alt="{{ $facilities[2]->name }}"
+                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                    @else
+                        <div class="w-full h-full bg-black"></div>
+                    @endif
+                </div>
+
+                {{-- Gambar 4 (Tengah Bawah) --}}
+                <div class="col-span-1 row-span-1 rounded-xl overflow-hidden">
+                    @if (isset($facilities[3]) && $facilities[3]->image)
+                        <img src="{{ asset('storage/' . $facilities[3]->image) }}" alt="{{ $facilities[3]->name }}"
+                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                    @else
+                        <div class="w-full h-full bg-black"></div>
+                    @endif
+                </div>
+
+                {{-- Gambar 5 (Kanan Bawah) --}}
+                <div class="col-span-1 md:col-span-2 row-span-1 rounded-xl overflow-hidden">
+                    @if (isset($facilities[4]) && $facilities[4]->image)
+                        <img src="{{ asset('storage/' . $facilities[4]->image) }}" alt="{{ $facilities[4]->name }}"
+                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                    @else
+                        <div class="w-full h-full bg-black"></div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Tombol Selengkapnya --}}
+            <div class="text-right mt-6">
+                <a href="{{ route('facilities') }}" class="inline-flex items-center group">
+                    <span class="text-sm font-semibold text-white mr-3">Selengkapnya</span>
+                    <div
+                        class="bg-gray-200 rounded-full p-2 group-hover:bg-gray-300 transition-transform duration-300 group-hover:translate-x-1">
+                        <i class="fas fa-arrow-right text-gray-800 text-sm"></i>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    {{-- CSS Tambahan --}}
     <style>
-        .hero-clip-path {
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4rem), calc(100% - 4rem) 100%, 0 100%);
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
         }
 
-        /* Aturan ini akan aktif jika lebar layar 768px atau kurang */
-        @media (max-width: 768px) {
-            .custom-none {
-                display: none;
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #product-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        #product-modal.hidden {
+            display: none;
+        }
+
+        @keyframes testimonial-slide {
+            0% {
+                transform: translateX(0);
             }
+
+            100% {
+                transform: translateX(calc(-50% - 1rem));
+            }
+        }
+
+        .animate-testimonial-slider {
+            display: flex;
+            width: fit-content;
+            animation: testimonial-slide 40s linear infinite;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 117, 24, 0.3);
+            border-radius: 10px;
         }
     </style>
 
-    <body class="font-['Poppins'] bg-gray-100">
-        @php
-            $amaliahGreen = '#161f36'; // Matching layout's navy blue
-            $amaliahOrange = '#FF7518'; // Matching layout's bright orange
-            $amaliahDark = '#282829';
-            $amaliahBlue = '#E0E7FF';
-            $hasImages = isset($mainImages) && $mainImages->isNotEmpty();
-        @endphp
-        <main style="margin-top: 10px;">
-            <section class="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                @if ($hasImages && $latestNews->isNotEmpty())
-                    <div x-data="{
-                        showVideo: false,
-                        activeImageSlide: 1,
-                        totalImageSlides: {{ $mainImages->count() }},
-                        activeNewsSlide: 1,
-                        totalNewsSlides: {{ $latestNews->count() }}
-                    }" x-init="setInterval(() => {
-                        if (!showVideo) { // Animasi gambar hanya berjalan jika video tidak ditampilkan
-                            activeImageSlide = activeImageSlide % totalImageSlides + 1
-                        }
-                    }, 5000);
-                    setInterval(() => { activeNewsSlide = activeNewsSlide % totalNewsSlides + 1 }, 5000);">
-
-                        <div class="relative h-[550px] overflow-hidden hero-clip-path rounded-3xl">
-
-                            {{-- Kontainer Slider Gambar (Hanya tampil jika showVideo false) --}}
-                            <div x-show="!showVideo" class="w-full h-full">
-                                @foreach ($mainImages as $image)
-                                    <div x-show="activeImageSlide === {{ $loop->iteration }}"
-                                        x-transition:enter="transition ease-out duration-1000"
-                                        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                        x-transition:leave="transition ease-in duration-1000"
-                                        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                                        class="absolute inset-0">
-                                        <img src="{{ Storage::url($image->path) }}"
-                                            alt="{{ $image->description ?? $image->filename }}"
-                                            class="w-full h-full object-cover">
-                                    </div>
-                                @endforeach
-
-                                {{-- Tombol "Watch Video" di Pojok Kanan Atas --}}
-                                <button @click="showVideo = true"
-                                    class="absolute top-6 right-6 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full hover:bg-black/70 transition-all duration-300">
-                                    <svg xmlns="https://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    <span class="text-sm font-semibold">Watch Video</span>
-                                </button>
-                            </div>
-
-                            {{-- Kontainer Iframe YouTube (Hanya tampil jika showVideo true) --}}
-                            <div x-show="showVideo" x-cloak class="w-full h-full">
-                                {{-- Iframe yang sudah dimodifikasi --}}
-                                <iframe class="w-full h-full"
-                                    :src="showVideo ?
-                                        'https://www.youtube.com/embed/STOhZZmY6Co?autoplay=1&mute=1&controls=0&loop=1&playlist=STOhZZmY6Co&rel=0&iv_load_policy=3&modestbranding=1' :
-                                        ''"
-                                    title="YouTube video player" frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    title="youtube" allowfullscreen>
-                                </iframe>
-
-                                {{-- Tombol "Close" untuk Video --}}
-                                <button @click="showVideo = false"
-                                    class="absolute top-6 right-6 z-20 flex items-center justify-center w-10 h-10 bg-black/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-all duration-300">
-                                    <svg xmlns="https://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        {{-- Bagian bawah (kartu berita dan logo) tidak diubah --}}
-                        <div class="absolute bottom-12 left-8 md:left-12 z-10 w-[calc(100%-4rem)] max-w-md">
-
-                            <div class="bg-white/90 backdrop-blur-md border border-white/30 rounded-xl p-3 shadow-lg mb-4">
-                                <div class="flex items-center justify-between w-full">
-                                    <div class="flex items-center justify-between w-full pr-2">
-                                        <img src="{{ asset('assets/logo/infra.png') }}" alt="Logo Partner 1"
-                                            class="h-7 object-contain transition duration-300">
-                                        <img src="{{ asset('assets/logo/jh.png') }}" alt="Logo Partner 5"
-                                            class="h-7 object-contain transition duration-300">
-                                        <img src="{{ asset('assets/logo/komdigi.png') }}" alt="Logo Partner 2"
-                                            class="h-7 object-contain transition duration-300">
-                                        <img src="{{ asset('assets/logo/maspionit.png') }}" alt="Logo Partner 3"
-                                            class="h-7 object-contain transition duration-300">
-                                        <img src="{{ asset('assets/logo/gspark.png') }}" alt="Logo Partner 4"
-                                            class="h-7 object-contain transition duration-300">
-                                    </div>
-
-                                    <a href="https://jagoanhosting.com/"
-                                        class="text-[#282829] hover:text-gray-600 transition-colors flex-shrink-0">
-                                        <svg xmlns="https://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-
-                            {{-- Kontainer Slider Kartu Berita --}}
-                            <div class="relative w-full h-auto min-h-[250px] overflow-hidden hero-clip-path ">
-                                @foreach ($latestNews as $news)
-                                    <div x-show="activeNewsSlide === {{ $loop->iteration }}"
-                                        x-transition:enter="transition transform ease-in-out duration-500"
-                                        x-transition:enter-start="opacity-0 translate-y-10"
-                                        x-transition:enter-end="opacity-100 translate-y-0"
-                                        x-transition:leave="transition transform ease-in-out duration-500"
-                                        x-transition:leave-start="opacity-100 translate-y-0"
-                                        x-transition:leave-end="opacity-0 -translate-y-10"
-                                        class="absolute inset-0 w-full">
-
-                                        <div
-                                            class="flex flex-col h-full bg-white/90 backdrop-blur-lg p-6 rounded-2xl shadow-2xl border border-white/30">
-                                            <h1 class="text-xl font-bold text-gray-900 leading-tight line-clamp-2">
-                                                {{ $news->title }}
-                                            </h1>
-                                            <p class="text-sm mt-2 text-gray-700 line-clamp-3 flex-grow">
-                                                {{ strip_tags($news->description) }}
-                                            </p>
-                                            <p class="text-xs font-medium text-gray-500 mt-4">
-                                                Diterbitkan
-                                                {{ \Carbon\Carbon::parse($news->date_published)->translatedFormat('d F Y') }}
-                                            </p>
-                                            <div class="mt-4">
-                                                <a href="{{ route('public.news.show', $news) }}"
-                                                    class="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#282829] px-4 py-2 rounded-full hover:bg-black transition-all duration-300 group">
-                                                    Selengkapnya
-                                                    <i
-                                                        class="fas fa-arrow-right transition-transform duration-300 group-hover:translate-x-1"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                @else
-                    {{-- Fallback jika tidak ada data --}}
-                    <div class="relative h-[550px] overflow-hidden hero-clip-path rounded-3xl bg-black"></div>
-                @endif
-            </section>
-
-            <section class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-16">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                    @php
-                        // Data untuk setiap kartu fitur (ditambahkan 'link' dan 'button_text')
-                        $fitur = [
-                            [
-                                'icon' => 'fa-file-lines',
-                                'title' => 'SPMB Online',
-                                'desc' =>
-                                    'Ayo daftarkan dirimu di SMK Amaliah secara mudah melalui sistem online kami.',
-                                'link' => 'https://ppdb.smkamaliah.sch.id/login', // Ganti dengan route atau URL PPDB Anda
-                                'button_text' => 'Daftar Sekarang',
-                            ],
-                            [
-                                'icon' => 'fa-chart-simple',
-                                'title' => 'E-Learning',
-                                'desc' =>
-                                    'Akses materi, tugas, dan sumber belajar kapan saja melalui platform E-Learning terintegrasi.',
-                                'link' => 'https://lms.smkamaliah.sch.id', // Ganti dengan URL E-Learning Anda
-                                'button_text' => 'Mulai Belajar',
-                            ],
-                            [
-                                'icon' => 'fa-vr-cardboard',
-                                'title' => 'Virtual Tour',
-                                'desc' =>
-                                    'Jelajahi setiap sudut dan fasilitas sekolah kami secara virtual dari kenyamanan rumah Anda.',
-                                'link' => 'https://yourdisc710.itch.io/amaliah-tour', // Ganti dengan route atau URL Virtual Tour
-                                'button_text' => 'Jelajahi Sekarang',
-                            ],
-                            [
-                                'icon' => 'fa-building-columns',
-                                'title' => 'Ujian Online',
-                                'desc' =>
-                                    'Laksanakan berbagai ujian sekolah dengan mudah dan aman melalui platform ujian online kami.',
-                                'link' => 'https://play.google.com/store/apps/details?id=com.amexam', // Ganti dengan URL Ujian Online
-                                'button_text' => 'Masuk Ujian',
-                            ],
-                        ];
-
-                        // Asumsi variabel $amaliahGreen dan $amaliahDark sudah ada
-                        $amaliahGreen = $amaliahGreen ?? '#63cd00';
-                        $amaliahDark = $amaliahDark ?? '#282829';
-                    @endphp
-
-                    {{-- Loop untuk menampilkan setiap kartu fitur --}}
-                    @foreach ($fitur as $index => $item)
-                        {{-- Seluruh kartu sekarang adalah sebuah link --}}
-                        <a href="{{ $item['link'] }}"
-                            class=" border-[{{ $loop->even ? $amaliahGreen : $amaliahOrange }}] group bg-gray-50 p-6 rounded-2xl flex flex-col items-start border-2  hover:border-[{{ $loop->even ? $amaliahGreen : $amaliahOrange }}] hover:bg-white transition-all duration-300 shadow-sm hover:shadow-lg transform hover:-translate-y-1">
-
-                            {{-- Bagian Ikon --}}
-                            <div class="p-4 rounded-xl mb-4" style="background-color: {{ $loop->even ? $amaliahGreen : $amaliahOrange }};">
-                                <i class="fas {{ $item['icon'] }} text-2xl text-white"></i>
-                            </div>
-
-                            {{-- Bagian Teks --}}
-                            <h2 class="text-lg font-bold mb-2" style="color: {{ $amaliahDark }};">{{ $item['title'] }}
-                            </h2>
-                            <p class="text-sm text-gray-600 mb-4 flex-grow">{{ $item['desc'] }}</p>
-
-                            {{-- Tombol Link dengan teks dinamis --}}
-                            <div class="text-sm font-semibold flex items-center mt-auto"
-                                style="color: {{ $loop->even ? $amaliahGreen : $amaliahOrange }};">
-                                <span>{{ $item['button_text'] }}</span>
-                                <i
-                                    class="fas fa-chevron-right ml-2 text-xs transition-transform group-hover:translate-x-1"></i>
-                            </div>
-                        </a>
-                    @endforeach
-
+    {{-- Testimonials Section --}}
+    <section class="py-24 bg-white overflow-hidden">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+                <div class="text-left">
+                    <h2 class="text-3xl md:text-4xl font-black text-[#282829]">Suara Mitra Kami</h2>
+                    <div class="w-12 h-1.5 bg-[#FF7518] mt-2 rounded-full"></div>
                 </div>
-            </section>
+                <a href="{{ route('send.testimonial') }}"
+                    class="group flex items-center gap-3 px-6 py-3 bg-[#161f36] text-white rounded-xl font-bold hover:bg-[#FF7518] transition-all duration-300 shadow-lg shadow-blue-900/20">
+                    <i class="fas fa-plus-circle group-hover:rotate-90 transition-transform duration-500"></i>
+                    Bagi Pengalaman Anda
+                </a>
+            </div>
 
-            {{-- Bagian Header Judul --}}
-            <section class="text-center px-4 sm:px-6 lg:px-8 mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">We Have Intelligent Solution For Your Education
-                </h2>
-                <div class="flex items-center justify-center gap-x-2 mx-auto mt-4">
-                    <div class="w-20 h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
-                    <div class="w-4 h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
-                    <div class="w-4 h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
-                </div>
-            </section>
-
-            {{-- Bagian Konten Utama (Deskripsi, Tombol, dan Grid Gambar) --}}
-            <section class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    {{-- Kolom Kiri: Teks dan Tombol --}}
-                    <div class="text-gray-600">
-                        <p class="text-base leading-relaxed">
-                            SMK Amaliah 1 & 2 merupakan bentuk sekolah kejuruan yang dibawah naungan Yayasan Pusat Studi
-                            Pengembangan Islam Amaliyah Indonesia (YPSPIAI) dengan mengutamakan kualitas, Profesionalitas
-                            dan Pelayanan Prima dan dibawah pengawasan Universitas Djuanda (UNIDA) berdiri pada tahun 2008.
-                        </p>
-
-                        {{-- Wadah untuk Tombol --}}
+            <div class="relative testimonial-slider">
+                <div class="flex gap-8 animate-testimonial-slider hover:[animation-play-state:paused] py-4">
+                    @foreach (array_merge($testimonials->toArray(), $testimonials->toArray()) as $testimonial)
                         <div
-                            class="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 mt-8">
-
-                            <a href="https://ppdb.smkamaliah.sch.id/"
-                                class="group inline-flex items-center justify-between text-white pl-6 pr-2 py-2 rounded-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-xl hover:opacity-90"
-                                style="background-color: {{ $amaliahGreen }};">
-
-                                <span class="mr-4">Info PPDB</span>
-
-                                <span
-                                    class="bg-white rounded-full h-8 w-8 flex items-center justify-center transition-transform duration-300 group-hover/button:translate-x-1 ease-in-out group-hover:translate-x-1">
-                                    <i class="fas fa-arrow-right text-sm " style="color: {{ $amaliahGreen }};"></i>
-                                </span>
-                            </a>
-
-                            <a href="{{ route('about') }}"
-                                class="group inline-flex items-center justify-between text-white pl-6 pr-2 py-2 rounded-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-xl hover:opacity-90"
-                                style="background-color: {{ $amaliahOrange }};">
-
-                                <span class="mr-4">Selengkapnya</span>
-
-                                <span
-                                    class="bg-white rounded-full h-8 w-8 flex items-center justify-center transition-transform duration-300 group-hover/button:translate-x-1 ease-in-out group-hover:translate-x-1">
-                                    <i class="fas fa-arrow-right text-sm    " style="color: {{ $amaliahOrange }};"></i>
-                                </span>
-                            </a>
-
-                        </div>
-                    </div>
-
-                    {{-- Kolom Kanan: Grid Gambar Dinamis dari Database --}}
-                    <div class="grid grid-cols-3 grid-rows-3 gap-4 h-96">
-
-                        {{-- Gambar 1 (Slot Paling Kiri, Tinggi) --}}
-                        @if (isset($gridImages[0]))
-                            <img src="{{ Storage::url($gridImages[0]->path) }}" alt="Grid Image 1"
-                                class="w-full h-full object-cover rounded-lg row-span-2">
-                        @else
-                            <div class="bg-gray-200 rounded-lg row-span-2"></div>
-                        @endif
-
-                        {{-- Gambar 2 (Slot Kanan Atas, Besar) --}}
-                        @if (isset($gridImages[1]))
-                            <img src="{{ Storage::url($gridImages[1]->path) }}" alt="Grid Image 2"
-                                class="w-full h-full object-cover rounded-lg col-span-2 row-span-2">
-                        @else
-                            <div class="bg-gray-200 rounded-lg col-span-2 row-span-2"></div>
-                        @endif
-
-                        {{-- Gambar 3 (Slot Kiri Bawah) --}}
-                        @if (isset($gridImages[2]))
-                            <img src="{{ Storage::url($gridImages[2]->path) }}" alt="Grid Image 3"
-                                class="w-full h-full object-cover rounded-lg">
-                        @else
-                            <div class="bg-gray-200 rounded-lg"></div>
-                        @endif
-
-                        {{-- Gambar 4 (Slot Tengah Bawah) --}}
-                        @if (isset($gridImages[3]))
-                            <img src="{{ Storage::url($gridImages[3]->path) }}" alt="Grid Image 4"
-                                class="w-full h-full object-cover rounded-lg">
-                        @else
-                            <div class="bg-gray-200 rounded-lg"></div>
-                        @endif
-
-                        {{-- Gambar 5 (Slot Kanan Bawah) --}}
-                        @if (isset($gridImages[4]))
-                            <img src="{{ Storage::url($gridImages[4]->path) }}" alt="Grid Image 5"
-                                class="w-full h-full object-cover rounded-lg">
-                        @else
-                            <div class="bg-gray-200 rounded-lg"></div>
-                        @endif
-
-                    </div>
-                </div>
-            </section>
-
-            </section>
-            <section class="bg-white py-16 sm:py-24">
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
-                        {{-- Kolom Kiri: Teks & Tombol (Tidak ada perubahan) --}}
-                        <div class="text-left">
-                            <h2 class="text-4xl md:text-5xl font-bold" style="color: {{ $amaliahDark }};">
-                                Here Is Our<br>Industry Partner
-                            </h2>
-
-                            <div class="flex items-center gap-x-2 mt-4">
-                                <div class="w-20 h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};">
-                                </div>
-                                <div class="w-4 h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
-                                <div class="w-4 h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
+                            class="min-w-[350px] md:min-w-[400px] bg-[#161f36] p-8 rounded-[2rem] relative group transition-all duration-500 hover:-translate-y-2">
+                            <div class="absolute top-0 right-10 w-12 h-2 bg-[#FF7518] rounded-b-xl"></div>
+                            <div class="mb-6 text-orange-400">
+                                <i class="fas fa-quote-left text-3xl opacity-50"></i>
                             </div>
-
-                            <p class="mt-6 text-gray-600 leading-relaxed">
-                                We cooperate with industry leaders to provide students with real-world experience through
-                                internships, industrial visits, training, and career opportunities after graduation.
+                            <p class="text-gray-200 leading-relaxed mb-8 h-24 overflow-y-auto custom-scrollbar">
+                                "{{ $testimonial['message'] }}"
                             </p>
-
-                            <a href="{{ route('partners') }}"
-                                class="group mt-8 inline-flex items-center text-white px-6 py-3 rounded-lg font-semibold shadow-lg group/button transition-opacity duration-300 hover:opacity-90"
-                                style="background-color: {{ $amaliahGreen }};">
-                                <span class="mr-4 text-lg">Selengkapnya</span>
+                            <div class="flex items-center gap-4 border-t border-white/10 pt-6">
                                 <div
-                                    class="bg-white rounded-full p-2 flex items-center justify-center transition-transform duration-300 group-hover/button:translate-x-1 ease-in-out group-hover:translate-x-1">
-                                    <i class="fas fa-arrow-right text-base " style="color: {{ $amaliahGreen }};"></i>
+                                    class="w-12 h-12 rounded-full bg-[#FF7518] flex items-center justify-center text-[#161f36] font-black shadow-lg">
+                                    {{ strtoupper(substr($testimonial['name'], 0, 1)) }}
                                 </div>
-                            </a>
-                        </div>
-
-                        {{-- Kolom Kanan: Grid Logo Mitra dengan Animasi Scroll --}}
-                        <div class="group relative h-[28rem] overflow-hidden">
-                            {{-- Kontainer untuk item yang akan dianimasikan --}}
-                            <div
-                                class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10 animate-scroll-vertical group-hover:[animation-play-state:paused]">
-
-                                {{-- Loop data dari controller (DUPLIKASI 1) --}}
-                                @forelse ($partners as $partner)
-                                    <div class="text-center">
-                                        <div
-                                            class="bg-gray-100 h-24 w-full rounded-lg mb-3 flex items-center justify-center p-4">
-                                            <img src="{{ asset('storage/' . $partner->logo) }}"
-                                                alt="Logo {{ $partner->name }}"
-                                                class="max-h-full max-w-full object-contain">
-                                        </div>
-                                        <p class="text-sm text-gray-600 font-medium">{{ $partner->name }}</p>
-                                    </div>
-                                @empty
-                                    <div class="col-span-2 md:col-span-4 text-center">
-                                        <p class="text-gray-500">Belum ada mitra yang ditambahkan.</p>
-                                    </div>
-                                @endforelse
-
-                                {{-- Loop data dari controller (DUPLIKASI 2 - Untuk Efek Mulus) --}}
-                                @forelse ($partners as $partner)
-                                    <div class="text-center">
-                                        <div
-                                            class="bg-gray-100 h-24 w-full rounded-lg mb-3 flex items-center justify-center p-4">
-                                            <img src="{{ asset('storage/' . $partner->logo) }}"
-                                                alt="Logo {{ $partner->name }}"
-                                                class="max-h-full max-w-full object-contain">
-                                        </div>
-                                        <p class="text-sm text-gray-600 font-medium">{{ $partner->name }}</p>
-                                    </div>
-                                @empty
-                                    {{-- Tidak perlu pesan empty di duplikasi --}}
-                                @endforelse
-                            </div>
-                            {{-- Efek fade di bagian bawah untuk transisi yang lebih halus --}}
-                            <div
-                                class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-white to-transparent pointer-events-none">
+                                <div>
+                                    <h4 class="font-bold text-white leading-none">{{ $testimonial['name'] }}</h4>
+                                    @if ($testimonial['company'])
+                                        <p class="text-[#FF7518] text-[10px] font-bold uppercase tracking-widest mt-1.5">
+                                            {{ $testimonial['company'] }}</p>
+                                    @endif
+                                </div>
                             </div>
                         </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
 
+    {{-- Contact & Address Section --}}
+    <section class="py-24 bg-slate-50 animate-on-scroll">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-4 space-y-10">
+                    <div>
+                        <h3 class="text-3xl font-black text-[#282829]">Hubungi Kami Lebih Lanjut</h3>
+                        <p class="text-gray-500 mt-4">Kami siap melayani kebutuhan infrastruktur tower Anda secara
+                            profesional.</p>
+                    </div>
+                    <div class="space-y-6">
+                        <div
+                            class="p-6 bg-white rounded-2xl shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+                            <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-[#FF7518]">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Telepon</p>
+                                <p class="text-[#282829] font-bold">0856-1922-827 / 0856-4901-1449</p>
+                            </div>
+                        </div>
+                        <div
+                            class="p-6 bg-white rounded-2xl shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#161f36]">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Email</p>
+                                <p class="text-[#282829] font-bold">smkamaliahciawi@gmail.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <a href="{{ route('faq') }}"
+                            class="text-xs font-bold text-[#161f36] hover:text-[#FF7518]">FAQ</a>
+                        <span class="text-gray-300">|</span>
+                        <a href="{{ route('syaratketentuan') }}"
+                            class="text-xs font-bold text-[#161f36] hover:text-[#FF7518]">Legalitas</a>
                     </div>
                 </div>
-            </section>
 
-            {{-- Tambahkan CSS untuk Animasi di bagian bawah file blade atau di file CSS utama --}}
-            <style>
-                @keyframes scroll-vertical {
-                    from {
-                        transform: translateY(0);
-                    }
-
-                    to {
-                        transform: translateY(-50%);
-                    }
-                }
-
-                .animate-scroll-vertical {
-                    /* Sesuaikan durasi (misal: 60s) untuk mengatur kecepatan scroll */
-                    animation: scroll-vertical 120s linear infinite;
-                }
-            </style>
-
-
-            {{-- Tombol Navigasi (Hanya tampil di mobile) --}}
-            <div class="lg:hidden mt-6 flex items-center space-x-4">
-                <button @click="scrollSlider('prev')"
-                    class="bg-white hover:bg-gray-200 text-gray-800 w-12 h-12 rounded-lg flex items-center justify-center transition-colors"
-                    id="majorbutton" role="presentation" aria-label="button">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button @click="scrollSlider('next')"
-                    class="bg-white hover:bg-gray-200 text-gray-800 w-12 h-12 rounded-lg flex items-center justify-center transition-colors"
-                    id="majorbutton" role="presentation" aria-label="button">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-
-            </div>
-            </div>
-            </section>
-
-
-            <section class="py-16 sm:py-24" style="background-color: {{ $amaliahDark }};">
-                {{-- Container Utama --}}
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-
-                    {{-- Dekorasi Titik --}}
-                    <div class="absolute top-8 left-8 md:left-12 flex items-center space-x-2 custom-none">
-                        <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
-                        <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
-                        <div class="w-3 h-3 bg-white rounded-full"></div>
-                    </div>
-
-                    {{-- Header Section --}}
-                    <div class="text-center">
-                        <h2 class="text-3xl md:text-4xl font-bold text-white">Fasilitas</h2>
-                        <p class="mt-2 text-gray-400">Stay in the know with insights from industry experts.</p>
-                        <div class="w-24 h-px bg-gray-600 mx-auto mt-4"></div>
-                    </div>
-
-                    {{-- Galeri Gambar Mozaik Dinamis --}}
-                    <div class="mt-12 w-full h-[30rem] md:h-[32rem] grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-4">
-
-                        {{-- Gambar 1 (Tinggi di Kiri) --}}
-                        <div class="col-span-1 row-span-2 rounded-xl overflow-hidden">
-                            @if (isset($facilities[0]) && $facilities[0]->image)
-                                <img src="{{ asset('storage/' . $facilities[0]->image) }}"
-                                    alt="{{ $facilities[0]->name }}"
-                                    class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-                            @else
-                                {{-- Placeholder jika gambar tidak ada --}}
-                                <div class="w-full h-full bg-black"></div>
-                            @endif
-                        </div>
-
-                        {{-- Gambar 2 (Tengah Atas) --}}
-                        <div class="col-span-1 row-span-1 rounded-xl overflow-hidden">
-                            @if (isset($facilities[1]) && $facilities[1]->image)
-                                <img src="{{ asset('storage/' . $facilities[1]->image) }}"
-                                    alt="{{ $facilities[1]->name }}"
-                                    class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-                            @else
-                                <div class="w-full h-full bg-black"></div>
-                            @endif
-                        </div>
-
-                        {{-- Gambar 3 (Kanan Atas) --}}
-                        <div class="col-span-1 md:col-span-2 row-span-1 rounded-xl overflow-hidden">
-                            @if (isset($facilities[2]) && $facilities[2]->image)
-                                <img src="{{ asset('storage/' . $facilities[2]->image) }}"
-                                    alt="{{ $facilities[2]->name }}"
-                                    class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-                            @else
-                                <div class="w-full h-full bg-black"></div>
-                            @endif
-                        </div>
-
-                        {{-- Gambar 4 (Tengah Bawah) --}}
-                        <div class="col-span-1 row-span-1 rounded-xl overflow-hidden">
-                            @if (isset($facilities[3]) && $facilities[3]->image)
-                                <img src="{{ asset('storage/' . $facilities[3]->image) }}"
-                                    alt="{{ $facilities[3]->name }}"
-                                    class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-                            @else
-                                <div class="w-full h-full bg-black"></div>
-                            @endif
-                        </div>
-
-                        {{-- Gambar 5 (Kanan Bawah) --}}
-                        <div class="col-span-1 md:col-span-2 row-span-1 rounded-xl overflow-hidden">
-                            @if (isset($facilities[4]) && $facilities[4]->image)
-                                <img src="{{ asset('storage/' . $facilities[4]->image) }}"
-                                    alt="{{ $facilities[4]->name }}"
-                                    class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-                            @else
-                                <div class="w-full h-full bg-black"></div>
-                            @endif
-                        </div>
-                    </div>
-
-                    {{-- Tombol Selengkapnya --}}
-                    <div class="text-right mt-6">
-                        <a href="{{ route('facilities') }}" class="inline-flex items-center group">
-                            <span class="text-sm font-semibold text-white mr-3">Selengkapnya</span>
-                            <div
-                                class="bg-gray-200 rounded-full p-2 group-hover:bg-gray-300 transition-transform duration-300 group-hover/button:translate-x-1 ease-in-out group-hover:translate-x-1">
-                                <i class="fas fa-arrow-right text-gray-800 text-sm"></i>
+                <div class="lg:col-span-8">
+                    <div class="relative rounded-[2.5rem] overflow-hidden shadow-xl aspect-video lg:h-[500px]">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3962.946924765796!2d106.84852937587186!3d-6.653457193341386!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69c9388f8d689b%3A0xc66033481f337a6!2sSMK%20Amaliah%201%20%26%202%20Ciawi!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                            class="grayscale hover:grayscale-0 transition-all duration-1000"></iframe>
+                        <div
+                            class="absolute bottom-8 left-8 right-8 bg-white/90 backdrop-blur-md p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div class="flex gap-4 items-start">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-[#FF7518] flex items-center justify-center text-white shrink-0 shadow-lg">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <p class="text-sm text-[#282829] font-medium">Jl. Raya Jl. Tol Jagorawi No.1, Ciawi,
+                                    Kabupaten Bogor, Jawa Barat 16720</p>
                             </div>
-                        </a>
+                            <a href="https://maps.app.goo.gl/..." target="_blank"
+                                class="shrink-0 px-6 py-3 bg-[#161f36] text-white text-xs font-bold rounded-xl hover:bg-[#FF7518] transition-all">Buka
+                                di Maps</a>
+                        </div>
                     </div>
-
                 </div>
-            </section>
-            {{-- CSS Tambahan untuk menyembunyikan scrollbar --}}
-            <style>
-                .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
+            </div>
+        </div>
+    </section>
+
+    {{-- Product Modal --}}
+    <div id="product-modal" class="hidden">
+        <div id="modal-content"
+            class="bg-white p-8 rounded-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <div id="modal-body-inner"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global Functions for buttons
+        function scrollSlider(direction) {
+            const container = document.querySelector('.testimonial-slider .flex');
+            if (!container) return;
+            const scrollAmount = 400;
+            if (direction === 'next') {
+                container.scrollBy({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                });
+            } else {
+                container.scrollBy({
+                    left: -scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function openModal(product) {
+            const modal = document.getElementById('product-modal');
+            const inner = document.getElementById('modal-body-inner');
+            inner.innerHTML = `
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="md:w-1/2">
+                    <img src="${product.image}" class="w-full h-80 object-cover rounded-2xl shadow-lg">
+                </div>
+                <div class="md:w-1/2">
+                    <h3 class="text-3xl font-bold text-gray-800 mb-4">${product.name}</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">${product.description || 'Deskripsi akan segera diperbarui.'}</p>
+                    <div class="flex gap-4">
+                        <a href="${product.link}" class="bg-[#FF7518] text-white px-8 py-3 rounded-xl font-bold hover:bg-orange-600 transition-all">Detail Lengkap</a>
+                    </div>
+                </div>
+            </div>`;
+            modal.classList.remove('hidden');
+            gsap.from("#modal-content", {
+                opacity: 0,
+                scale: 0.8,
+                duration: 0.4,
+                ease: "back.out(1.7)"
+            });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('product-modal');
+            gsap.to("#modal-content", {
+                opacity: 0,
+                scale: 0.8,
+                duration: 0.3,
+                onComplete: () => modal.classList.add('hidden')
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof gsap !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+
+                // Animate on Scroll Elements
+                gsap.utils.toArray('.animate-on-scroll').forEach(element => {
+                    gsap.from(element, {
+                        opacity: 0,
+                        y: 50,
+                        duration: 1,
+                        scrollTrigger: {
+                            trigger: element,
+                            start: "top 85%"
+                        }
+                    });
+                });
+
+                // Product Items Click
+                document.querySelectorAll('.product-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        openModal({
+                            name: this.dataset.name,
+                            image: this.querySelector('img')?.src,
+                            description: this.dataset.description,
+                            link: this.dataset.link || '#'
+                        });
+                    });
+                });
+
+                // Stats Counter
+                const stats = document.querySelectorAll('.stat-number');
+                if (stats.length > 0) {
+                    ScrollTrigger.create({
+                        trigger: ".stat-number",
+                        onEnter: () => {
+                            stats.forEach(stat => {
+                                const target = +stat.dataset.target;
+                                gsap.to(stat, {
+                                    innerText: target,
+                                    duration: 2,
+                                    snap: {
+                                        innerText: 1
+                                    }
+                                });
+                            });
+                        }
+                    });
                 }
+            }
 
-                .scrollbar-hide {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-            </style>
-
-
-            @php
-                // Definisikan warna utama
-                $amaliahGreen = '#63cd00';
-                $amaliahDark = '#282829';
-
-                // Definisikan informasi kontak
-                $alamat = 'Jl. Raya Jl. Tol Jagorawi No.1, Ciawi, Kec. Ciawi, Kabupaten Bogor, Jawa Barat 16720';
-                $email = 'smkamaliahciawi@gmail.com';
-                $phone = '0856-1922-827 / 0856-4901-1449';
-            @endphp
-
-        </main>
-    </body>
-
-    </html>
-@endsection
+            // Close modal on background click
+            document.getElementById('product-modal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        });
+    </script>

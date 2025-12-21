@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Gallery;
 use App\Models\Product;
-use App\Models\Service;
 use App\Models\Testimonial;
+use App\Models\Partner;
+use App\Models\Facility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -19,9 +20,10 @@ class HomeController extends Controller
     {
         // Inisialisasi koleksi kosong untuk mencegah error jika query gagal
         $products = collect();
-        $services = collect();
         $testimonials = collect();
         $galleryItems = collect();
+        $partners = collect();
+        $facilities = collect();
 
         // -------------------------------
         // 🛍️ PRODUK TERBARU
@@ -30,19 +32,6 @@ class HomeController extends Controller
             $products = Product::latest()->take(4)->get();
         } catch (\Throwable $e) {
             Log::warning('Gagal mengambil produk: ' . $e->getMessage());
-        }
-
-        // -------------------------------
-        // 💆‍♀️ LAYANAN
-        // -------------------------------
-        try {
-            $services = Service::where('is_recommended', 1)->take(4)->get();
-
-            if ($services->isEmpty()) {
-                $services = Service::latest()->take(4)->get();
-            }
-        } catch (\Throwable $e) {
-            Log::warning('Gagal mengambil layanan: ' . $e->getMessage());
         }
 
         // -------------------------------
@@ -64,6 +53,24 @@ class HomeController extends Controller
         }
 
         // -------------------------------
+        // 🌿 PARTNERS
+        // -------------------------------
+        try {
+            $partners = Partner::latest()->take(6)->get();
+        } catch (\Throwable $e) {
+            Log::warning('Gagal mengambil partners: ' . $e->getMessage());
+        }
+
+        // -------------------------------
+        // 🏢 FACILITIES
+        // -------------------------------
+        try {
+            $facilities = Facility::latest()->take(6)->get();
+        } catch (\Throwable $e) {
+            Log::warning('Gagal mengambil facilities: ' . $e->getMessage());
+        }
+
+        // -------------------------------
         // 🌿 KEUNGGULAN (STATIC DATA)
         // -------------------------------
         $advantages = [
@@ -79,22 +86,22 @@ class HomeController extends Controller
         // 🩷 KATEGORI LAYANAN (STATIC)
         // -------------------------------
         $allServiceCategories = [
-            (object)[
+            (object) [
                 'title' => 'Perawatan Ibu Hamil',
                 'link' => 'ibu-hamil',
                 'img_url' => 'https://images.unsplash.com/photo-1579783902672-91041935b3e6?auto=format&fit=crop&w=800&q=60',
             ],
-            (object)[
+            (object) [
                 'title' => 'Perawatan Bayi & Anak',
                 'link' => 'bayi-anak',
                 'img_url' => 'https://images.unsplash.com/photo-1543088339-b9d9c288f6b7?auto=format&fit=crop&w=800&q=60',
             ],
-            (object)[
+            (object) [
                 'title' => 'Perawatan Pasca Lahir',
                 'link' => 'pasca-lahir',
                 'img_url' => 'https://images.unsplash.com/photo-1574676643202-09c063b4f621?auto=format&fit=crop&w=800&q=60',
             ],
-            (object)[
+            (object) [
                 'title' => 'Konsultasi Kebidanan',
                 'link' => 'konsultasi',
                 'img_url' => 'https://images.unsplash.com/photo-1576092764977-943e86c99c7d?auto=format&fit=crop&w=800&q=60',
@@ -115,12 +122,13 @@ class HomeController extends Controller
         // -------------------------------
         return view('welcome', compact(
             'products',
-            'services',
             'advantages',
             'allServiceCategories',
             'testimonials',
             'waTestimonialUrls',
-            'galleryItems'
+            'galleryItems',
+            'partners',
+            'facilities'
         ));
     }
 }

@@ -1,256 +1,156 @@
 @extends('layouts.app')
-@section('title')
-FAQ - Tower Management & Service
-@endsection
 
-@push('styles')
-{{-- Memastikan Font Awesome dan AOS dimuat (Karena ada atribut data-aos-*) --}}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-<style>
-/* -------------------------------------
-   COLOR THEME: MODERN LIGHT MODE (WHITE & AMBER)
----------------------------------------*/
-:root {
-    --accent: #FFC300; /* Kuning Amber */
-    --bg-light: #F8F9FB; /* Light Background */
-    --bg-card: #FFFFFF; /* White Card */
-    --text-dark: #2C3E50; /* Navy/Dark Text */
-    --text-muted: #7F8C8D; /* Muted Gray */
-    --border-subtle: #E9ECEF; /* Border Gray */
-}
-
-body {
-    background: var(--bg-light);
-    color: var(--text-dark);
-}
-
-/* Hero (Clean & Light) */
-.faq-hero {
-    padding-top: 130px;
-    padding-bottom: 70px;
-    text-align: center;
-    background: linear-gradient(to bottom, var(--bg-light), #F1F3F7);
-}
-.faq-hero h1 {
-    font-weight: 800;
-    color: var(--text-dark);
-}
-.faq-hero p {
-    color: var(--text-muted);
-    max-width: 600px; /* Batasi lebar teks paragraf */
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.badge-custom {
-    background: var(--bg-card) !important;
-    border: 1px solid var(--border-subtle) !important;
-    color: var(--text-dark) !important;
-    font-weight: 600;
-    padding: 8px 16px;
-    border-radius: 8px;
-    display: inline-block; /* Agar margin-bottom berfungsi */
-}
-
-.divider {
-    width: 60px; height: 4px;
-    background: var(--accent);
-    margin: 12px auto 22px;
-    border-radius: 4px;
-}
-
-/* Accordion (Modern Minimalis) */
-.accordion-item {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    margin-bottom: 15px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,.05);
-}
-
-.accordion-button {
-    background: var(--bg-card);
-    color: var(--text-dark);
-    font-weight: 600;
-    padding: 18px 20px;
-    letter-spacing: normal;
-    font-size: 1.05rem;
-    transition: background .3s, color .3s;
-    width: 100%; /* Memastikan tombol memenuhi lebar */
-    text-align: left;
-}
-.accordion-button:focus { box-shadow:none !important; }
-
-.accordion-button.collapsed {
-    color: var(--text-dark);
-}
-
-.accordion-button:not(.collapsed) {
-    background: var(--accent); /* Kuning ketika aktif */
-    color: var(--text-dark);
-    border-bottom: 1px solid var(--border-subtle);
-    box-shadow: 0 2px 5px rgba(255, 195, 0, 0.2);
-}
-
-.accordion-body {
-    background: #F4F6F9;
-    color: var(--text-dark);
-    padding: 20px 25px;
-    line-height: 1.6;
-    font-size: 0.95rem;
-}
-
-/* Custom icon */
-.accordion-button::after { display:none; }
-.custom-icon {
-    font-size: 1.2rem;
-    margin-left: auto;
-    transition: .3s ease;
-    color: var(--accent);
-    flex-shrink: 0; /* Agar tidak terpotong */
-}
-.accordion-button.collapsed .custom-icon {
-    color: var(--text-muted);
-}
-.accordion-button:not(.collapsed) .custom-icon {
-    transform: rotate(45deg);
-    color: var(--text-dark);
-}
-
-/* KEPADATAN */
-section { padding: 50px 0; }
-</style>
-@endpush
+@section('title', 'Pusat Bantuan - PT. RBM')
 
 @section('content')
+{{-- Google Fonts, Alpine.js, & AOS --}}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-{{-- ✅ HERO SECTION --}}
-<section class="faq-hero" data-aos="fade-down">
-    <div class="container">
-        <span class="badge-custom mb-2">Pusat Bantuan</span>
-        <h1>Pertanyaan yang Sering Diajukan (FAQ)</h1>
-        <div class="divider"></div>
-        <p>Kami telah mengumpulkan jawaban atas pertanyaan umum terkait layanan, produk, dan operasional Tower Management.</p>
-    </div>
-</section>
+<div class="bg-[#F4F7FA] min-h-screen font-['Poppins'] text-[#161f36]"
+     x-data="{
+        search: '',
+        activeTab: 'umum',
+        activeFaq: null,
+        faqs: [
+            { id: 1, cat: 'umum', q: 'DI MANA LOKASI KANTOR PUSAT PT. RBM?', a: 'Kantor pusat kami berlokasi di kawasan industri strategis Jakarta. Kami memiliki fasilitas workshop yang modern untuk mendukung operasional teknis.' },
+            { id: 2, cat: 'umum', q: 'BAGAIMANA CARA MENGHUBUNGI TIM SALES?', a: 'Anda dapat menghubungi kami melalui tombol WhatsApp yang tersedia, atau melalui email resmi marketing kami di rbm.official@example.com.' },
+            { id: 3, cat: 'layanan', q: 'APAKAH MELAYANI PROYEK DI LUAR PULAU JAWA?', a: 'Ya, jangkauan layanan kami mencakup seluruh wilayah Indonesia. Kami memiliki tim mobile yang siap dikirim ke lokasi proyek Anda.' },
+            { id: 4, cat: 'teknis', q: 'APAKAH PRODUK TOWER MEMILIKI SERTIFIKASI?', a: 'Tentu. Semua produk fabrikasi kami melalui proses QC ketat dan memiliki sertifikasi standar industri internasional untuk keamanan dan durabilitas.' },
+            { id: 5, cat: 'layanan', q: 'BERAPA LAMA ESTIMASI PENGERJAAN PROYEK?', a: 'Estimasi waktu sangat bergantung pada skala proyek. Namun, kami selalu memberikan timeline yang transparan sejak tahap awal konsultasi.' },
+            { id: 6, cat: 'teknis', q: 'APAKAH BISA CUSTOM SPESIFIKASI ALAT?', a: 'Sangat bisa. Kami memiliki tim engineering yang ahli dalam merancang solusi kustom sesuai kebutuhan teknis spesifik di lapangan.' }
+        ],
+        get filteredFaqs() {
+            return this.faqs.filter(f =>
+                (this.activeTab === 'all' || f.cat === this.activeTab) &&
+                f.q.toLowerCase().includes(this.search.toLowerCase())
+            );
+        }
+     }">
 
-{{-- ✅ FAQ CONTENT --}}
-<section class="py-5 pt-0">
-<div class="container" style="max-width:1000px;">
-    <div class="row g-4">
-
-        {{-- Kolom Kiri --}}
-        <div class="col-md-6">
-            <div class="accordion" id="faqLeft">
-
-                @php
-                    // Konten FAQ yang disesuaikan untuk Tower Management & Service
-                    $left = [
-                        'Di mana lokasi kantor pusat Tower Management?' =>
-                        'Kantor pusat kami berlokasi di Central Business District Jakarta. Detail alamat lengkap tersedia di halaman Kontak dan Google Maps.',
-                        'Apa saja jam operasional layanan kami?' =>
-                        'Jam operasional kantor adalah Senin - Jumat, 09.00 - 17.00 WIB. Dukungan teknis darurat tersedia 24/7 untuk klien kontrak.',
-                        'Bagaimana cara memulai proyek atau mendapatkan penawaran?' =>
-                        'Anda dapat mengisi formulir Permintaan Penawaran di halaman Layanan, atau langsung menghubungi tim sales kami melalui telepon/email.',
-                        'Apakah ada biaya konsultasi awal?' =>
-                        'Konsultasi awal untuk penjajakan proyek bersifat gratis. Kami akan memberikan estimasi biaya setelah memahami kebutuhan spesifik Anda.',
-                        'Bisa dilakukan penjadwalan ulang meeting?' =>
-                        'Tentu, silakan hubungi kontak mitra kami minimal 24 jam sebelum jadwal untuk koordinasi ulang.',
-                        'Layanan apa yang menjadi keunggulan utama Tower?' =>
-                        'Kami unggul dalam Jasa Konstruksi, Layanan Engineering terintegrasi, dan Solusi Otomatisasi Jaringan.'
-                    ];
-                @endphp
-
-                @foreach($left as $q => $a)
-                <div class="accordion-item" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#faqL{{ $loop->index }}"
-                                type="button">
-                            {{ $q }}
-                            <i class="fas fa-plus custom-icon"></i>
-                        </button>
-                    </h2>
-                    <div id="faqL{{ $loop->index }}" class="accordion-collapse collapse"
-                            data-bs-parent="#faqLeft">
-                        <div class="accordion-body">{{ $a }}</div>
-                    </div>
-                </div>
-                @endforeach
-
-            </div>
+    {{-- 🌌 MODERN HERO SECTION --}}
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-[#161f36]">
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-[#FF7518] rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-500 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2"></div>
         </div>
 
-        {{-- Kolom Kanan --}}
-        <div class="col-md-6">
-            <div class="accordion" id="faqRight">
+        <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+            <span class="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-[#FF7518] text-[10px] font-black uppercase tracking-[0.3em] mb-6" data-aos="fade-up">
+                Help Center
+            </span>
+            <h1 class="text-4xl md:text-6xl font-black text-white uppercase tracking-tight mb-8" data-aos="fade-up" data-aos-delay="100">
+                Ada yang bisa kami <span class="text-[#FF7518]">Bantu?</span>
+            </h1>
 
-                @php
-                    // Konten FAQ yang disesuaikan untuk Tower Management & Service
-                    $right = [
-                        'Apakah Tower menyediakan layanan di luar Jakarta?' =>
-                        'Ya, kami melayani proyek di berbagai kota besar di Indonesia. Silakan diskusikan lokasi proyek Anda dengan tim kami.',
-                        'Bagaimana proses purna jual dan garansi produk/layanan?' =>
-                        'Setiap produk dan layanan disertai garansi sesuai kontrak. Kami menyediakan tim purna jual dan dukungan teknis yang responsif.',
-                        'Minimal skala proyek yang diterima Tower?' =>
-                        'Kami melayani proyek dari skala menengah hingga besar, namun kami terbuka untuk diskusi proyek skala kecil dengan potensi jangka panjang.',
-                        'Apakah ada program pelatihan untuk klien?' =>
-                        'Ya, kami menyediakan pelatihan teknis (misalnya, untuk sistem otomatisasi) sebagai bagian dari paket layanan kami.',
-                        'Apa keunggulan Manufaktur Tower dibandingkan kompetitor?' =>
-                        'Keunggulan kami terletak pada kustomisasi produk industri yang presisi dan standar kualitas internasional.',
-                        'Apa yang membedakan Tower dari perusahaan manajemen lain?' =>
-                        'Integrasi solusi (produk, konstruksi, engineering) di bawah satu atap, didukung komitmen pada transparansi dan kualitas premium.'
-                    ];
-                @endphp
-
-                @foreach($right as $q => $a)
-                <div class="accordion-item" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#faqR{{ $loop->index }}"
-                                type="button">
-                            {{ $q }}
-                            <i class="fas fa-plus custom-icon"></i>
-                        </button>
-                    </h2>
-                    <div id="faqR{{ $loop->index }}" class="accordion-collapse collapse"
-                            data-bs-parent="#faqRight">
-                        <div class="accordion-body">{{ $a }}</div>
-                    </div>
+            {{-- 🔍 INTERACTIVE SEARCH BAR --}}
+            <div class="relative max-w-2xl mx-auto group" data-aos="fade-up" data-aos-delay="200">
+                <input type="text"
+                       x-model="search"
+                       placeholder="Cari pertanyaan Anda di sini..."
+                       class="w-full px-8 py-5 bg-white rounded-2xl shadow-2xl text-[#161f36] placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-[#FF7518]/30 transition-all text-sm md:text-base">
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-[#FF7518] rounded-xl flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-search"></i>
                 </div>
-                @endforeach
-
             </div>
         </div>
+    </section>
 
-    </div>
+    {{-- 🏗️ CONTENT SECTION --}}
+    <section class="py-12 -mt-10 relative z-20">
+        <div class="max-w-5xl mx-auto px-6">
+
+            {{-- 📑 CATEGORY TABS --}}
+            <div class="flex flex-wrap justify-center gap-3 mb-12" data-aos="fade-up">
+                <template x-for="tab in ['all', 'umum', 'teknis', 'layanan']">
+                    <button @click="activeTab = tab; activeFaq = null"
+                            class="px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2"
+                            :class="activeTab === tab ? 'bg-[#FF7518] border-[#FF7518] text-white shadow-xl shadow-orange-500/20 translate-y-[-2px]' : 'bg-white border-white text-gray-400 hover:border-gray-200 shadow-sm'">
+                        <span x-text="tab"></span>
+                    </button>
+                </template>
+            </div>
+
+            {{-- 🧩 FAQ ACCORDION LIST --}}
+            <div class="space-y-4 min-h-[400px]">
+                {{-- Empty State --}}
+                <div x-show="filteredFaqs.length === 0" x-cloak class="text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-300">
+                    <i class="fas fa-search text-gray-200 text-5xl mb-4"></i>
+                    <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Pertanyaan tidak ditemukan</p>
+                </div>
+
+                <template x-for="faq in filteredFaqs" :key="faq.id">
+                    <div class="group" data-aos="fade-up">
+                        <button @click="activeFaq === faq.id ? activeFaq = null : activeFaq = faq.id"
+                                class="w-full flex items-center justify-between p-6 bg-white rounded-2xl text-left transition-all duration-300 hover:shadow-xl"
+                                :class="activeFaq === faq.id ? 'ring-2 ring-[#FF7518] shadow-2xl' : 'shadow-sm'">
+                            <div class="flex items-center gap-4">
+                                <span class="w-10 h-10 rounded-xl bg-[#F4F7FA] flex items-center justify-center text-[#161f36] font-black text-xs group-hover:bg-[#FF7518] group-hover:text-white transition-colors"
+                                      :class="activeFaq === faq.id ? 'bg-[#FF7518] text-white' : ''">
+                                    Q
+                                </span>
+                                <span class="text-xs md:text-sm font-black uppercase tracking-tight"
+                                      :class="activeFaq === faq.id ? 'text-[#FF7518]' : 'text-[#161f36]'">
+                                    <span x-text="faq.q"></span>
+                                </span>
+                            </div>
+                            <i class="fas fa-chevron-down text-[10px] transition-transform duration-500 text-gray-300"
+                               :class="activeFaq === faq.id ? 'rotate-180 text-[#FF7518]' : ''"></i>
+                        </button>
+
+                        <div x-show="activeFaq === faq.id"
+                             x-collapse x-cloak
+                             class="overflow-hidden bg-white border-t border-gray-50 rounded-b-2xl shadow-xl shadow-gray-100/50">
+                            <div class="p-8 text-gray-500 text-sm leading-relaxed relative">
+                                <div class="absolute left-6 top-8 bottom-8 w-[2px] bg-[#FF7518]/20"></div>
+                                <div class="pl-6">
+                                    <span class="block text-[10px] font-black text-[#FF7518] mb-2 uppercase tracking-widest">Jawaban Kami:</span>
+                                    <span x-text="faq.a"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            {{-- 📞 CONTACT FOOTER --}}
+            <div class="mt-24 p-1 rounded-[3rem] bg-gradient-to-r from-[#FF7518] to-orange-400 shadow-2xl shadow-orange-500/20" data-aos="zoom-in">
+                <div class="bg-[#161f36] rounded-[2.8rem] p-10 lg:p-16 text-center relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h3 class="text-2xl lg:text-4xl font-black text-white uppercase tracking-tight mb-4">Masih butuh penjelasan?</h3>
+                        <p class="text-gray-400 text-xs lg:text-sm uppercase tracking-[0.2em] mb-10">Tim ahli kami siap melayani konsultasi teknis Anda kapan saja.</p>
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <a href="https://wa.me/62812345678" class="flex items-center gap-3 bg-[#FF7518] text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-orange-600 transition-all scale-100 hover:scale-105 shadow-xl shadow-orange-500/20">
+                                <i class="fab fa-whatsapp text-lg"></i> Mulai Konsultasi
+                            </a>
+                            <a href="/contact" class="flex items-center gap-3 bg-white/5 text-white border border-white/10 px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all">
+                                Hubungi Kami
+                            </a>
+                        </div>
+                    </div>
+                    {{-- Decorative Circle --}}
+                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-[#FF7518]/10 rounded-full blur-3xl"></div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
-</section>
 
-{{-- ✅ AOS Initialization Script --}}
-@push('scripts')
+{{-- Scripts --}}
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Inisialisasi AOS (Animate On Scroll)
-        AOS.init({
-            duration: 800, // Durasi animasi
-            once: true // Animasi hanya terjadi sekali saat scroll
-        });
-
-        // Menambahkan fungsionalitas untuk memastikan AOS bekerja saat accordion dibuka/ditutup
-        var accordions = document.querySelectorAll('.accordion-item');
-        accordions.forEach(function(item) {
-            item.addEventListener('shown.bs.collapse', function () {
-                AOS.refresh();
-            });
-        });
+        AOS.init({ duration: 1000, once: true });
     });
 </script>
-@endpush
+
+<style>
+    [x-cloak] { display: none !important; }
+    /* Scrollbar Style */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #F4F7FA; }
+    ::-webkit-scrollbar-thumb { background: #161f36; border-radius: 10px; border: 2px solid #F4F7FA; }
+    ::-webkit-scrollbar-thumb:hover { background: #FF7518; }
+</style>
 @endsection

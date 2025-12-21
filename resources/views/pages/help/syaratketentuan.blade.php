@@ -1,278 +1,189 @@
 @extends('layouts.app')
 
-@section('title', 'Syarat & Ketentuan Layanan - Tower Management')
-
-@push('styles')
-{{-- Memastikan Font Awesome (untuk ikon plus/minus) dan AOS dimuat --}}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-<style>
-/* |--------------------------------------------------------------------------
-| CUSTOM STYLES & OVERRIDES
-|--------------------------------------------------------------------------
-| Menggunakan variabel kustom CSS untuk tema warna dan beberapa override
-| yang sulit dilakukan dengan kelas utilitas Tailwind murni.
-*/
-:root {
-    --accent: #FFC300; /* Kuning Amber */
-    --bg-light: #F8F9FB;
-    --bg-card: #FFFFFF;
-    --text-dark: #2C3E50;
-    --text-muted: #7F8C8D;
-    --border-subtle: #E9ECEF;
-}
-
-/* Mengatur background body menggunakan CSS variabel */
-body {
-    background-color: var(--bg-light);
-    color: var(--text-dark);
-}
-
-/* Kategori Title (Override untuk padding/border kustom) */
-.sk-category-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin-top: 40px;
-    margin-bottom: 18px;
-    border-bottom: 2px solid var(--border-subtle);
-    padding-bottom: 8px;
-}
-
-/* Accordion active state override */
-.accordion-button:not(.collapsed) {
-    background: var(--accent) !important;
-    border-bottom: 1px solid var(--border-subtle) !important;
-    box-shadow: 0 2px 5px rgba(255, 195, 0, 0.2) !important;
-}
-
-/* Accordion body background */
-.accordion-body {
-    background-color: #F4F6F9 !important;
-    color: var(--text-dark);
-    line-height: 1.6;
-}
-
-/* Custom icon rotation */
-.accordion-button::after { display: none; }
-.custom-icon {
-    transition: transform 0.3s ease, color 0.3s ease;
-    color: var(--text-muted);
-}
-.accordion-button:not(.collapsed) .custom-icon {
-    transform: rotate(45deg);
-    color: var(--text-dark);
-}
-
-/* Warna aksen untuk list/strong di body */
-.accordion-body strong { color: var(--accent); }
-</style>
-@endpush
+@section('title', 'Syarat & Ketentuan - PT. RBM')
 
 @section('content')
-<section
-    class="pt-32 pb-16 bg-gradient-to-b from-[var(--bg-light)] to-[#F1F3F7] min-h-screen"
-    data-aos="fade-down"
->
-    {{-- HERO SECTION --}}
-    <div class="container mx-auto max-w-4xl px-4 text-center">
-        <h2 class="text-4xl font-extrabold text-[var(--text-dark)] md:text-5xl">
-            Syarat & Ketentuan Layanan
-        </h2>
+{{-- Google Fonts, Alpine.js, & AOS --}}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-        {{-- Divider Emas --}}
-        <div class="w-[70px] h-1 bg-[var(--accent)] mx-auto mt-2 mb-6 rounded"></div>
+<div class="bg-[#F4F7FA] min-h-screen font-['Poppins'] text-[#161f36]" x-data="{ activeSchedules: [1] }">
 
-        <p class="text-lg text-[var(--text-muted)] mx-auto max-w-3xl">
-            Dokumen ini mengatur hak dan kewajiban antara Klien dan Tower Management terkait semua produk dan layanan profesional yang disediakan.
-        </p>
-    </div>
+    {{-- 🌌 HERO BANNER: Konsisten dengan Produk & FAQ --}}
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden bg-[#161f36]">
+        <div class="absolute inset-0 z-0">
+            {{-- Background Pattern --}}
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#FF7518 0.5px, transparent 0.5px); background-size: 24px 24px;"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#161f36]"></div>
+        </div>
 
-    {{-- ACCORDION CONTENT --}}
-    <div class="container mx-auto max-w-4xl mt-12 px-4">
-        <div class="accordion" id="skAccordion">
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+            <nav class="flex justify-center mb-6" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-2 text-[10px] uppercase tracking-[0.3em] font-bold">
+                    <li><a href="/" class="text-gray-500 hover:text-white transition">Home</a></li>
+                    <li class="text-gray-600"><i class="fas fa-chevron-right text-[8px] mx-1"></i></li>
+                    <li class="text-[#FF7518]">Terms & Conditions</li>
+                </ol>
+            </nav>
+            <h1 class="text-3xl md:text-5xl font-black text-white uppercase tracking-tight" data-aos="fade-up">
+                Syarat & <span class="text-[#FF7518]">Ketentuan</span>
+            </h1>
+            <p class="text-gray-400 text-xs lg:text-sm mt-6 max-w-2xl mx-auto leading-relaxed uppercase tracking-widest font-medium" data-aos="fade-up" data-aos-delay="100">
+                Pedoman resmi mengenai hak, kewajiban, dan standar operasional antara PT. RBM dan mitra kerja.
+            </p>
+        </div>
+    </section>
 
-            {{-- KATEGORI 1: Ketentuan Kontrak & Umum --}}
-            <h3 class="sk-category-title" data-aos="fade-right">1. Ketentuan Kontrak & Umum</h3>
+    {{-- 🏗️ MAIN CONTENT --}}
+    <section class="py-16 lg:py-24">
+        <div class="max-w-4xl mx-auto px-6">
 
-            <div class="accordion-item shadow-lg mb-4 rounded-xl border border-[var(--border-subtle)]" data-aos="fade-up" data-aos-delay="100">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed flex items-center w-full text-left font-semibold text-lg py-4 px-6 rounded-xl transition duration-300 ease-in-out"
-                            data-bs-toggle="collapse" data-bs-target="#sk1" type="button">
-                        Persetujuan Kontrak Resmi
-                        <i class="fas fa-plus custom-icon text-xl"></i>
-                    </button>
-                </h2>
-                <div id="sk1" class="accordion-collapse collapse" data-bs-parent="#skAccordion">
-                    <div class="accordion-body text-base p-6 rounded-b-xl">
-                        Semua proyek dan layanan besar memerlukan penandatanganan **Perjanjian Layanan Tertulis (Kontrak)**. Penawaran atau *Purchase Order* (PO) dianggap sebagai persetujuan awal atas S&K yang berlaku, kecuali dinyatakan lain dalam Kontrak utama.
-                    </div>
+            {{-- Search/Filter Simple --}}
+            <div class="mb-12 flex items-center justify-between border-b border-gray-200 pb-6" data-aos="fade-up">
+                <div class="hidden md:block">
+                    <p class="text-[10px] font-black text-[#FF7518] uppercase tracking-[0.2em]">Update Terakhir</p>
+                    <p class="text-sm font-bold text-gray-400 uppercase">20 Desember 2025</p>
+                </div>
+                <div class="flex gap-4">
+                    <button @click="activeSchedules = [1,2,3,4,5,6,7,8,9]" class="text-[9px] font-black uppercase tracking-widest text-[#161f36] hover:text-[#FF7518]">Buka Semua</button>
+                    <span class="text-gray-300">|</span>
+                    <button @click="activeSchedules = []" class="text-[9px] font-black uppercase tracking-widest text-[#161f36] hover:text-[#FF7518]">Tutup Semua</button>
                 </div>
             </div>
 
-            <div class="accordion-item shadow-lg mb-4 rounded-xl border border-[var(--border-subtle)]" data-aos="fade-up" data-aos-delay="200">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed flex items-center w-full text-left font-semibold text-lg py-4 px-6 rounded-xl transition duration-300 ease-in-out"
-                            data-bs-toggle="collapse" data-bs-target="#sk2" type="button">
-                        Kewajiban Data Teknis & Lokasi
-                        <i class="fas fa-plus custom-icon text-xl"></i>
-                    </button>
-                </h2>
-                <div id="sk2" class="accordion-collapse collapse" data-bs-parent="#skAccordion">
-                    <div class="accordion-body text-base p-6 rounded-b-xl">
-                        Klien wajib menyediakan **data teknis, spesifikasi, dan akses lokasi** proyek yang lengkap dan akurat. Tower Management tidak bertanggung jawab atas keterlambatan atau kesalahan yang timbul akibat data yang tidak valid atau kurang lengkap.
+            <div class="space-y-12">
+
+                {{-- KATEGORI 1 --}}
+                <div data-aos="fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="flex-shrink-0 w-12 h-12 bg-[#161f36] text-[#FF7518] rounded-2xl flex items-center justify-center font-black text-xl shadow-lg shadow-navy-900/20">01</span>
+                        <h2 class="text-lg font-black uppercase tracking-tight text-[#161f36]">Ketentuan Kontrak & Umum</h2>
+                    </div>
+
+                    <div class="space-y-3">
+                        {{-- Item 1 --}}
+                        <div class="group bg-white rounded-2xl border border-gray-100 transition-all duration-300 overflow-hidden"
+                             :class="activeSchedules.includes(1) ? 'shadow-xl ring-1 ring-[#FF7518]/20' : 'shadow-sm'">
+                            <button @click="activeSchedules.includes(1) ? activeSchedules = activeSchedules.filter(i => i !== 1) : activeSchedules.push(1)"
+                                    class="w-full p-6 text-left flex items-center justify-between">
+                                <span class="text-sm font-extrabold uppercase tracking-tight" :class="activeSchedules.includes(1) ? 'text-[#FF7518]' : 'text-[#161f36]'">Persetujuan Kontrak Resmi</span>
+                                <i class="fas fa-plus text-[10px] transition-transform duration-500" :class="activeSchedules.includes(1) ? 'rotate-45 text-[#FF7518]' : 'text-gray-300'"></i>
+                            </button>
+                            <div x-show="activeSchedules.includes(1)" x-collapse x-cloak class="px-6 pb-6 text-sm text-gray-500 leading-relaxed">
+                                <p>Semua proyek dan layanan besar memerlukan penandatanganan <strong class="text-[#161f36]">Perjanjian Layanan Tertulis (Kontrak)</strong>. Penawaran atau Purchase Order (PO) dianggap sebagai persetujuan awal atas S&K yang berlaku.</p>
+                            </div>
+                        </div>
+
+                        {{-- Item 2 --}}
+                        <div class="group bg-white rounded-2xl border border-gray-100 transition-all duration-300 overflow-hidden"
+                             :class="activeSchedules.includes(2) ? 'shadow-xl ring-1 ring-[#FF7518]/20' : 'shadow-sm'">
+                            <button @click="activeSchedules.includes(2) ? activeSchedules = activeSchedules.filter(i => i !== 2) : activeSchedules.push(2)"
+                                    class="w-full p-6 text-left flex items-center justify-between">
+                                <span class="text-sm font-extrabold uppercase tracking-tight" :class="activeSchedules.includes(2) ? 'text-[#FF7518]' : 'text-[#161f36]'">Kewajiban Data Teknis & Lokasi</span>
+                                <i class="fas fa-plus text-[10px] transition-transform duration-500" :class="activeSchedules.includes(2) ? 'rotate-45 text-[#FF7518]' : 'text-gray-300'"></i>
+                            </button>
+                            <div x-show="activeSchedules.includes(2)" x-collapse x-cloak class="px-6 pb-6 text-sm text-gray-500 leading-relaxed">
+                                <p>Klien wajib menyediakan data teknis, spesifikasi, dan akses lokasi proyek yang lengkap. PT. RBM tidak bertanggung jawab atas kesalahan yang timbul akibat data yang tidak valid.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                {{-- KATEGORI 2 --}}
+                <div data-aos="fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="flex-shrink-0 w-12 h-12 bg-[#161f36] text-[#FF7518] rounded-2xl flex items-center justify-center font-black text-xl shadow-lg shadow-navy-900/20">02</span>
+                        <h2 class="text-lg font-black uppercase tracking-tight text-[#161f36]">Pembayaran & Penagihan</h2>
+                    </div>
+
+                    <div class="space-y-3">
+                        {{-- Item 4 --}}
+                        <div class="group bg-white rounded-2xl border border-gray-100 transition-all duration-300 overflow-hidden"
+                             :class="activeSchedules.includes(4) ? 'shadow-xl ring-1 ring-[#FF7518]/20' : 'shadow-sm'">
+                            <button @click="activeSchedules.includes(4) ? activeSchedules = activeSchedules.filter(i => i !== 4) : activeSchedules.push(4)"
+                                    class="w-full p-6 text-left flex items-center justify-between">
+                                <span class="text-sm font-extrabold uppercase tracking-tight" :class="activeSchedules.includes(4) ? 'text-[#FF7518]' : 'text-[#161f36]'">Syarat Pembayaran & Termin</span>
+                                <i class="fas fa-plus text-[10px] transition-transform duration-500" :class="activeSchedules.includes(4) ? 'rotate-45 text-[#FF7518]' : 'text-gray-300'"></i>
+                            </button>
+                            <div x-show="activeSchedules.includes(4)" x-collapse x-cloak class="px-6 pb-6 text-sm text-gray-500 leading-relaxed">
+                                <p>Pembayaran dilakukan dalam 3 tahap utama:</p>
+                                <ul class="mt-4 space-y-2">
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-check-circle text-[#FF7518] mt-1 text-[10px]"></i>
+                                        <span><strong class="text-[#161f36]">Termin 1 (DP):</strong> Mobilisasi tim dan material.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-check-circle text-[#FF7518] mt-1 text-[10px]"></i>
+                                        <span><strong class="text-[#161f36]">Termin 2 (Progress):</strong> Berdasarkan pencapaian target kerja.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-check-circle text-[#FF7518] mt-1 text-[10px]"></i>
+                                        <span><strong class="text-[#161f36]">Termin 3 (Final):</strong> Pelunasan setelah serah terima (FHO).</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- KATEGORI 3 --}}
+                <div data-aos="fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="flex-shrink-0 w-12 h-12 bg-[#161f36] text-[#FF7518] rounded-2xl flex items-center justify-center font-black text-xl shadow-lg shadow-navy-900/20">03</span>
+                        <h2 class="text-lg font-black uppercase tracking-tight text-[#161f36]">Garansi & Jaminan</h2>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="group bg-white rounded-2xl border border-gray-100 transition-all duration-300 overflow-hidden"
+                             :class="activeSchedules.includes(8) ? 'shadow-xl ring-1 ring-[#FF7518]/20' : 'shadow-sm'">
+                            <button @click="activeSchedules.includes(8) ? activeSchedules = activeSchedules.filter(i => i !== 8) : activeSchedules.push(8)"
+                                    class="w-full p-6 text-left flex items-center justify-between">
+                                <span class="text-sm font-extrabold uppercase tracking-tight" :class="activeSchedules.includes(8) ? 'text-[#FF7518]' : 'text-[#161f36]'">Periode & Batasan Garansi</span>
+                                <i class="fas fa-plus text-[10px] transition-transform duration-500" :class="activeSchedules.includes(8) ? 'rotate-45 text-[#FF7518]' : 'text-gray-300'"></i>
+                            </button>
+                            <div x-show="activeSchedules.includes(8)" x-collapse x-cloak class="px-6 pb-6 text-sm text-gray-500 leading-relaxed">
+                                <p>Semua pengerjaan dilindungi garansi operasional selama 6-12 bulan. Garansi tidak berlaku jika terjadi modifikasi oleh pihak ketiga tanpa persetujuan tertulis dari PT. RBM.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="accordion-item shadow-lg mb-4 rounded-xl border border-[var(--border-subtle)]" data-aos="fade-up" data-aos-delay="300">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed flex items-center w-full text-left font-semibold text-lg py-4 px-6 rounded-xl transition duration-300 ease-in-out"
-                            data-bs-toggle="collapse" data-bs-target="#sk3" type="button">
-                        Hak Kekayaan Intelektual (HKI)
-                        <i class="fas fa-plus custom-icon text-xl"></i>
-                    </button>
-                </h2>
-                <div id="sk3" class="accordion-collapse collapse" data-bs-parent="#skAccordion">
-                    <div class="accordion-body text-base p-6 rounded-b-xl">
-                        Semua **desain, blueprint, metodologi, dan perangkat lunak** yang dikembangkan oleh Tower selama proyek tetap menjadi HKI milik Tower, kecuali HKI tersebut secara eksplisit dialihkan kepada Klien melalui persetujuan tertulis dalam Kontrak.
+            {{-- 📥 DOWNLOAD SECTION --}}
+            <div class="mt-20 p-8 rounded-[2rem] bg-white border border-[#161f36]/5 flex flex-col md:flex-row items-center justify-between gap-6" data-aos="zoom-in">
+                <div class="flex items-center gap-5">
+                    <div class="w-14 h-14 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black uppercase text-[#161f36]">Versi Cetak (PDF)</h4>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Syarat_Ketentuan_RBM_2025.pdf</p>
                     </div>
                 </div>
-            </div>
-
-            {{-- KATEGORI 2: Pembayaran & Penagihan --}}
-            <h3 class="sk-category-title" data-aos="fade-right">2. Pembayaran & Penagihan</h3>
-
-            <div class="accordion-item shadow-lg mb-4 rounded-xl border border-[var(--border-subtle)]" data-aos="fade-up" data-aos-delay="400">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed flex items-center w-full text-left font-semibold text-lg py-4 px-6 rounded-xl transition duration-300 ease-in-out"
-                            data-bs-toggle="collapse" data-bs-target="#sk4" type="button">
-                        Syarat Pembayaran & Termin
-                        <i class="fas fa-plus custom-icon text-xl"></i>
-                    </button>
-                </h2>
-                <div id="sk4" class="accordion-collapse collapse" data-bs-parent="#skAccordion">
-                    <div class="accordion-body text-base p-6 rounded-b-xl">
-                        Pembayaran proyek akan mengikuti jadwal termin yang disepakati dalam Kontrak. Umumnya melibatkan:
-                        <ol class="list-decimal list-inside ml-4 mt-2 space-y-1">
-                            <li>**Pembayaran Uang Muka (Down Payment/DP)** untuk mobilisasi tim dan pembelian material awal.</li>
-                            <li>Pembayaran Progres berdasarkan pencapaian target kerja.</li>
-                            <li>Pembayaran Akhir setelah serah terima proyek (Final Handover).</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-
-            <div class="accordion-item shadow-lg mb-4 rounded-xl border border-[var(--border-subtle)]" data-aos="fade-up" data-aos-delay="500">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed flex items-center w-full text-left font-semibold text-lg py-4 px-6 rounded-xl transition duration-300 ease-in-out"
-                            data-bs-toggle="collapse" data-bs-target="#sk5" type="button">
-                        Keterlambatan Pembayaran
-                        <i class="fas fa-plus custom-icon text-xl"></i>
-                    </button>
-                </h2>
-                <div id="sk5" class="accordion-collapse collapse" data-bs-parent="#skAccordion">
-                    <div class="accordion-body text-base p-6 rounded-b-xl">
-                        Keterlambatan pembayaran melebihi batas waktu yang ditentukan dalam faktur dapat mengakibatkan **penghentian sementara** layanan atau pekerjaan proyek tanpa pemberitahuan lebih lanjut.
-                    </div>
-                </div>
-            </div>
-
-            {{-- KATEGORI 3: Pembatalan & Pengakhiran Kontrak --}}
-            <h3 class="sk-category-title" data-aos="fade-right">3. Pembatalan & Pengakhiran Kontrak</h3>
-
-            <div class="accordion-item shadow-lg mb-4 rounded-xl border border-[var(--border-subtle)]" data-aos="fade-up" data-aos-delay="600">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed flex items-center w-full text-left font-semibold text-lg py-4 px-6 rounded-xl transition duration-300 ease-in-out"
-                            data-bs-toggle="collapse" data-bs-target="#sk6" type="button">
-                        Pembatalan Proyek oleh Klien
-                        <i class="fas fa-plus custom-icon text-xl"></i>
-                    </button>
-                </h2>
-                <div id="sk6" class="accordion-collapse collapse" data-bs-parent="#skAccordion">
-                    <div class="accordion-body text-base p-6 rounded-b-xl">
-                        Jika Klien membatalkan proyek setelah Kontrak ditandatangani, Klien berkewajiban membayar **seluruh biaya pekerjaan yang telah diselesaikan** dan **biaya pembatalan** (termasuk biaya material non-refundable dan biaya administrasi) yang diatur dalam Kontrak.
-                    </div>
-                </div>
-            </div>
-
-            <div class="accordion-item shadow-lg mb-4 rounded-xl border border-[var(--border-subtle)]" data-aos="fade-up" data-aos-delay="700">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed flex items-center w-full text-left font-semibold text-lg py-4 px-6 rounded-xl transition duration-300 ease-in-out"
-                            data-bs-toggle="collapse" data-bs-target="#sk7" type="button">
-                        Pengakhiran oleh Tower Management
-                        <i class="fas fa-plus custom-icon text-xl"></i>
-                    </button>
-                </h2>
-                <div id="sk7" class="accordion-collapse collapse" data-bs-parent="#skAccordion">
-                    <div class="accordion-body text-base p-6 rounded-b-xl">
-                        Tower berhak mengakhiri Kontrak secara sepihak jika Klien melanggar S&K, gagal melakukan pembayaran, atau terlibat dalam aktivitas ilegal yang merugikan nama baik atau operasional Tower.
-                    </div>
-                </div>
-            </div>
-
-            {{-- KATEGORI 4: Garansi & Jaminan Kualitas --}}
-            <h3 class="sk-category-title" data-aos="fade-right">4. Garansi & Jaminan Kualitas</h3>
-
-            <div class="accordion-item shadow-lg mb-4 rounded-xl border border-[var(--border-subtle)]" data-aos="fade-up" data-aos-delay="800">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed flex items-center w-full text-left font-semibold text-lg py-4 px-6 rounded-xl transition duration-300 ease-in-out"
-                            data-bs-toggle="collapse" data-bs-target="#sk8" type="button">
-                        Periode Garansi
-                        <i class="fas fa-plus custom-icon text-xl"></i>
-                    </button>
-                </h2>
-                <div id="sk8" class="accordion-collapse collapse" data-bs-parent="#skAccordion">
-                    <div class="accordion-body text-base p-6 rounded-b-xl">
-                        Produk dan instalasi kami dilindungi oleh Garansi selama periode yang ditetapkan, terhitung sejak tanggal Serah Terima Proyek (FHO). Durasi garansi bervariasi tergantung jenis layanan/produk.
-                    </div>
-                </div>
-            </div>
-
-            <div class="accordion-item shadow-lg mb-4 rounded-xl border border-[var(--border-subtle)]" data-aos="fade-up" data-aos-delay="900">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed flex items-center w-full text-left font-semibold text-lg py-4 px-6 rounded-xl transition duration-300 ease-in-out"
-                            data-bs-toggle="collapse" data-bs-target="#sk9" type="button">
-                        Batasan Garansi
-                        <i class="fas fa-plus custom-icon text-xl"></i>
-                    </button>
-                </h2>
-                <div id="sk9" class="accordion-collapse collapse" data-bs-parent="#skAccordion">
-                    <div class="accordion-body text-base p-6 rounded-b-xl">
-                        Garansi tidak mencakup kerusakan yang disebabkan oleh:
-                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
-                            <li>Penggunaan yang salah atau tidak sesuai panduan.</li>
-                            <li>Modifikasi atau perbaikan yang dilakukan pihak ketiga tanpa izin Tower.</li>
-                            <li>Bencana alam (force majeure).</li>
-                        </ul>
-                    </div>
-                </div>
+                <a href="#" class="w-full md:w-auto px-8 py-4 bg-[#161f36] text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#FF7518] transition-all shadow-lg text-center">
+                    Unduh Dokumen
+                </a>
             </div>
 
         </div>
-    </div>
-</section>
+    </section>
+</div>
 
-{{-- ✅ AOS Initialization Script (Wajib agar data-aos bekerja) --}}
-@push('scripts')
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Inisialisasi AOS (Animate On Scroll)
-        AOS.init({
-            duration: 800, // Durasi animasi
-            once: true // Animasi hanya terjadi sekali saat scroll
-        });
-
-        // Refresh AOS saat accordion dibuka
-        var accordions = document.querySelectorAll('.accordion-item');
-        accordions.forEach(function(item) {
-            item.addEventListener('shown.bs.collapse', function () {
-                AOS.refresh();
-            });
-        });
+        AOS.init({ duration: 1000, once: true });
     });
 </script>
-@endpush
+
+<style>
+    [x-cloak] { display: none !important; }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #F4F7FA; }
+    ::-webkit-scrollbar-thumb { background: #161f36; border-radius: 10px; border: 2px solid #F4F7FA; }
+    ::-webkit-scrollbar-thumb:hover { background: #FF7518; }
+</style>
 @endsection
