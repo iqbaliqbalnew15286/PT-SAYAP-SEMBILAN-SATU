@@ -293,6 +293,7 @@
             <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                     <div class="space-y-6">
+
                         <img src="{{ asset('assets/img/image.png') }}" alt="Logo RBM"
                             class="h-14 brightness-0 invert opacity-90">
                         <p class="text-rbm-light-text text-sm leading-relaxed">Berdedikasi untuk memberikan layanan
@@ -302,6 +303,48 @@
                                 <a href="#" class="text-gray-400 hover:text-rbm-accent transition"><i
                                         class="fab fa-{{ $icon }} text-lg"></i></a>
                             @endforeach
+
+                        {{-- Struktur Branding --}}
+                        <a href="/" class="flex items-center gap-3">
+                            {{-- Logo putih agar kontras --}}
+                            <img src="{{ asset('assets/img/image.png') }}" alt="Logo RBM"
+                                class="h-10">
+                            <div>
+                                {{-- Teks Logo Putih --}}
+                                <span class="text-white font-semibold text-lg leading-tight">PT. RIZQALLAH BOER MAKMUR</span>
+                                <span class="block text-rbm-light-text text-xs">Jakarta, Indonesia</span>
+                            </div>
+                        </a>
+
+                        {{-- Deskripsi text-rbm-light-text (Abu-abu terang kustom) --}}
+                        <p class="text-rbm-light-text text-sm leading-relaxed">
+                            Penyedia jasa kontraktor dan supplier terbaik di Indonesia. Kami menjamin kualitas dan ketepatan waktu proyek Anda.
+                        </p>
+
+                        {{-- Ikon Sosial Media (Hover background Oranye Terang) --}}
+                        <div class="flex items-center space-x-3">
+                            {{-- Ikon default gray-400, container hover rbm-accent --}}
+                            <a href="#" target="_blank"
+                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-rbm-accent">
+                                <i
+                                    class="fab fa-youtube text-gray-400 text-xl group-hover:text-white transition-colors"></i>
+                            </a>
+                            <a href="#" target="_blank"
+                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-rbm-accent">
+                                <i
+                                    class="fab fa-instagram text-gray-400 text-xl group-hover:text-white transition-colors"></i>
+                            </a>
+                            <a href="#" target="_blank"
+                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-rbm-accent">
+                                <i
+                                    class="fab fa-facebook-f text-gray-400 text-xl group-hover:text-white transition-colors"></i>
+                            </a>
+                            <a href="#" target="_blank"
+                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-rbm-accent">
+                                <i
+                                    class="fab fa-linkedin text-gray-400 text-xl group-hover:text-white transition-colors"></i>
+                            </a>
+
                         </div>
                     </div>
 
