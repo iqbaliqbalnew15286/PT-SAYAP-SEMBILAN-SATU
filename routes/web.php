@@ -125,10 +125,12 @@ Route::get('/partners/{id}', function ($id) {
 // List Facilities
 Route::get('/facilities', function () {
     $facilities = \App\Models\Facility::latest()->get();
+    $facility = $facilities->first();
+    $other_facilities = $facilities->skip(1)->take(3);
     $groupedFacilities = $facilities->groupBy('type');
     $facilityImages = collect(); // Placeholder
     $gridImages = collect(); // Placeholder
-    return view('pages.facilities.index', compact('facilities', 'groupedFacilities', 'facilityImages', 'gridImages'));
+    return view('pages.facilities.index', compact('facility', 'other_facilities', 'facilities', 'groupedFacilities', 'facilityImages', 'gridImages'));
 })->name('facilities');
 
 // Detail Facility

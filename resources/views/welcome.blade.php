@@ -520,53 +520,114 @@ document.addEventListener('scroll', () => {
             border-radius: 10px;
         }
     </style>
+{{-- Testimonials Section - Interactive Blue & Orange --}}
+<section class="py-24 bg-gray-50 overflow-hidden">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    {{-- Testimonials Section --}}
-    <section class="py-24 bg-white overflow-hidden">
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
-                <div class="text-left">
-                    <h2 class="text-3xl md:text-4xl font-black text-[#282829]">Suara Mitra Kami</h2>
-                    <div class="w-12 h-1.5 bg-[#FF7518] mt-2 rounded-full"></div>
-                </div>
-                <a href="{{ route('send.testimonial') }}"
-                    class="group flex items-center gap-3 px-6 py-3 bg-[#161f36] text-white rounded-xl font-bold hover:bg-[#FF7518] transition-all duration-300 shadow-lg shadow-blue-900/20">
-                    <i class="fas fa-plus-circle group-hover:rotate-90 transition-transform duration-500"></i>
-                    Bagi Pengalaman Anda
-                </a>
+        {{-- Title dengan Mix Warna Biru & Oranye --}}
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-[#161f36] mb-4 tracking-tight">Testimoni</h2>
+            <div class="flex justify-center gap-1.5">
+                <div class="w-16 h-2 bg-[#161f36] rounded-full"></div> {{-- Biru Tua --}}
+                <div class="w-4 h-2 bg-[#FF7518] rounded-full animate-pulse"></div> {{-- Oranye --}}
+                <div class="w-4 h-2 bg-[#FF7518]/50 rounded-full"></div>
+            </div>
+        </div>
+
+        <div x-data="{
+            skip: 1,
+            atBeginning: true,
+            atEnd: false,
+            next() {
+                this.$refs.slider.scrollBy({ left: this.$refs.slider.firstElementChild.clientWidth + 24, behavior: 'smooth' })
+            },
+            prev() {
+                this.$refs.slider.scrollBy({ left: -(this.$refs.slider.firstElementChild.clientWidth + 24), behavior: 'smooth' })
+            },
+            checkPosition() {
+                this.atBeginning = this.$refs.slider.scrollLeft <= 5
+                this.atEnd = this.$refs.slider.scrollLeft + this.$refs.slider.clientWidth >= this.$refs.slider.scrollWidth - 5
+            }
+        }" class="relative px-4">
+
+            {{-- Tombol Navigasi Interaktif --}}
+            <div class="absolute top-1/2 -translate-y-1/2 inset-x-0 z-30 flex justify-between pointer-events-none px-2 md:-mx-8">
+                <button @click="prev()"
+                    class="pointer-events-auto w-12 h-12 bg-white text-[#161f36] border-2 border-[#161f36] rounded-full flex items-center justify-center hover:bg-[#161f36] hover:text-white transition-all duration-300 shadow-lg disabled:opacity-30 disabled:cursor-not-allowed"
+                    :disabled="atBeginning">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+
+                <button @click="next()"
+                    class="pointer-events-auto w-12 h-12 bg-[#FF7518] text-white rounded-full flex items-center justify-center hover:bg-[#e66a15] transition-all duration-300 shadow-lg shadow-orange-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                    :disabled="atEnd">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
 
-            <div class="relative testimonial-slider">
-                <div class="flex gap-8 animate-testimonial-slider hover:[animation-play-state:paused] py-4">
-                    @foreach (array_merge($testimonials->toArray(), $testimonials->toArray()) as $testimonial)
-                        <div
-                            class="min-w-[350px] md:min-w-[400px] bg-[#161f36] p-8 rounded-[2rem] relative group transition-all duration-500 hover:-translate-y-2">
-                            <div class="absolute top-0 right-10 w-12 h-2 bg-[#FF7518] rounded-b-xl"></div>
-                            <div class="mb-6 text-orange-400">
-                                <i class="fas fa-quote-left text-3xl opacity-50"></i>
+            {{-- Slider Container --}}
+            <div x-ref="slider" @scroll.debounce.10ms="checkPosition()"
+                class="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-10 pt-4">
+
+                @foreach ($testimonials as $testimonial)
+                    <div class="min-w-full md:min-w-[calc(50%-12px)] snap-start group">
+                        <div class="bg-white p-10 rounded-[2rem] shadow-[0_4px_20px_rgba(0,0,0,0.05)] border-b-4 border-transparent hover:border-[#FF7518] h-full flex flex-col justify-between transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 relative">
+
+                            {{-- Ikon Kutipan Interaktif --}}
+                            <div class="absolute top-6 left-8 text-gray-100 group-hover:text-orange-50 transition-colors duration-500">
+                                <i class="fas fa-quote-left text-6xl"></i>
                             </div>
-                            <p class="text-gray-200 leading-relaxed mb-8 h-24 overflow-y-auto custom-scrollbar">
-                                "{{ $testimonial['message'] }}"
-                            </p>
-                            <div class="flex items-center gap-4 border-t border-white/10 pt-6">
-                                <div
-                                    class="w-12 h-12 rounded-full bg-[#FF7518] flex items-center justify-center text-[#161f36] font-black shadow-lg">
-                                    {{ strtoupper(substr($testimonial['name'], 0, 1)) }}
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-white leading-none">{{ $testimonial['name'] }}</h4>
+
+                            <div class="relative z-10 mb-8">
+                                <p class="text-gray-600 leading-relaxed text-lg italic font-medium">
+                                    "{{ $testimonial['message'] }}"
+                                </p>
+                            </div>
+
+                            {{-- Profil di Pojok Kanan Bawah --}}
+                            <div class="flex items-center justify-end gap-5 border-t border-gray-50 pt-8">
+                                <div class="text-right">
+                                    <h4 class="font-bold text-[#161f36] text-xl group-hover:text-[#FF7518] transition-colors">{{ $testimonial['name'] }}</h4>
                                     @if ($testimonial['company'])
-                                        <p class="text-[#FF7518] text-[10px] font-bold uppercase tracking-widest mt-1.5">
-                                            {{ $testimonial['company'] }}</p>
+                                        <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">{{ $testimonial['company'] }}</p>
+                                    @endif
+                                </div>
+
+                                {{-- Avatar Biru dengan Border Oranye --}}
+                                <div class="w-20 h-20 rounded-2xl bg-[#161f36] border-2 border-transparent group-hover:border-[#FF7518] shadow-lg flex-shrink-0 overflow-hidden flex items-center justify-center text-white text-3xl font-bold transition-all duration-500 transform group-hover:rotate-3">
+                                    @if(isset($testimonial['photo']) && $testimonial['photo'])
+                                        <img src="{{ asset($testimonial['photo']) }}" class="w-full h-full object-cover">
+                                    @else
+                                        {{ strtoupper(substr($testimonial['name'], 0, 1)) }}
                                     @endif
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
             </div>
         </div>
-    </section>
+
+        {{-- CTA Button --}}
+        <div class="mt-8 text-center">
+            <a href="{{ route('send.testimonial') }}"
+                class="inline-flex items-center gap-3 px-10 py-4 bg-[#161f36] text-white rounded-full font-bold hover:bg-[#FF7518] transition-all duration-300 shadow-xl group">
+                <i class="fas fa-comment-dots group-hover:scale-125 transition-transform"></i>
+                Bagi Pengalaman Anda
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
 
     {{-- Contact & Address Section --}}
     <section class="py-24 bg-slate-50 animate-on-scroll">

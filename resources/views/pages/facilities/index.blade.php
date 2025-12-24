@@ -3,168 +3,252 @@
 @section('title', 'Katalog Fasilitas - PT. RBM')
 
 @section('content')
-{{-- Load Scripts --}}
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    {{-- Resource & Fonts --}}
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<div class="bg-[#F9FBFF] min-h-screen font-['Poppins'] text-[#1A202C]"
-     x-data="{ activeTab: 'all', search: '' }">
-
-    {{-- 🌌 HERO SECTION --}}
     @php
-        $heroBg = $facilities->count() > 0 ? Storage::url($facilities->first()->image) : 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070';
+        // Ambil data gambar dari koleksi $facilities untuk elemen desain dinamis
+        $fHero1 = $facilities->where('type', 'Peralatan Pabrikas')->first()
+            ? Storage::url($facilities->where('type', 'Peralatan Pabrikas')->first()->image)
+            : 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2000';
+        $fHero2 = $facilities->where('type', 'Kendaraan Operasional')->first()
+            ? Storage::url($facilities->where('type', 'Kendaraan Operasional')->first()->image)
+            : 'https://images.unsplash.com/photo-1544380904-c686119ec4f5?q=80&w=2000';
+
+        $fGrid1 = $facilities->skip(1)->first() ? Storage::url($facilities->skip(1)->first()->image) : $fHero1;
+        $fGrid2 = $facilities->skip(2)->first() ? Storage::url($facilities->skip(2)->first()->image) : $fHero2;
+        $fGrid3 = $facilities->skip(3)->first() ? Storage::url($facilities->skip(3)->first()->image) : $fHero1;
     @endphp
 
-    <section class="relative h-[35vh] lg:h-[45vh] flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 z-0">
-            <img src="{{ $heroBg }}" class="w-full h-full object-cover scale-105 animate-slow-zoom" alt="Hero">
-            <div class="absolute inset-0 bg-gradient-to-b from-[#161f36]/90 via-[#161f36]/70 to-[#F9FBFF]"></div>
-        </div>
-        <div class="relative z-10 text-center px-6" data-aos="fade-up">
-            <span class="inline-block py-1 px-4 rounded-full bg-[#FF7518] text-white font-bold text-[9px] tracking-[0.3em] uppercase mb-4 shadow-lg shadow-orange-500/20">
-                Infrastruktur & Aset
-            </span>
-            <h1 class="text-3xl md:text-6xl font-black text-white mb-2 tracking-tight uppercase">
-                Our <span class="text-[#FF7518]">Facilities</span>
-            </h1>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fcfcfc;
+        }
+
+        .heading-tight {
+            letter-spacing: -0.04em;
+        }
+
+        .bg-navy {
+            background-color: #161f36;
+        }
+
+        .text-orange-main {
+            color: #FF7518;
+        }
+
+        .bg-orange-main {
+            background-color: #FF7518;
+        }
+
+        @keyframes slow-zoom {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .animate-slow-zoom {
+            animation: slow-zoom 20s infinite ease-in-out;
+        }
+    </style>
+
+    {{-- 🌌 1. HERO SLIDER (Gaya Amaliah - Fasilitas) --}}
+    <section class="relative w-full h-[450px] overflow-hidden">
+        <div x-data="{ activeSlide: 1, totalSlides: 2 }" x-init="setInterval(() => { activeSlide = activeSlide % totalSlides + 1 }, 5000)" class="h-full">
+
+            <div x-show="activeSlide === 1" x-transition.opacity.duration.1000ms class="absolute inset-0">
+                <img src="{{ $fHero1 }}" class="w-full h-full object-cover animate-slow-zoom">
+                <div class="absolute inset-0 bg-[#161f36]/60 flex items-center justify-center">
+                    <h2 class="text-white text-4xl md:text-6xl font-extrabold uppercase heading-tight text-center px-4">
+                        Industrial <span class="text-orange-main">Facilities</span>
+                    </h2>
+                </div>
+            </div>
+
+            <div x-show="activeSlide === 2" x-transition.opacity.duration.1000ms class="absolute inset-0">
+                <img src="{{ $fHero2 }}" class="w-full h-full object-cover animate-slow-zoom">
+                <div class="absolute inset-0 bg-[#161f36]/60 flex items-center justify-center">
+                    <h2 class="text-white text-4xl md:text-6xl font-extrabold uppercase heading-tight text-center px-4">
+                        Operation <span class="text-orange-main">Support</span>
+                    </h2>
+                </div>
+            </div>
         </div>
     </section>
 
-    {{-- 🏷️ STICKY FILTER & SEARCH BAR (Sinkron dengan Form Input) --}}
-    <div class="sticky top-16 lg:top-20 z-40 max-w-6xl mx-auto px-4 -mt-8">
-        <div class="bg-white/95 backdrop-blur-xl p-2 rounded-2xl lg:rounded-[2.5rem] shadow-2xl border border-white/50 flex flex-col md:flex-row gap-2">
-
-            {{-- Search Input --}}
-            <div class="relative flex-1 group">
-                <span class="absolute inset-y-0 left-5 flex items-center text-[#FF7518]">
-                    <i class="fas fa-search text-sm"></i>
-                </span>
-                <input type="text" x-model="search" placeholder="Cari nama alat atau spesifikasi..."
-                       class="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-xl lg:rounded-3xl text-sm focus:ring-2 focus:ring-[#FF7518]/20 transition-all font-medium text-[#161f36]">
-            </div>
-
-            {{-- Tab Buttons (Sesuaikan dengan value di Form) --}}
-            <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl lg:rounded-3xl overflow-x-auto no-scrollbar">
-                <button @click="activeTab = 'all'"
-                    :class="activeTab === 'all' ? 'bg-[#161f36] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
-                    class="whitespace-nowrap px-5 lg:px-8 py-2.5 rounded-lg lg:rounded-[2rem] text-[10px] lg:text-xs font-black transition-all duration-300 uppercase tracking-widest">
-                    Semua
-                </button>
-                <button @click="activeTab = 'Peralatan Pabrikas'"
-                    :class="activeTab === 'Peralatan Pabrikas' ? 'bg-[#FF7518] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
-                    class="whitespace-nowrap px-5 lg:px-8 py-2.5 rounded-lg lg:rounded-[2rem] text-[10px] lg:text-xs font-black transition-all duration-300 uppercase tracking-widest">
-                    Pabrikasi
-                </button>
-                <button @click="activeTab = 'Peralatan Maintenance'"
-                    :class="activeTab === 'Peralatan Maintenance' ? 'bg-[#FF7518] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
-                    class="whitespace-nowrap px-5 lg:px-8 py-2.5 rounded-lg lg:rounded-[2rem] text-[10px] lg:text-xs font-black transition-all duration-300 uppercase tracking-widest">
-                    Maintenance
-                </button>
-                <button @click="activeTab = 'Kendaraan Operasional'"
-                    :class="activeTab === 'Kendaraan Operasional' ? 'bg-[#FF7518] text-white shadow-md' : 'text-gray-500 hover:bg-white'"
-                    class="whitespace-nowrap px-5 lg:px-8 py-2.5 rounded-lg lg:rounded-[2rem] text-[10px] lg:text-xs font-black transition-all duration-300 uppercase tracking-widest">
-                    Kendaraan
-                </button>
-            </div>
+    {{-- 🍞 2. BREADCRUMB DARK (Gaya Amaliah) --}}
+    <div class="bg-[#2D2D2D] py-4">
+        <div class="max-w-7xl mx-auto px-6">
+            <nav class="flex text-sm font-bold uppercase tracking-widest text-gray-400 items-center">
+                <a href="/" class="hover:text-white transition-colors">Home</a>
+                <span class="mx-3 text-white">/</span>
+                <span class="text-white">Our Facilities</span>
+            </nav>
         </div>
     </div>
 
-    {{-- 🏗️ CONTENT SECTION --}}
-    <section class="py-12 lg:py-20">
-        <div class="max-w-7xl mx-auto px-6 space-y-20">
-
-            @php
-                $categories = [
-                    'Peralatan Pabrikasi' => 'Peralatan Pabrikas',
-                    'Peralatan Maintenance' => 'Peralatan Maintenance',
-                    'Kendaraan Operasional' => 'Kendaraan Operasional'
-                ];
-            @endphp
-
-            @foreach($categories as $displayTitle => $dbValue)
-                @php $items = $facilities->where('type', $dbValue); @endphp
-
-                @if($items->count() > 0)
-                <div x-show="activeTab === 'all' || activeTab === '{{ $dbValue }}'"
-                     class="space-y-8"
-                     x-transition:enter="transition ease-out duration-500">
-
-                    {{-- Judul Kategori Otomatis --}}
-                    <div class="flex items-center justify-between border-b border-gray-100 pb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="h-8 w-1.5 bg-[#FF7518] rounded-full"></div>
-                            <h2 class="text-xl md:text-2xl font-black text-[#161f36] uppercase tracking-tight">{{ $displayTitle }}</h2>
-                        </div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-gray-100">
-                            {{ $items->count() }} Unit
-                        </span>
+    {{-- 🏗️ 3. DYNAMIC GRID SECTION (Layout 3 Foto - Fasilitas) --}}
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="flex items-end justify-center lg:justify-start gap-4">
+                    <div class="h-48 w-28 rounded-2xl overflow-hidden shadow-xl">
+                        <img src="{{ $fGrid1 }}" class="h-full w-full object-cover">
                     </div>
-
-                    {{-- Grid Kartu --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-                        @foreach($items as $facility)
-                        <div x-show="search === '' || '{{ strtolower($facility->name . ' ' . $facility->description) }}'.includes(search.toLowerCase())"
-                             class="group bg-white rounded-[2rem] overflow-hidden border border-gray-50 shadow-sm hover:shadow-2xl transition-all duration-500"
-                             data-aos="fade-up">
-
-                            {{-- Foto --}}
-                            <div class="relative aspect-square overflow-hidden bg-gray-100">
-                                <img src="{{ Storage::url($facility->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                <div class="absolute top-4 left-4">
-                                    <span class="bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest text-[#FF7518] border border-orange-100">
-                                        {{ $facility->type }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            {{-- Info --}}
-                            <div class="p-6">
-                                <h3 class="text-base font-black text-[#161f36] mb-2 group-hover:text-[#FF7518] transition-colors uppercase leading-tight">
-                                    {{ $facility->name }}
-                                </h3>
-                                <p class="text-gray-500 text-xs leading-relaxed mb-6 line-clamp-2 italic">
-                                    "{{ $facility->description }}"
-                                </p>
-                                <div class="pt-5 border-t border-gray-50 flex items-center justify-between">
-                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                                        ID: {{ str_pad($facility->id, 3, '0', STR_PAD_LEFT) }}
-                                    </span>
-                                    <a href="{{ route('facilities.show', $facility->id) }}" class="w-8 h-8 bg-[#161f36] text-white rounded-lg flex items-center justify-center hover:bg-[#FF7518] transition-all">
-                                        <i class="fas fa-arrow-right text-[10px]"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
+                    <div class="h-80 w-40 rounded-2xl overflow-hidden shadow-2xl border-4 border-white -mb-10">
+                        <img src="{{ $fGrid2 }}" class="h-full w-full object-cover">
+                    </div>
+                    <div class="h-64 w-32 rounded-2xl overflow-hidden shadow-xl">
+                        <img src="{{ $fGrid3 }}" class="h-full w-full object-cover">
                     </div>
                 </div>
-                @endif
-            @endforeach
 
-            {{-- 🔍 EMPTY SEARCH STATE --}}
-            <div x-show="search !== '' && !document.querySelector('.group:not([style*=\'display: none\'])')"
-                 class="py-20 text-center bg-white rounded-[3rem] shadow-sm border border-dashed border-gray-200">
-                <i class="fas fa-search-minus fa-3x text-gray-200 mb-4"></i>
-                <h3 class="text-lg font-bold text-gray-400 italic">Data tidak ditemukan untuk "<span x-text="search" class="text-[#FF7518]"></span>"</h3>
+                <div class="text-center lg:text-left">
+                    <div class="w-20 h-1.5 bg-orange-main mb-6 mx-auto lg:mx-0"></div>
+                    <h2 class="text-3xl md:text-5xl font-extrabold text-[#161f36] heading-tight uppercase mb-6">Aset &
+                        Armada <br> Terstandarisasi</h2>
+                    <p class="text-gray-500 leading-relaxed mb-8 font-medium italic">Kami didukung oleh infrastruktur modern
+                        dan peralatan kelas industri untuk menjamin presisi di setiap pengerjaan proyek.</p>
+                    <div class="flex flex-wrap gap-6 justify-center lg:justify-start">
+                        <div class="flex items-center gap-2 font-black text-navy text-xs uppercase">
+                            <i class="fas fa-tools text-orange-main"></i> High Precision
+                        </div>
+                        <div class="flex items-center gap-2 font-black text-navy text-xs uppercase">
+                            <i class="fas fa-truck-moving text-orange-main"></i> Fast Response
+                        </div>
+                    </div>
+                </div>
             </div>
-
         </div>
     </section>
-</div>
 
-<style>
-    @keyframes slow-zoom { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
-    .animate-slow-zoom { animation: slow-zoom 20s infinite ease-in-out; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    html { scroll-behavior: smooth; }
-</style>
+    {{-- 🏷️ 4. STICKY FILTER & CATALOG (Gaya Modern) --}}
+    <div x-data="{ activeTab: 'all', search: '' }">
+        <section class="py-20 bg-[#fcfcfc]">
+            <div class="max-w-7xl mx-auto px-6">
 
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        AOS.init({ duration: 1000, once: true });
-    });
-</script>
+                {{-- Search & Filter Bar --}}
+                <div
+                    class="flex flex-col lg:flex-row gap-6 justify-between items-center mb-16 bg-white p-4 rounded-[2.5rem] shadow-sm border border-gray-100">
+                    <div class="relative w-full lg:w-1/3">
+                        <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-orange-main"></i>
+                        <input type="text" x-model="search" placeholder="Cari fasilitas..."
+                            class="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-full text-sm focus:ring-2 focus:ring-orange-main/20 font-bold">
+                    </div>
+
+                    <div class="flex gap-2 overflow-x-auto no-scrollbar w-full lg:w-auto p-1">
+                        <button @click="activeTab = 'all'"
+                            :class="activeTab === 'all' ? 'bg-navy text-white shadow-lg' : 'bg-gray-100 text-gray-500'"
+                            class="px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Semua</button>
+                        <button @click="activeTab = 'Peralatan Pabrikas'"
+                            :class="activeTab === 'Peralatan Pabrikas' ? 'bg-orange-main text-white shadow-lg' :
+                                'bg-gray-100 text-gray-500'"
+                            class="px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Pabrikasi</button>
+                        <button @click="activeTab = 'Peralatan Maintenance'"
+                            :class="activeTab === 'Peralatan Maintenance' ? 'bg-orange-main text-white shadow-lg' :
+                                'bg-gray-100 text-gray-500'"
+                            class="px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Maintenance</button>
+                        <button @click="activeTab = 'Kendaraan Operasional'"
+                            :class="activeTab === 'Kendaraan Operasional' ? 'bg-orange-main text-white shadow-lg' :
+                                'bg-gray-100 text-gray-500'"
+                            class="px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Kendaraan</button>
+                    </div>
+                </div>
+
+                {{-- Loop Kategori --}}
+                <div class="space-y-24">
+                    @php
+                        $categories = [
+                            'Peralatan Pabrikasi' => 'Peralatan Pabrikas',
+                            'Peralatan Maintenance' => 'Peralatan Maintenance',
+                            'Kendaraan Operasional' => 'Kendaraan Operasional',
+                        ];
+                    @endphp
+
+                    @foreach ($categories as $label => $dbValue)
+                        @php $filtered = $facilities->where('type', $dbValue); @endphp
+
+                        @if ($filtered->count() > 0)
+                            <div x-show="activeTab === 'all' || activeTab === '{{ $dbValue }}'" x-transition.fade>
+                                <div class="flex items-center gap-4 mb-10">
+                                    <h3 class="text-2xl font-black text-navy uppercase tracking-tighter">{{ $label }}
+                                    </h3>
+                                    <div class="flex-1 h-[1px] bg-gray-100"></div>
+                                    <span
+                                        class="bg-gray-50 px-4 py-1 rounded-full text-[10px] font-bold text-gray-400 uppercase tracking-widest border border-gray-100">{{ $filtered->count() }}
+                                        Items</span>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                                    @foreach ($filtered as $f)
+                                        <div x-show="search === '' || '{{ strtolower($f->name) }}'.includes(search.toLowerCase())"
+                                            class="group bg-white rounded-[2rem] overflow-hidden border border-gray-50 shadow-sm hover:shadow-2xl transition-all duration-500">
+                                            <div class="relative aspect-square overflow-hidden bg-gray-100">
+                                                <img src="{{ Storage::url($f->image) }}"
+                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                            </div>
+                                            <div class="p-6">
+                                                <h4
+                                                    class="text-sm font-black text-navy mb-2 group-hover:text-orange-main transition-colors uppercase leading-tight">
+                                                    {{ $f->name }}</h4>
+                                                <p
+                                                    class="text-gray-400 text-[10px] leading-relaxed mb-6 italic line-clamp-2">
+                                                    "{{ $f->description }}"</p>
+                                                <div class="pt-4 border-t border-gray-50 flex justify-between items-center">
+                                                    <span
+                                                        class="text-[9px] font-bold text-gray-300 uppercase">ASET-{{ str_pad($f->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                                    <a href="{{ route('facilities.show', $f->id) }}"
+                                                        class="w-8 h-8 bg-navy text-white rounded-xl flex items-center justify-center hover:bg-orange-main transition-all">
+                                                        <i class="fas fa-chevron-right text-[10px]"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    {{-- 📞 6. CTA FINAL (Identik Produk) --}}
+    <section class="pb-24 px-6">
+        <div class="max-w-7xl mx-auto bg-navy rounded-[4rem] p-12 md:p-24 text-center relative overflow-hidden shadow-2xl">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-orange-main opacity-20 rounded-full blur-[120px]"></div>
+            <div class="relative z-10">
+                <h2 class="text-3xl md:text-6xl font-extrabold text-white mb-8 uppercase heading-tight">Build with <br>
+                    <span class="text-orange-main">Expertise</span></h2>
+                <p class="text-gray-400 mb-14 max-w-xl mx-auto font-medium opacity-80 italic">Kualitas hasil kerja
+                    ditentukan oleh kualitas alat dan keahlian tim kami.</p>
+                <a href="/contact"
+                    class="bg-orange-main text-white px-16 py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] hover:bg-white hover:text-navy transition-all duration-300 shadow-xl">Contact
+                    Us Now</a>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 @endsection

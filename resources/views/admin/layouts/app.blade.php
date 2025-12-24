@@ -201,7 +201,7 @@
                @else
                    text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)]
                @endif">
-                 <i class="bi bi-handshake me-2 @if(request()->routeIs('admin.partners.index')) text-[var(--primary-accent)] @endif"></i> Mitra
+                 <i class="bi bi-handshake me-2 @if(request()->routeIs('admin.partners.index')) text-[var(--primary-accent)] @endif"></i> Mitra Industri
             </a>
             <a href="{{ route('admin.facilities.index') }}"
                class="flex items-center py-2 px-3 my-1 rounded-lg text-sm transition-colors duration-200
