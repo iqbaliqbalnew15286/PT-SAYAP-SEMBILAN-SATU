@@ -77,8 +77,8 @@
 
                             {{-- Foto Testimoni --}}
                             <td class="px-4 py-3 text-center border-r border-subtle-gray">
-                                @if($t->photo && Storage::disk('public')->exists($t->photo))
-                                    <img src="{{ asset('storage/'.$t->photo) }}" width="50" height="50"
+                                @if($t->image && Storage::disk('public')->exists($t->image))
+                                    <img src="{{ asset('storage/'.$t->image) }}" width="50" height="50"
                                          class="rounded-full mx-auto object-cover border border-gray-200" alt="Foto Klien">
                                 @else
                                     <i class="fas fa-user-circle text-4xl text-gray-400"></i>

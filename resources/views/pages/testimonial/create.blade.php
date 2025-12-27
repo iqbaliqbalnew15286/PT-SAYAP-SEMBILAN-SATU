@@ -1,60 +1,110 @@
 @extends('layouts.app')
 
-@section('title', 'Kirim Testimoni - PT. Rizqallah Boer Makmur')
+@section('title', 'Tambah Testimoni')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="bg-white rounded-lg shadow-lg p-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-6 text-center">Kirim Testimoni</h1>
-        <p class="text-gray-600 mb-8 text-center">
-            Bagikan pengalaman Anda dengan PT. Rizqallah Boer Makmur. Testimoni Anda akan ditinjau oleh admin sebelum ditampilkan.
-        </p>
 
-        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
-                {{ session('success') }}
+<style>
+    .text-dark-tower { color: #2C3E50; }
+    .bg-dark-tower { background-color: #2C3E50; }
+    .text-accent-tower { color: #FF8C00; }
+    .bg-accent-tower { background-color: #FF8C00; }
+    .hover\:bg-accent-dark:hover { background-color: #E67E22; }
+    .shadow-soft { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); }
+
+    input[type="file"]::file-selector-button {
+        background-color: #f3f4f6;
+        color: #374151;
+        border: none;
+        padding: 0.5rem 1rem;
+        margin-right: 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+        background-color: #e5e7eb;
+    }
+</style>
+
+<div class="container mx-auto px-4 md:px-8 py-8">
+    <div class="bg-white rounded-2xl shadow-soft overflow-hidden">
+
+        {{-- Header --}}
+        <div class="flex items-center justify-between px-6 md:px-8 py-5 border-b">
+            <div>
+                <h4 class="text-2xl font-bold text-dark-tower">Tambah Testimoni Baru</h4>
+                <p class="text-sm text-gray-500 mt-1">Isi data testimoni pelanggan dengan lengkap</p>
             </div>
-        @endif
-
-        @if($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <div class="hidden md:block w-12 h-12 rounded-full bg-accent-tower/10 flex items-center justify-center">
+                <i class="fas fa-comment-dots text-accent-tower text-xl"></i>
             </div>
-        @endif
+        </div>
 
-        <form action="{{ route('testimonial.store') }}" method="POST" class="space-y-6">
+        {{-- Form --}}
+        <form action="{{ route('admin.testimonials.store') }}" method="POST" enctype="multipart/form-data" class="px-6 md:px-8 py-6">
             @csrf
 
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap *</label>
-                <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-rbm-accent focus:border-rbm-accent">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                {{-- Nama --}}
+                <div>
+                    <label for="name" class="block text-sm font-semibold text-dark-tower mb-2">
+                        Nama <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="name" id="name" required
+                        value="{{ old('name') }}"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('name') border-red-500 @enderror">
+                    @error('name')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Foto --}}
+                <div>
+                    <label for="photo" class="block text-sm font-semibold text-dark-tower mb-2">
+                        Foto (Opsional)
+                    </label>
+                    <input type="file" name="photo" id="photo" accept="image/*"
+                        class="w-full text-sm text-gray-700 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('photo') border-red-500 @enderror">
+                    @error('photo')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Pesan --}}
+                <div class="md:col-span-2">
+                    <label for="message" class="block text-sm font-semibold text-dark-tower mb-2">
+                        Pesan <span class="text-red-500">*</span>
+                    </label>
+                    <textarea name="message" id="message" rows="4" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition resize-none @error('message') border-red-500 @enderror">{{ old('message') }}</textarea>
+                    @error('message')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
             </div>
 
-            <div>
-                <label for="company" class="block text-sm font-medium text-gray-700">Perusahaan (Opsional)</label>
-                <input type="text" name="company" id="company" value="{{ old('company') }}"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-rbm-accent focus:border-rbm-accent">
-            </div>
+            {{-- Tombol --}}
+            <div class="mt-10 flex items-center justify-end gap-3 pt-6 border-t">
 
-            <div>
-                <label for="message" class="block text-sm font-medium text-gray-700">Pesan Testimoni *</label>
-                <textarea name="message" id="message" rows="5" required
-                          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-rbm-accent focus:border-rbm-accent"
-                          placeholder="Tuliskan pengalaman Anda dengan PT. Rizqallah Boer Makmur...">{{ old('message') }}</textarea>
-            </div>
+                <a href="{{ route('admin.testimonials.index') }}"
+                   class="px-6 py-2.5 rounded-xl font-semibold bg-gray-100 text-dark-tower hover:bg-gray-200 transition text-sm">
+                    Kembali
+                </a>
 
-            <div class="flex justify-end">
                 <button type="submit"
-                        class="bg-rbm-accent text-white px-6 py-2 rounded-md font-semibold hover:bg-opacity-90 transition-colors">
-                    Kirim Testimoni
+                    class="px-6 py-2.5 rounded-xl font-semibold bg-dark-tower text-white hover:bg-gray-800 transition shadow-md flex items-center gap-2 text-sm">
+                    <i class="fas fa-save"></i>
+                    Simpan
                 </button>
+
             </div>
         </form>
     </div>
 </div>
+
 @endsection

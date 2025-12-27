@@ -83,7 +83,7 @@
             {{-- BANNER --}}
             <section class="relative bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-md">
 
-                <img src="{{ asset('assets/img/image.png') }}" alt="Tower Banner"
+                <img src="{{ asset('assets/img/foto1.png') }}" alt="Tower Banner"
                     class="w-full h-72 md:h-80 object-cover object-center">
 
                 {{-- Overlay elegan --}}

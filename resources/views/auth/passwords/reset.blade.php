@@ -114,7 +114,7 @@
                         <i class="fa-solid fa-tower-broadcast text-white text-xl"></i>
                     </div>
                     <div class="leading-tight">
-                        <p class="text-xl font-extrabold tracking-tight text-slate-800">PT Sayap Sembilan Satu</p>
+                        <p class="text-xl font-extrabold tracking-tight text-slate-800">PT Rizkallah Boer Makmur</p>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-orange-500">Premium Tower
                             Infrastructure</p>
                     </div>
@@ -147,7 +147,7 @@
                 </div>
 
                 <footer class="mt-8 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">
-                    &copy; {{ date('Y') }} PT Sayap Sembilan Satu • Secure Access Point
+                    &copy; {{ date('Y') }} PT Rizkallah Boer Makmur • Secure Access Point
                 </footer>
             </div>
 
@@ -233,7 +233,7 @@
                         class="text-sm font-bold text-slate-400 hover:text-orange-500 transition-colors">
                         <i class="fa-solid fa-arrow-left mr-2"></i> Back to Login
                     </a>
-                    <p class="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">Secured by Sayap 91 Node
+                    <p class="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">Secured by RBM Node
                     </p>
                 </div>
             </div>

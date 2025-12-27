@@ -72,9 +72,9 @@
                     <label class="block text-sm font-medium text-dark-tower mb-1">Foto Klien (Opsional)</label>
 
                     {{-- Pratinjau Foto Saat Ini --}}
-                    @if($testimonial->photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($testimonial->photo))
+                    @if($testimonial->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($testimonial->image))
                         <div class="mb-3 flex items-center space-x-3">
-                            <img src="{{ asset('storage/'.$testimonial->photo) }}"
+                            <img src="{{ asset('storage/'.$testimonial->image) }}"
                                  class="w-16 h-16 rounded-full object-cover shadow-md border border-gray-200"
                                  alt="Foto Klien Saat Ini">
                             <span class="text-xs text-gray-500">Foto saat ini</span>
@@ -83,11 +83,11 @@
                         <span class="text-sm text-gray-500 block mb-3">Belum ada foto terunggah.</span>
                     @endif
 
-                    <input type="file" name="photo" id="photo" accept="image/*"
-                           class="w-full border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('photo') border-red-500 @enderror">
+                    <input type="file" name="image" id="image" accept="image/*"
+                           class="w-full border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('image') border-red-500 @enderror">
                     <p class="text-xs text-gray-500 mt-1">Unggah file baru untuk mengganti foto lama.</p>
 
-                    @error('photo')
+                    @error('image')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
