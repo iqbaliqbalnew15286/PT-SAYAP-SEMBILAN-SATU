@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Admin - Tower Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
@@ -14,12 +15,18 @@
             TOWER LIGHT MODE - BLUE & ORANGE
         -------------------------------*/
         :root {
-            --bg-light-main: #F8FAFC;    /* Latar belakang utama (putih kebiruan) */
-            --bg-card: #FFFFFF;          /* Putih bersih */
-            --primary-blue: #0F172A;     /* Navy Gelap untuk teks/aksen */
-            --accent-orange: #FF5F00;    /* Oranye menyala sesuai screenshot */
-            --accent-blue: #3B82F6;      /* Biru pendukung */
-            --text-muted: #64748B;       /* Abu-abu teks */
+            --bg-light-main: #F8FAFC;
+            /* Latar belakang utama (putih kebiruan) */
+            --bg-card: #FFFFFF;
+            /* Putih bersih */
+            --primary-blue: #0F172A;
+            /* Navy Gelap untuk teks/aksen */
+            --accent-orange: #FF5F00;
+            /* Oranye menyala sesuai screenshot */
+            --accent-blue: #3B82F6;
+            /* Biru pendukung */
+            --text-muted: #64748B;
+            /* Abu-abu teks */
         }
 
         body {
@@ -74,8 +81,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .password-toggle:hover {
@@ -89,33 +103,42 @@
     <div class="flex flex-1 min-h-screen">
 
         {{-- LEFT PANEL (INFO & STATS) --}}
-        <div class="hidden md:flex flex-1/2 lg:w-2/3 bg-white p-12 flex-col justify-between fade-in border-r border-slate-100">
+        <div
+            class="hidden md:flex flex-1/2 lg:w-2/3 bg-white p-12 flex-col justify-between fade-in border-r border-slate-100">
 
             <div class="max-w-xl mx-auto w-full h-full flex flex-col justify-between">
 
                 <header class="flex items-center space-x-4 mt-4">
-                    <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-200">
+                    <div
+                        class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-200">
                         <i class="fa-solid fa-tower-broadcast text-white text-xl"></i>
                     </div>
                     <div class="leading-tight">
                         <p class="text-xl font-extrabold tracking-tight text-slate-800">PT Sayap Sembilan Satu</p>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-orange-500">Premium Tower Infrastructure</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-orange-500">Premium Tower
+                            Infrastructure</p>
                     </div>
                 </header>
 
                 <div class="flex-1 flex flex-col justify-center space-y-8 py-10">
 
                     {{-- Image Card (Hero) --}}
-                    <div class="relative w-full h-[320px] rounded-[2rem] overflow-hidden shadow-2xl border border-slate-100">
+                    <div
+                        class="relative w-full h-[320px] rounded-[2rem] overflow-hidden shadow-2xl border border-slate-100">
                         <img src="https://images.unsplash.com/photo-1544669503-4453427da239?q=80&w=2070" alt="Hero"
                             class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent">
+                        </div>
 
                         <div class="absolute bottom-0 left-0 p-8 text-white">
-                            <span class="bg-orange-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase mb-3 inline-block">System Active</span>
+                            <span
+                                class="bg-orange-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase mb-3 inline-block">System
+                                Active</span>
                             <p class="text-3xl font-bold tracking-tight">Real-Time Monitoring</p>
-                            <p class="text-sm mt-1 text-slate-200 font-light">Akses terpusat kendali infrastruktur menara.</p>
-                            <a href="#" class="text-sm font-bold mt-4 inline-flex items-center text-orange-400 hover:text-orange-300 transition-colors">
+                            <p class="text-sm mt-1 text-slate-200 font-light">Akses terpusat kendali infrastruktur
+                                menara.</p>
+                            <a href="#"
+                                class="text-sm font-bold mt-4 inline-flex items-center text-orange-400 hover:text-orange-300 transition-colors">
                                 <i class="fa-solid fa-circle-dot mr-2 animate-pulse"></i> Cek Status Jaringan
                             </a>
                         </div>
@@ -129,7 +152,8 @@
                             </div>
                             <div>
                                 <p class="font-bold text-slate-800 text-sm">Main Website</p>
-                                <a href="/" class="text-xs font-semibold text-slate-400 hover:text-orange-500 transition-all">
+                                <a href="/"
+                                    class="text-xs font-semibold text-slate-400 hover:text-orange-500 transition-all">
                                     <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
                                 </a>
                             </div>
@@ -141,7 +165,8 @@
                             </div>
                             <div>
                                 <p class="font-bold text-slate-800 text-sm">Tech Support</p>
-                                <a href="#" class="text-xs font-semibold text-slate-400 hover:text-blue-500 transition-all">
+                                <a href="#"
+                                    class="text-xs font-semibold text-slate-400 hover:text-blue-500 transition-all">
                                     <i class="fa-solid fa-phone mr-1"></i> Hubungi Kami
                                 </a>
                             </div>
@@ -157,7 +182,8 @@
         </div>
 
         {{-- RIGHT PANEL LOGIN FORM --}}
-        <div class="w-full md:w-1/2 lg:w-1/3 bg-white flex flex-col justify-center px-10 py-16 shadow-[-20px_0_50px_rgba(0,0,0,0.03)] relative z-10">
+        <div
+            class="w-full md:w-1/2 lg:w-1/3 bg-white flex flex-col justify-center px-10 py-16 shadow-[-20px_0_50px_rgba(0,0,0,0.03)] relative z-10">
 
             <div class="max-w-md mx-auto w-full">
                 <div class="mb-10 text-left">
@@ -169,7 +195,8 @@
                 </div>
 
                 @if ($errors->any())
-                    <div class="bg-red-50 text-red-600 text-xs rounded-xl p-4 mb-6 border border-red-100 flex flex-col gap-1">
+                    <div
+                        class="bg-red-50 text-red-600 text-xs rounded-xl p-4 mb-6 border border-red-100 flex flex-col gap-1">
                         @foreach ($errors->all() as $error)
                             <div><i class="fas fa-circle-exclamation mr-2"></i> {{ $error }}</div>
                         @endforeach
@@ -180,7 +207,8 @@
                     @csrf
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Email
+                            Address</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
                                 <i class="fa-solid fa-envelope-open"></i>
@@ -193,8 +221,10 @@
 
                     <div class="space-y-2">
                         <div class="flex justify-between items-center px-1">
-                            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Security Password</label>
-                            <a href="#" class="text-[10px] font-bold text-orange-500 hover:underline">FORGOT?</a>
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Security
+                                Password</label>
+                            <a href="{{ route('password.request') }}"
+                                class="text-[10px] font-bold text-orange-500 hover:underline">FORGOT?</a>
                         </div>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
@@ -212,8 +242,11 @@
 
                     <div class="flex items-center py-2">
                         <label class="flex items-center group cursor-pointer">
-                            <input type="checkbox" name="remember" class="h-4 w-4 border-slate-200 rounded text-orange-500 focus:ring-orange-500/20">
-                            <span class="ml-3 text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Keep me logged in</span>
+                            <input type="checkbox" name="remember"
+                                class="h-4 w-4 border-slate-200 rounded text-orange-500 focus:ring-orange-500/20">
+                            <span
+                                class="ml-3 text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Keep
+                                me logged in</span>
                         </label>
                     </div>
 
@@ -224,7 +257,8 @@
                 </form>
 
                 <div class="text-center mt-10">
-                    <p class="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">Secured by Sayap 91 Node</p>
+                    <p class="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">Secured by Sayap 91 Node
+                    </p>
                 </div>
             </div>
         </div>
@@ -246,4 +280,5 @@
         }
     </script>
 </body>
+
 </html>

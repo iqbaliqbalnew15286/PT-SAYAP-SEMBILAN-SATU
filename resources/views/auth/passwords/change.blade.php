@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Forgot Password - Tower Management</title>
+    <title>Change Password - Tower Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -91,6 +91,10 @@
                 transform: translateY(0);
             }
         }
+
+        .password-toggle:hover {
+            color: var(--accent-orange);
+        }
     </style>
 </head>
 
@@ -122,11 +126,11 @@
                     <div class="grid grid-cols-2 gap-6 w-full">
                         <div class="card-info flex items-center p-6 space-x-4 border-l-4 border-orange-500">
                             <div class="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-envelope text-xl text-orange-500"></i>
+                                <i class="fas fa-key text-xl text-orange-500"></i>
                             </div>
                             <div>
-                                <p class="font-bold text-slate-800 text-sm">Password Recovery</p>
-                                <p class="text-xs text-slate-400">Reset link akan dikirim ke email Anda</p>
+                                <p class="font-bold text-slate-800 text-sm">New Password</p>
+                                <p class="text-xs text-slate-400">Buat password baru yang kuat</p>
                             </div>
                         </div>
 
@@ -135,8 +139,8 @@
                                 <i class="fas fa-shield-alt text-xl text-blue-500"></i>
                             </div>
                             <div>
-                                <p class="font-bold text-slate-800 text-sm">Secure Process</p>
-                                <p class="text-xs text-slate-400">Proses reset password yang aman</p>
+                                <p class="font-bold text-slate-800 text-sm">Secure Account</p>
+                                <p class="text-xs text-slate-400">Lindungi akun Anda dengan password kuat</p>
                             </div>
                         </div>
                     </div>
@@ -149,25 +153,18 @@
 
         </div>
 
-        {{-- RIGHT PANEL FORGOT PASSWORD FORM --}}
+        {{-- RIGHT PANEL CHANGE PASSWORD FORM --}}
         <div
             class="w-full md:w-1/2 lg:w-1/3 bg-white flex flex-col justify-center px-10 py-16 shadow-[-20px_0_50px_rgba(0,0,0,0.03)] relative z-10">
 
             <div class="max-w-md mx-auto w-full">
                 <div class="mb-10 text-left">
                     <h1 class="text-4xl font-extrabold mb-2 tracking-tight text-slate-900">
-                        Reset <span class="text-orange-500">Password.</span>
+                        New <span class="text-orange-500">Password.</span>
                     </h1>
-                    <p class="text-sm font-medium text-slate-400">Masukkan email untuk menerima link reset</p>
+                    <p class="text-sm font-medium text-slate-400">Masukkan password baru untuk akun Anda</p>
                     <div class="w-12 h-1.5 bg-orange-500 mt-4 rounded-full"></div>
                 </div>
-
-                @if (session('status'))
-                    <div
-                        class="bg-green-50 text-green-600 text-xs rounded-xl p-4 mb-6 border border-green-100 flex items-center">
-                        <i class="fas fa-check-circle mr-2"></i> {{ session('status') }}
-                    </div>
-                @endif
 
                 @if ($errors->any())
                     <div
@@ -178,25 +175,42 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('password.email') }}" class="space-y-5">
+                <form method="POST" action="{{ route('password.change.post') }}" class="space-y-5">
                     @csrf
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Email
-                            Address</label>
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">New
+                            Password</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
-                                <i class="fa-solid fa-envelope-open"></i>
+                                <i class="fa-solid fa-shield-lock"></i>
                             </span>
-                            <input name="email" type="email" value="{{ old('email') }}"
+                            <input name="password" id="password_field" type="password"
+                                class="w-full rounded-xl py-4 pl-12 pr-12 input-light font-medium focus:ring-0 text-sm"
+                                placeholder="••••••••" required>
+                            <span class="absolute inset-y-0 right-4 flex items-center text-slate-400 password-toggle"
+                                onclick="togglePasswordVisibility()">
+                                <i id="toggleIcon" class="fa-solid fa-eye text-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Confirm
+                            Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
+                                <i class="fa-solid fa-shield-check"></i>
+                            </span>
+                            <input name="password_confirmation" type="password"
                                 class="w-full rounded-xl py-4 pl-12 pr-4 input-light font-medium focus:ring-0 text-sm"
-                                placeholder="name@company.com" required autofocus>
+                                placeholder="••••••••" required>
                         </div>
                     </div>
 
                     <button type="submit"
                         class="w-full py-4 rounded-xl btn-orange font-extrabold text-sm tracking-widest uppercase transition-all duration-300">
-                        Send Reset Link <i class="fa-solid fa-paper-plane ml-2"></i>
+                        Change Password <i class="fa-solid fa-key ml-2"></i>
                     </button>
                 </form>
 
@@ -212,6 +226,21 @@
         </div>
 
     </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password_field');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+    </script>
 
 </body>
 
