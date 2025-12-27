@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AdminAuthController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\VerifyCodeController;
 use App\Http\Controllers\PublicTestimonialController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
@@ -146,6 +148,14 @@ Route::get('/facilities/{id}', function ($id) {
 Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
+// Password Reset Routes
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/verify-code', [VerifyCodeController::class, 'showVerifyForm'])->name('password.verify');
+Route::post('/verify-code', [VerifyCodeController::class, 'verifyCode'])->name('password.verify.post');
+Route::get('/change-password', [VerifyCodeController::class, 'showChangePasswordForm'])->name('password.change');
+Route::post('/change-password', [VerifyCodeController::class, 'changePassword'])->name('password.change.post');
 
 
 // ==================== ADMIN CMS ====================
