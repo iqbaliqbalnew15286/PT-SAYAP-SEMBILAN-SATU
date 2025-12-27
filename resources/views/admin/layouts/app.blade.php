@@ -134,7 +134,6 @@
                 <i class="bi bi-speedometer2 me-2 @if(request()->routeIs('admin.dashboard')) text-[var(--primary-accent)] @else text-[var(--text-muted)] @endif"></i>
                 Dashboard
             </div>
-            <i class="bi bi-chevron-right text-base text-[var(--text-muted)]"></i>
         </a>
 
         {{-- MANAJEMEN KONTEN (ACCORDION) --}}
@@ -214,24 +213,9 @@
             </a>
         </div>
 
-        {{-- MENU FUNGSIONAL --}}
-        <div class="menu-section text-[var(--text-muted)] text-xs font-extrabold uppercase my-4 mx-2 tracking-wider">Fungsionalitas</div>
 
-        <a href="{{ route('admin.testimonials.index') }}" class="nav-link-custom flex items-center p-3 rounded-xl font-medium mb-1 text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)]">
-            <div class="flex items-center">
-                <i class="bi bi-calendar-check me-2 text-[var(--text-muted)] hover:text-[var(--primary-accent)]"></i> Reservasi
-            </div>
-        </a>
-        <a href="{{ route('admin.partners.index') }}" class="nav-link-custom flex items-center p-3 rounded-xl font-medium mb-1 text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)]">
-            <div class="flex items-center">
-                <i class="bi bi-people me-2 text-[var(--text-muted)] hover:text-[var(--primary-accent)]"></i> Pengguna
-            </div>
-        </a>
-        <a href="{{ route('admin.facilities.index') }}" class="nav-link-custom flex items-center p-3 rounded-xl font-medium mb-1 text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)]">
-            <div class="flex items-center">
-                <i class="bi bi-gear me-2 text-[var(--text-muted)] hover:text-[var(--primary-accent)]"></i> Pengaturan Sistem
-            </div>
-        </a>
+        <div class="menu-section text-[var(--text-muted)] text-xs font-extrabold uppercase my-4 mx-2 tracking-wider">Autentikasi & Akses</div>
+
 
     </nav>
 

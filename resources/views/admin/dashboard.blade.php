@@ -51,7 +51,7 @@
             <div class="mb-8">
                 <div class="w-full rounded-lg overflow-hidden border border-[#D9D9D9] shadow-lg">
                     <img alt="Panoramic aerial view of modern building complex with glass and greenery"
-                        class="w-full h-40 object-cover object-center" src="{{ asset('assets/image/DroneView.jpg') }}" />
+                        class="w-full h-40 object-cover object-center" src="{{ asset('assets/img/image.png') }}" />
                 </div>
             </div>
 
