@@ -135,7 +135,7 @@
                         <div class="flex flex-col border-l border-gray-200 pl-3">
                             <span
                                 class="text-rbm-dark font-times text-sm md:text-lg font-bold leading-tight uppercase tracking-tighter">
-                                PT SAYAP SEMBILAN SATU
+                                PT RIZKALLAH BOER MAKMUR
                             </span>
                             <span
                                 class="text-[10px] md:text-xs font-sans text-gray-500 font-medium tracking-widest uppercase opacity-80">
