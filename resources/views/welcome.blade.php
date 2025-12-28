@@ -238,14 +238,14 @@
             <div class="space-y-10 reveal">
                 <div class="relative pl-6 border-l-4 border-[#FF7518]">
                     <h3 class="text-xl font-bold text-[#161f36] mb-4">
-                        PT SAYAP SEMBILAN SATU
+                        PT Rizqallah Boer Makmur
                     </h3>
 
                     <p class="text-gray-700 text-base leading-relaxed">
-                        Penyedia infrastruktur menara telekomunikasi di bawah naungan
-                        <span class="px-2 py-0.5 bg-[#161f36] text-white rounded-md font-semibold">YPSPIAI</span>
-                        dengan pengawasan teknis
-                        <span class="text-[#FF7518] font-semibold">Universitas Djuanda (UNIDA)</span>.
+                       Didirikan pada tahun 2005 di Jakarta sebagai perusahaan yang berdedikasi dalam penyediaan barang dan jasa berkualitas tinggi.
+                       Seiring berkembangnya teknologi, fokus utama kami kini menjadi mitra strategis di industri Telekomunikasi dengan jangkauan layanan 
+                       yang mencakup seluruh wilayah Indonesia.Kami memahami bahwa infrastruktur telekomunikasi adalah tulang punggung konektivitas digital. 
+                       Oleh karena itu, <span class="text-[#FF7518] font-semibold">RBM</span> hadir memberikan solusi komprehensif mulai dari pembangunan hingga pemeliharaan infrastruktur menara.
                     </p>
 
                     <p class="mt-4 text-gray-500 text-sm leading-relaxed">

@@ -42,7 +42,7 @@
             <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-gray-100 flex flex-col lg:flex-row">
                 {{-- Image Part --}}
                 <div class="lg:w-1/2 relative group" data-aos="fade-right">
-                    <img src="{{ $about?->image ? asset('storage/'.$about->image) : asset('assets/img/staff_kolase.jpg') }}"
+                    <img src="{{ $about?->image ? asset('storage/'.$about->image) : asset('assets/img/download.jpeg') }}"
                          class="w-full h-[400px] lg:h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="RBM Team">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#161f36]/60 to-transparent opacity-60"></div>
                 </div>

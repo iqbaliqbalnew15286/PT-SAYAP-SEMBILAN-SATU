@@ -135,7 +135,7 @@
                         <div class="flex flex-col border-l border-gray-200 pl-3">
                             <span
                                 class="text-rbm-dark font-times text-sm md:text-lg font-bold leading-tight uppercase tracking-tighter">
-                                PT RIZKALLAH BOER MAKMUR
+                                PT RIZQALLAH BOER MAKMUR
                             </span>
                             <span
                                 class="text-[10px] md:text-xs font-sans text-gray-500 font-medium tracking-widest uppercase opacity-80">
@@ -366,7 +366,7 @@
             <div class="border-t border-white/5 py-8 bg-black/20">
                 <div
                     class="max-w-screen-xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-gray-500 font-medium tracking-wider">
-                    <p class="uppercase">&copy; {{ date('Y') }} PT. RIZKALLAH BOER MAKMUR. All rights Reserved.
+                    <p class="uppercase">&copy; {{ date('Y') }} PT. RIZQALLAH BOER MAKMUR. All rights Reserved.
                     </p>
                     <div class="flex gap-8 uppercase">
                         <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
