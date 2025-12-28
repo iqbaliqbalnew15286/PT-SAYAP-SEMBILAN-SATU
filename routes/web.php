@@ -42,12 +42,24 @@ Route::get('/about', function () {
 
 Route::get('/search', function (Request $request) {
     $query = $request->get('query');
-    if (!$query) return redirect()->back()->with('error', 'Silakan masukkan kata kunci.');
+    if (!$query)
+        return redirect()->back()->with('error', 'Silakan masukkan kata kunci.');
 
-    $products = Product::where('name', 'like', '%' . $query . '%')
-        ->orWhere('description', 'like', '%' . $query . '%')
+    $products = Product::where('type', 'barang')
+        ->where(function ($q) use ($query) {
+            $q->where('name', 'like', '%' . $query . '%')
+                ->orWhere('description', 'like', '%' . $query . '%');
+        })
         ->get();
-    return view('pages.search.results', compact('products', 'query'));
+
+    $services = Product::where('type', 'jasa')
+        ->where(function ($q) use ($query) {
+            $q->where('name', 'like', '%' . $query . '%')
+                ->orWhere('description', 'like', '%' . $query . '%');
+        })
+        ->get();
+
+    return view('pages.search.results', compact('products', 'services', 'query'));
 })->name('search');
 
 // Produk & Galeri
@@ -56,11 +68,22 @@ Route::get('/products', function () {
     return view('pages.products.products', compact('items'));
 })->name('products');
 
+Route::get('/services', function () {
+    $items = Product::where('type', 'jasa')->latest()->get();
+    return view('pages.services.services', compact('items'));
+})->name('services');
+
 Route::get('/products/{slug}', function ($slug) {
     $product = Product::where('slug', $slug)->orWhere('id', $slug)->firstOrFail();
     $recommended_products = Product::where('id', '!=', $product->id)->latest()->take(4)->get();
     return view('pages.products.show', compact('product', 'recommended_products'));
 })->name('product.show');
+
+Route::get('/services/{slug}', function ($slug) {
+    $service = Product::where('type', 'jasa')->where('slug', $slug)->orWhere('id', $slug)->firstOrFail();
+    $recommended_services = Product::where('type', 'jasa')->where('id', '!=', $service->id)->latest()->take(4)->get();
+    return view('pages.services.show', compact('service', 'recommended_services'));
+})->name('service.show');
 
 Route::get('/gallery', function () {
     $galleries = Gallery::latest()->get();
@@ -153,6 +176,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 // ==================== 4. STORAGE FALLBACK ====================
 Route::get('storage/{path}', function ($path) {
     $storagePath = storage_path('app/public/' . $path);
-    if (!Storage::disk('public')->exists($path)) abort(404);
+    if (!Storage::disk('public')->exists($path))
+        abort(404);
     return response()->file($storagePath);
 })->where('path', '.*')->name('storage.local');

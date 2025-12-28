@@ -36,13 +36,13 @@ class PublicFacilityController extends Controller
         // Kita ambil data fresh agar tidak bentrok dengan filter di atas
         $groupedFacilities = Facility::latest()->get()->groupBy('type');
 
-        return view('PublicSide.facilities.index', [
-            'facilities'        => $facilities,
-            'types'             => $types,
-            'facilityImages'    => $facilityImages,
-            'currentType'       => $request->type, // Untuk menandai tombol filter yang aktif
+        return view('pages.facilities.index', [
+            'facilities' => $facilities,
+            'types' => $types,
+            'facilityImages' => $facilityImages,
+            'currentType' => $request->type, // Untuk menandai tombol filter yang aktif
             'groupedFacilities' => $groupedFacilities,
-            'gridImages'        => $gridImages,
+            'gridImages' => $gridImages,
         ]);
     }
 
@@ -60,8 +60,8 @@ class PublicFacilityController extends Controller
             ->take(3)
             ->get();
 
-        return view('PublicSide.facilities.show', [
-            'facility'        => $facility,
+        return view('pages.facilities.show', [
+            'facility' => $facility,
             'otherFacilities' => $otherFacilities
         ]);
     }
