@@ -1,22 +1,15 @@
-# TODO - Forgot Password Feature Implementation
+# TODO: Fix Booking Route and Authentication
 
-## Completed Tasks ✅
+## Completed Tasks
 
--   [x] Added password reset routes to routes/web.php
--   [x] Updated login.blade.php to link "FORGOT?" to password.request route
--   [x] Redesigned email.blade.php (forgot password form) to match login page design
--   [x] Redesigned reset.blade.php (reset password form) to match login page design
--   [x] Verified controllers exist (ForgotPasswordController, ResetPasswordController)
+-   [x] Identify the issue: Route was trying to return view('booking') but file is at 'pages.booking.booking'
+-   [x] Change booking route to check authentication: if not logged in, show login page; if logged in, show booking page
+-   [x] Add separate routes for booking/login, booking/register, booking/verify
+-   [x] Fix view path to 'pages.booking.booking' for authenticated users
 
-## Next Steps
+## Remaining Tasks
 
--   [ ] Test the forgot password functionality
--   [ ] Configure mail settings if needed (check .env for MAIL\_\* variables)
--   [ ] Verify email sending works (may need to set up mailtrap or similar for testing)
-
-## Notes
-
--   Controllers use Laravel's built-in SendsPasswordResetEmails and ResetsPasswords traits
--   Views now match the custom design of the login page
--   Password reset tokens table exists (from migration)
--   Mail configuration is standard Laravel setup
+-   [x] Add missing POST routes for booking authentication (login.post, register.post, reset.post, logout)
+-   [ ] Create or update login.blade.php with proper login form that redirects to booking after login
+-   [ ] Test the authentication flow
+-   [ ] Ensure login form posts to correct route and handles authentication

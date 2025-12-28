@@ -129,7 +129,7 @@
                         'icon' => 'fa-calendar-check',
                         'title' => 'Project Booking',
                         'desc' => 'Atur jadwal survei proyek',
-                        'link' => route('booking'),
+                        'link' => route('booking.login'),
                         'color' => $amaliahOrange,
                     ],
                     [
@@ -333,7 +333,7 @@
                     pengembangan skill, dan peluang profesional jangka panjang.
                 </p>
 
-                <a href="{{ route('partners') }}"
+                <a href="{{ route('partners.index') }}"
                     class="inline-flex items-center gap-4 mt-8 px-6 py-3 rounded-lg bg-[#FF7518] text-white font-semibold transition hover:scale-105">
                     Selengkapnya
                     <i class="fas fa-arrow-right text-sm"></i>
@@ -503,7 +503,7 @@
 
             {{-- Tombol Selengkapnya --}}
             <div class="text-right mt-6">
-                <a href="{{ route('facilities') }}" class="inline-flex items-center group">
+                <a href="{{ route('facilities.index') }}" class="inline-flex items-center group">
                     <span class="text-sm font-semibold text-white mr-3">Selengkapnya</span>
                     <div
                         class="bg-gray-200 rounded-full p-2 group-hover:bg-gray-300 transition-transform duration-300 group-hover:translate-x-1">

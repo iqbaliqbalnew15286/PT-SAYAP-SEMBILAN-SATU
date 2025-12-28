@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\PublicPage;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Image;

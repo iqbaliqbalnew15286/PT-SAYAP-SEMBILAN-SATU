@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\PublicPage;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Image;
+use App\Models\Image; // Pastikan model Image ada
 use App\Models\Facility;
 use Illuminate\Http\Request;
 
@@ -14,48 +14,55 @@ class PublicFacilityController extends Controller
      */
     public function index(Request $request)
     {
-        // Mengambil semua tipe fasilitas yang unik untuk tombol filter
+        // 1. Ambil semua tipe fasilitas yang unik untuk tombol filter di UI
         $types = Facility::select('type')->distinct()->pluck('type');
 
+        // 2. Ambil gambar dekorasi untuk grid (sesuai logika lama Anda)
         $gridImages = Image::where('title', 'PortraitImage')->take(3)->get();
+        $facilityImages = Image::where('title', 'FacilityImage')->first();
 
-        // Query dasar untuk fasilitas
+        // 3. Query dasar untuk fasilitas dengan filter
         $facilityQuery = Facility::query();
-        // Ambil semua fasilitas dan kelompokkan berdasarkan kolom 'type'
-        $groupedFacilities = Facility::latest()->get()->groupBy('type');
 
         // Terapkan filter jika ada parameter 'type' di URL
-        if ($request->has('type') && $request->type != '') {
+        if ($request->filled('type')) {
             $facilityQuery->where('type', $request->type);
         }
 
-        // Ambil data fasilitas yang sudah difilter atau semua data
+        // Ambil data fasilitas hasil filter
         $facilities = $facilityQuery->latest()->get();
 
-
-        $facilityImages = Image::where('title', 'FacilityImage')->first();
+        // 4. Kelompokkan semua fasilitas berdasarkan tipe (untuk tampilan per kategori)
+        // Kita ambil data fresh agar tidak bentrok dengan filter di atas
+        $groupedFacilities = Facility::latest()->get()->groupBy('type');
 
         return view('PublicSide.facilities.index', [
-            'facilities'     => $facilities,
-            'types'          => $types,
-            'facilityImages' => $facilityImages,
-            'currentType'    => $request->type,
+            'facilities'        => $facilities,
+            'types'             => $types,
+            'facilityImages'    => $facilityImages,
+            'currentType'       => $request->type, // Untuk menandai tombol filter yang aktif
             'groupedFacilities' => $groupedFacilities,
-            'gridImages' => $gridImages,
+            'gridImages'        => $gridImages,
         ]);
     }
 
     /**
      * Menampilkan detail satu fasilitas.
      */
-    public function show(Facility $facility)
+    public function show($id)
     {
-        // Ambil semua fasilitas LAIN, dengan eager loading (jika diperlukan untuk sidebar card)
+        // Menggunakan findOrFail agar jika ID tidak ada langsung muncul 404
+        $facility = Facility::findOrFail($id);
+
+        // Ambil fasilitas lain secara acak untuk rekomendasi/sidebar
         $otherFacilities = Facility::where('id', '!=', $facility->id)
             ->inRandomOrder()
             ->take(3)
             ->get();
 
-        return view('PublicSide.facilities.show', compact('facility', 'otherFacilities'));
+        return view('PublicSide.facilities.show', [
+            'facility'        => $facility,
+            'otherFacilities' => $otherFacilities
+        ]);
     }
 }

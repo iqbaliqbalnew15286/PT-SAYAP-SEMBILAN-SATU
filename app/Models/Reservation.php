@@ -6,5 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reservation extends Model
 {
-    //
+    protected $fillable = [
+        'user_id',
+        'name',
+        'phone',
+        'email',
+        'service_id',
+        'date',
+        'time',
+        'note',
+        'status',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Product::class, 'service_id');
+    }
 }

@@ -185,7 +185,7 @@
                             <a href="{{ route('gallery.index') }}"
                                 class="block px-5 py-3 text-sm text-gray-600 hover:bg-orange-50 hover:text-rbm-accent transition-colors">Galeri
                                 Proyek</a>
-                            <a href="{{ route('partners') }}"
+                            <a href="{{ route('partners.index') }}"
                                 class="block px-5 py-3 text-sm text-gray-600 hover:bg-orange-50 hover:text-rbm-accent transition-colors">Mitra
                                 Kami</a>
                             <a href="{{ route('send.testimonial') }}"
@@ -195,7 +195,7 @@
 
                     <a href="{{ route('products') }}"
                         class="nav-link {{ Request::is('products*') ? 'nav-active' : '' }}">Produk</a>
-                    <a href="{{ route('facilities') }}"
+                    <a href="{{ route('facilities.index') }}"
                         class="nav-link {{ Request::is('facilities*') ? 'nav-active' : '' }}">Fasilitas</a>
                     <a href="{{ route('kontak') }}"
                         class="nav-link {{ Request::is('kontak*') ? 'nav-active' : '' }}">Kontak</a>
@@ -235,13 +235,14 @@
                                 Kami</a>
                             <a href="{{ route('gallery.index') }}"
                                 class="block px-6 py-3 text-sm text-gray-600">Galeri Proyek</a>
-                            <a href="{{ route('partners') }}" class="block px-6 py-3 text-sm text-gray-600">Mitra
+                            <a href="{{ route('partners.index') }}"
+                                class="block px-6 py-3 text-sm text-gray-600">Mitra
                                 Industri</a>
                         </div>
                     </div>
 
                     <a href="{{ route('products') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Produk</a>
-                    <a href="{{ route('facilities') }}"
+                    <a href="{{ route('facilities.index') }}"
                         class="px-4 py-3 text-gray-700 font-bold uppercase">Fasilitas</a>
                     <a href="{{ route('kontak') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Kontak</a>
 
@@ -365,7 +366,8 @@
             <div class="border-t border-white/5 py-8 bg-black/20">
                 <div
                     class="max-w-screen-xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-gray-500 font-medium tracking-wider">
-                    <p class="uppercase">&copy; {{ date('Y') }} PT. RIZKALLAH BOER MAKMUR. All rights Reserved.</p>
+                    <p class="uppercase">&copy; {{ date('Y') }} PT. RIZKALLAH BOER MAKMUR. All rights Reserved.
+                    </p>
                     <div class="flex gap-8 uppercase">
                         <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
                         <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
