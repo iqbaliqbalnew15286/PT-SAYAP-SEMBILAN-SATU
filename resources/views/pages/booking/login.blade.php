@@ -59,7 +59,6 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -74,8 +73,7 @@
 
         {{-- Header --}}
         <div class="text-center mb-8">
-            <div
-                class="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-200">
+            <div class="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-200">
                 <i class="fa-solid fa-tower-broadcast text-white text-2xl"></i>
             </div>
             <h1 class="text-3xl font-extrabold mb-2 tracking-tight text-slate-900">
@@ -88,7 +86,9 @@
         @if ($errors->any())
             <div class="bg-red-50 text-red-600 text-sm rounded-xl p-4 mb-6 border border-red-100">
                 @foreach ($errors->all() as $error)
-                    <div><i class="fas fa-circle-exclamation mr-2"></i> {{ $error }}</div>
+                    <div class="flex items-center mb-1 last:mb-0">
+                        <i class="fas fa-circle-exclamation mr-2"></i> {{ $error }}
+                    </div>
                 @endforeach
             </div>
         @endif
@@ -104,69 +104,65 @@
         <form method="POST" action="{{ route('booking.login.post') }}" class="space-y-6">
             @csrf
 
+            {{-- Email Input --}}
             <div class="space-y-2">
-                <label class="text-sm font-semibold text-slate-700">Email</label>
+                <label class="text-sm font-bold text-slate-700">Email</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
                         <i class="fa-solid fa-envelope"></i>
                     </span>
                     <input name="email" type="email" value="{{ old('email') }}"
-                        class="w-full rounded-xl py-3 pl-12 pr-4 input-light font-medium focus:ring-0"
+                        class="w-full rounded-xl py-3.5 pl-12 pr-4 input-light font-medium focus:outline-none"
                         placeholder="nama@email.com" required autofocus>
                 </div>
             </div>
 
+            {{-- Password Input --}}
             <div class="space-y-2">
                 <div class="flex justify-between items-center">
-                    <label class="text-sm font-semibold text-slate-700">Password</label>
+                    <label class="text-sm font-bold text-slate-700">Password</label>
                     <a href="{{ route('booking.reset') }}"
-                        class="text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors">Lupa
-                        Password?</a>
+                        class="text-xs font-bold text-orange-500 hover:text-orange-600 transition-colors">Lupa Password?</a>
                 </div>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
                         <i class="fa-solid fa-lock"></i>
                     </span>
                     <input name="password" id="password_field" type="password"
-                        class="w-full rounded-xl py-3 pl-12 pr-12 input-light font-medium focus:ring-0"
+                        class="w-full rounded-xl py-3.5 pl-12 pr-12 input-light font-medium focus:outline-none"
                         placeholder="••••••••" required>
                     <span
-                        class="absolute inset-y-0 right-4 flex items-center text-slate-400 cursor-pointer hover:text-orange-500"
+                        class="absolute inset-y-0 right-4 flex items-center text-slate-400 cursor-pointer hover:text-orange-500 transition-colors"
                         onclick="togglePasswordVisibility()">
                         <i id="toggleIcon" class="fa-solid fa-eye text-sm"></i>
                     </span>
                 </div>
             </div>
 
-            <div class="flex items-center">
-                <label class="flex items-center cursor-pointer">
-                    <input type="checkbox" name="remember"
-                        class="h-4 w-4 border-slate-200 rounded text-orange-500 focus:ring-orange-500/20">
-                    <span class="ml-3 text-sm font-medium text-slate-600">Ingat saya</span>
-                </label>
+            {{-- Login Button --}}
+            <div class="pt-2">
+                <button type="submit"
+                    class="w-full py-4 rounded-xl btn-orange font-bold text-sm tracking-widest uppercase transition-all duration-300 flex items-center justify-center">
+                    Masuk <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
             </div>
-
-            <button type="submit"
-                class="w-full py-3 rounded-xl btn-orange font-bold text-sm tracking-wide uppercase transition-all duration-300">
-                Masuk <i class="fa-solid fa-arrow-right ml-2"></i>
-            </button>
         </form>
 
         {{-- Register Link --}}
-        <div class="text-center mt-6">
+        <div class="text-center mt-8">
             <p class="text-sm text-slate-500">
                 Belum punya akun?
                 <a href="{{ route('booking.register') }}"
-                    class="font-semibold text-orange-500 hover:text-orange-600 transition-colors">
+                    class="font-bold text-orange-500 hover:text-orange-600 transition-colors">
                     Daftar Sekarang
                 </a>
             </p>
         </div>
 
         {{-- Back to Home --}}
-        <div class="text-center mt-4">
+        <div class="text-center mt-6 pt-6 border-t border-slate-100">
             <a href="{{ route('home') }}"
-                class="text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors">
+                class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-wider">
                 <i class="fa-solid fa-arrow-left mr-2"></i> Kembali ke Beranda
             </a>
         </div>

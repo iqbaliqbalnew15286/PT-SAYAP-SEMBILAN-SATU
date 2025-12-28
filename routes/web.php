@@ -18,7 +18,7 @@ use App\Http\Controllers\Admin\AboutController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\TestimonialController;
-use App\Http\Controllers\Admin\ReservationController; // Pastikan ini ada
+use App\Http\Controllers\Admin\ReservationController;
 
 // Models
 use App\Models\Product;
@@ -42,22 +42,19 @@ Route::get('/about', function () {
 
 Route::get('/search', function (Request $request) {
     $query = $request->get('query');
-    if (!$query)
-        return redirect()->back()->with('error', 'Silakan masukkan kata kunci.');
+    if (!$query) return redirect()->back()->with('error', 'Silakan masukkan kata kunci.');
 
     $products = Product::where('type', 'barang')
         ->where(function ($q) use ($query) {
             $q->where('name', 'like', '%' . $query . '%')
                 ->orWhere('description', 'like', '%' . $query . '%');
-        })
-        ->get();
+        })->get();
 
     $services = Product::where('type', 'jasa')
         ->where(function ($q) use ($query) {
             $q->where('name', 'like', '%' . $query . '%')
                 ->orWhere('description', 'like', '%' . $query . '%');
-        })
-        ->get();
+        })->get();
 
     return view('pages.search.results', compact('products', 'services', 'query'));
 })->name('search');
@@ -107,16 +104,18 @@ Route::post('/testimonial', [PublicTestimonialController::class, 'store'])->name
 // ==================== 2. BOOKING SYSTEM (USER AUTH) ====================
 Route::prefix('booking')->group(function () {
 
-    // Guest Only
+    // Guest Only (Halaman Login, Register, & Reset Password)
     Route::middleware('guest')->group(function () {
         Route::get('/login', [BookingAuthController::class, 'showLogin'])->name('booking.login');
         Route::post('/login', [BookingAuthController::class, 'login'])->name('booking.login.post');
         Route::get('/register', [BookingAuthController::class, 'showRegister'])->name('booking.register');
         Route::post('/register', [BookingAuthController::class, 'register'])->name('booking.register.post');
 
-        // Reset Password
+        // Reset Password User
         Route::get('/reset', [BookingAuthController::class, 'showReset'])->name('booking.reset');
         Route::post('/reset', [BookingAuthController::class, 'sendResetLink'])->name('booking.reset.post');
+
+        // Route 'password.reset' sangat krusial, link di email akan mencari nama route ini
         Route::get('/reset-password/{token}', [BookingAuthController::class, 'showResetPasswordForm'])->name('password.reset');
         Route::post('/reset-password', [BookingAuthController::class, 'resetPassword'])->name('booking.reset.password.post');
     });
@@ -127,7 +126,7 @@ Route::prefix('booking')->group(function () {
             $products = Product::where('type', 'barang')->latest()->get();
             $services = Product::where('type', 'jasa')->latest()->get();
             return view('pages.booking.booking', compact('products', 'services'));
-        })->name('booking');
+        })->name('booking.index'); // Nama route diganti ke booking.index agar sinkron dengan Controller
 
         // Halaman Riwayat & Simpan Booking
         Route::get('/riwayat', [BookingAuthController::class, 'riwayat'])->name('booking.riwayat');
@@ -176,7 +175,6 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 // ==================== 4. STORAGE FALLBACK ====================
 Route::get('storage/{path}', function ($path) {
     $storagePath = storage_path('app/public/' . $path);
-    if (!Storage::disk('public')->exists($path))
-        abort(404);
+    if (!Storage::disk('public')->exists($path)) abort(404);
     return response()->file($storagePath);
 })->where('path', '.*')->name('storage.local');
