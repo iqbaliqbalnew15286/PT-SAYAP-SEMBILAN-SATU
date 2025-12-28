@@ -6,7 +6,7 @@
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <link rel="icon" type="image/png" href="{{ asset('assets/logo/am.png') }}">
 
-    <title>@yield('title', 'PT. Sayap Sembilan Satu - Tower Infrastructure')</title>
+    <title>@yield('title', 'PT. Rizqallah Boer Makmur - Tower Infrastructure')</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 

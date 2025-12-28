@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'PT SAYAP SEMBILAN SATU | Tower Infrastructure')
+@section('title', 'PT RIZQALLAH BOER MAKMUR | Tower Infrastructure')
 
 @section('content')
 
