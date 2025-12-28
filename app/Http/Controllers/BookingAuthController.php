@@ -15,10 +15,14 @@ use App\Models\Reservation;
 class BookingAuthController extends Controller
 {
     /**
-     * Menampilkan halaman login untuk user booking
+     * Menampilkan halaman login.
+     * Mencegah user yang sudah login mengakses halaman login kembali.
      */
     public function showLogin()
     {
+        if (Auth::check()) {
+            return redirect()->intended('/booking');
+        }
         return view('pages.booking.login');
     }
 
@@ -33,9 +37,8 @@ class BookingAuthController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
-        $remember = $request->has('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended('/booking')->with('success', 'Selamat datang kembali!');
         }
@@ -76,80 +79,52 @@ class BookingAuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('booking.login')->with('success', 'Registrasi berhasil! Silakan login menggunakan akun Anda.');
+        return redirect()->route('booking.login')->with('success', 'Registrasi berhasil! Silakan login.');
     }
 
     /**
-     * Menampilkan Riwayat Booking User
-     */
-    public function riwayat()
-    {
-        // Mengambil data booking berdasarkan user_id yang sedang login
-        // Diurutkan dari yang terbaru (latest)
-        $bookings = Reservation::where('user_id', Auth::id())
-                                ->orderBy('created_at', 'desc')
-                                ->get();
-
-        return view('pages.booking.riwayat', compact('bookings'));
-    }
-
-    /**
-     * Menyimpan data booking dari AJAX/Form
-     */
-    public function storeBooking(Request $request)
-    {
-        $request->validate([
-            'services' => 'required|string',
-            'total_price' => 'required|numeric',
-            'date' => 'required|date',
-            'time' => 'required|string',
-        ]);
-
-        // Simpan ke database
-        $booking = Reservation::create([
-            'user_id'    => Auth::id(),
-            'name'       => Auth::user()->name,
-            'phone'      => Auth::user()->phone ?? '',
-            'email'      => Auth::user()->email,
-            'date'       => $request->date,
-            'time'       => $request->time,
-            'note'       => $request->services, // Menyimpan daftar nama layanan
-            'total_price'=> $request->total_price, // Menyimpan total biaya
-            'status'     => 'pending', // Status awal otomatis pending
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Booking berhasil dibuat!',
-            'redirect' => route('booking.riwayat')
-        ]);
-    }
-
-    /**
-     * Fitur Password Reset
+     * Fitur Password Reset - Menampilkan Halaman Input Email
      */
     public function showReset()
     {
         return view('pages.booking.reset');
     }
 
+    /**
+     * Mengirim Link Reset ke Email menggunakan Password Broker
+     */
     public function sendResetLink(Request $request)
     {
         $request->validate(['email' => 'required|email']);
-        $status = Password::sendResetLink($request->only('email'));
 
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with('success', 'Link reset password telah dikirim ke email Anda.')
-            : back()->withErrors(['email' => __($status)]);
+        // Menggunakan Password Broker agar fitur "Throttle/Please Wait" terkelola otomatis
+        $status = Password::broker()->sendResetLink(
+            $request->only('email')
+        );
+
+        // Jika berhasil, Laravel mengembalikan 'passwords.sent'
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', __($status));
+        }
+
+        // Jika gagal (Throttle/Email salah), kirim pesan error
+        return back()->withErrors(['email' => __($status)]);
     }
 
+    /**
+     * Menampilkan Form Password Baru (dari link email)
+     */
     public function showResetPasswordForm(Request $request, $token = null)
     {
-        return view('pages.booking.reset-password')->with(
-            ['token' => $token, 'email' => $request->email]
-        );
+        return view('pages.booking.reset-password')->with([
+            'token' => $token,
+            'email' => $request->email
+        ]);
     }
 
+    /**
+     * Proses Update Password Baru ke Database
+     */
     public function resetPassword(Request $request)
     {
         $request->validate([
@@ -158,7 +133,7 @@ class BookingAuthController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
 
-        $status = Password::reset(
+        $status = Password::broker()->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->forceFill([
@@ -171,18 +146,32 @@ class BookingAuthController extends Controller
         );
 
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('booking.login')->with('success', 'Password berhasil diperbarui. Silakan login.')
+            ? redirect()->route('booking.login')->with('success', __($status))
             : back()->withErrors(['email' => __($status)]);
     }
 
     /**
-     * Proses Logout
+     * Menampilkan Riwayat Booking
+     */
+    public function riwayat()
+    {
+        $bookings = Reservation::where('user_id', Auth::id())->latest()->get();
+        return view('pages.booking.riwayat', compact('bookings'));
+    }
+
+    /**
+     * Logout
      */
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('home');
+
+        return redirect()->route('home')->withHeaders([
+            'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => 'Sun, 02 Jan 1990 00:00:00 GMT',
+        ]);
     }
 }

@@ -4,32 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password - Booking Tower Management</title>
+    <title>Atur Ulang Password - Booking Tower Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
         :root {
             --bg-light-main: #F8FAFC;
-            --bg-card: #FFFFFF;
-            --primary-blue: #0F172A;
             --accent-orange: #FF5F00;
-            --accent-blue: #3B82F6;
-            --text-muted: #64748B;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg-light-main);
-            color: var(--primary-blue);
         }
 
         .input-light {
             background-color: #F1F5F9;
             border: 1px solid #E2E8F0;
-            color: var(--primary-blue);
             transition: all 0.2s;
         }
 
@@ -37,6 +30,7 @@
             background-color: #FFFFFF;
             border-color: var(--accent-orange);
             box-shadow: 0 0 0 4px rgba(255, 95, 0, 0.1);
+            outline: none;
         }
 
         .btn-orange {
@@ -55,15 +49,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -72,63 +59,56 @@
 
     <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 fade-in">
 
-        {{-- Header --}}
         <div class="text-center mb-8">
-            <div
-                class="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-200">
+            <div class="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-200">
                 <i class="fa-solid fa-key text-white text-2xl"></i>
             </div>
             <h1 class="text-3xl font-extrabold mb-2 tracking-tight text-slate-900">
                 Password <span class="text-orange-500">Baru</span>
             </h1>
-            <p class="text-sm font-medium text-slate-400">Masukkan password baru untuk akun Anda</p>
+            <p class="text-sm font-medium text-slate-400">Silakan buat password baru yang kuat untuk akun Anda</p>
         </div>
 
-        {{-- Error Messages --}}
+        {{-- Notifikasi Error --}}
         @if ($errors->any())
-            <div class="bg-red-50 text-red-600 text-sm rounded-xl p-4 mb-6 border border-red-100">
+            <div class="bg-red-50 text-red-600 text-sm rounded-xl p-4 mb-6 border border-red-100 shadow-sm">
                 @foreach ($errors->all() as $error)
-                    <div><i class="fas fa-circle-exclamation mr-2"></i> {{ $error }}</div>
+                    <div class="flex items-center mb-1 font-semibold">
+                        <i class="fas fa-circle-exclamation mr-2"></i> {{ $error }}
+                    </div>
                 @endforeach
             </div>
         @endif
 
-        {{-- Success Messages --}}
-        @if (session('success'))
-            <div class="bg-green-50 text-green-600 text-sm rounded-xl p-4 mb-6 border border-green-100">
-                <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-            </div>
-        @endif
-
-        {{-- Reset Password Form --}}
-        <form method="POST" action="{{ route('booking.reset.password.post') }}" class="space-y-6">
+        {{-- Form Reset Password --}}
+        <form method="POST" action="{{ route('booking.reset.password.post') }}" class="space-y-5">
             @csrf
 
+            {{-- Token Keamanan (Wajib ada untuk Laravel) --}}
             <input type="hidden" name="token" value="{{ $token }}">
 
             <div class="space-y-2">
-                <label class="text-sm font-semibold text-slate-700">Email</label>
+                <label class="text-sm font-bold text-slate-700 ml-1">Email Anda</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
                         <i class="fa-solid fa-envelope"></i>
                     </span>
-                    <input name="email" type="email" value="{{ old('email', $email ?? '') }}"
-                        class="w-full rounded-xl py-3 pl-12 pr-4 input-light font-medium focus:ring-0"
-                        placeholder="nama@email.com" required autofocus>
+                    <input name="email" type="email" value="{{ $email ?? old('email') }}"
+                        class="w-full rounded-xl py-3.5 pl-12 pr-4 input-light font-medium bg-slate-50 cursor-not-allowed"
+                        placeholder="nama@email.com" required readonly>
                 </div>
             </div>
 
             <div class="space-y-2">
-                <label class="text-sm font-semibold text-slate-700">Password Baru</label>
+                <label class="text-sm font-bold text-slate-700 ml-1">Password Baru</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
                         <i class="fa-solid fa-lock"></i>
                     </span>
                     <input name="password" id="password_field" type="password"
-                        class="w-full rounded-xl py-3 pl-12 pr-12 input-light font-medium focus:ring-0"
-                        placeholder="Minimal 8 karakter" required>
-                    <span
-                        class="absolute inset-y-0 right-4 flex items-center text-slate-400 cursor-pointer hover:text-orange-500"
+                        class="w-full rounded-xl py-3.5 pl-12 pr-12 input-light font-medium"
+                        placeholder="Minimal 8 karakter" required autofocus>
+                    <span class="absolute inset-y-0 right-4 flex items-center text-slate-400 cursor-pointer hover:text-orange-500"
                         onclick="togglePasswordVisibility()">
                         <i id="toggleIcon" class="fa-solid fa-eye text-sm"></i>
                     </span>
@@ -136,38 +116,36 @@
             </div>
 
             <div class="space-y-2">
-                <label class="text-sm font-semibold text-slate-700">Konfirmasi Password</label>
+                <label class="text-sm font-bold text-slate-700 ml-1">Konfirmasi Password</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
                         <i class="fa-solid fa-lock"></i>
                     </span>
                     <input name="password_confirmation" type="password"
-                        class="w-full rounded-xl py-3 pl-12 pr-4 input-light font-medium focus:ring-0"
+                        class="w-full rounded-xl py-3.5 pl-12 pr-4 input-light font-medium"
                         placeholder="Ulangi password baru" required>
                 </div>
             </div>
 
-            <button type="submit"
-                class="w-full py-3 rounded-xl btn-orange font-bold text-sm tracking-wide uppercase transition-all duration-300">
-                Reset Password <i class="fa-solid fa-key ml-2"></i>
+            <button type="submit" id="submit-btn"
+                class="w-full py-4 rounded-xl btn-orange font-bold text-sm tracking-widest uppercase transition-all duration-300 shadow-lg">
+                Perbarui Password <i class="fa-solid fa-shield-check ml-2"></i>
             </button>
         </form>
 
-        {{-- Back to Login --}}
-        <div class="text-center mt-6">
+        <div class="text-center mt-8 pt-6 border-t border-slate-50">
             <a href="{{ route('booking.login') }}"
-                class="text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors">
-                <i class="fa-solid fa-arrow-left mr-2"></i> Kembali ke Login
+                class="text-xs font-bold text-slate-400 hover:text-orange-500 transition-colors uppercase tracking-widest">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Batal dan Kembali
             </a>
         </div>
-
     </div>
 
     <script>
+        // Fungsi untuk melihat/menyembunyikan password
         function togglePasswordVisibility() {
             const passwordField = document.getElementById('password_field');
             const toggleIcon = document.getElementById('toggleIcon');
-
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';
                 toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -176,8 +154,16 @@
                 toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
+
+        // Mencegah klik ganda saat memproses password baru
+        const form = document.querySelector('form');
+        const btn = document.querySelector('#submit-btn');
+
+        form.addEventListener('submit', function() {
+            btn.innerHTML = 'Memproses... <i class="fa-solid fa-circle-notch fa-spin ml-2"></i>';
+            btn.style.pointerEvents = 'none';
+            btn.classList.add('opacity-70');
+        });
     </script>
-
 </body>
-
 </html>
