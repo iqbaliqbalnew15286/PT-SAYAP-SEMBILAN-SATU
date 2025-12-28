@@ -3,63 +3,72 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar semua booking (dengan pagination).
      */
     public function index()
     {
-        //
+        // Menggunakan latest() agar data terbaru muncul di paling atas
+        $reservations = Reservation::latest()->paginate(10);
+
+        // Sesuaikan path view ini dengan folder tempat Anda menyimpan file .blade.php
+        return view('admin.tables.booking.index', compact('reservations'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan detail lengkap satu data booking.
      */
-    public function create()
+    public function show($id)
     {
-        //
+        $reservation = Reservation::findOrFail($id);
+        return view('admin.tables.booking.show', compact('reservation'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menampilkan form edit status dan harga.
      */
-    public function store(Request $request)
+    public function edit($id)
     {
-        //
+        $reservation = Reservation::findOrFail($id);
+        return view('admin.tables.booking.edit', compact('reservation'));
     }
 
     /**
-     * Display the specified resource.
+     * Memperbarui data ke database.
      */
-    public function show(string $id)
+    public function update(Request $request, $id)
     {
-        //
+        // Tambahkan validasi untuk total_price agar input harus berupa angka
+        $request->validate([
+            'status' => 'required|in:pending,proses,selesai,batal',
+            'total_price' => 'nullable|numeric|min:0',
+        ]);
+
+        $reservation = Reservation::findOrFail($id);
+
+        $reservation->update([
+            'status' => $request->status,
+            'total_price' => $request->total_price ?? $reservation->total_price,
+        ]);
+
+        return redirect()->route('admin.booking.index')
+            ->with('success', 'Reservasi #' . $id . ' berhasil diperbarui.');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Menghapus data booking secara permanen.
      */
-    public function edit(string $id)
+    public function destroy($id)
     {
-        //
-    }
+        $reservation = Reservation::findOrFail($id);
+        $reservation->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('admin.booking.index')
+            ->with('success', 'Data booking berhasil dihapus dari sistem.');
     }
 }

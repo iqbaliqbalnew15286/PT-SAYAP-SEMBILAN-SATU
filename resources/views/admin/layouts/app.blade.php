@@ -170,7 +170,7 @@
                 <div class="flex items-center">
                     <i
                         class="bi bi-shield-lock me-2 @if ($isAuthActive) text-[var(--primary-accent)] @endif"></i>
-                    Editor Login
+                    Editor Booking
                 </div>
                 <i id="authIcon" class="bi bi-chevron-right text-base text-[var(--text-muted)] transition-all"></i>
             </a>
@@ -183,9 +183,9 @@
                     class="flex items-center py-2 px-3 my-1 rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-dark)]">
                     <i class="bi bi-person-gear me-2"></i> Login Admin
                 </a>
-                <a href="#"
+                <a href="{{ route('admin.booking.index') }}"
                     class="flex items-center py-2 px-3 my-1 rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-dark)]">
-                    <i class="bi bi-calendar-event me-2"></i> Login Booking
+                    <i class="bi bi-calendar-event me-2"></i> Daftar Booking
                 </a>
                 <a href="#"
                     class="flex items-center py-2 px-3 my-1 rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-dark)]">

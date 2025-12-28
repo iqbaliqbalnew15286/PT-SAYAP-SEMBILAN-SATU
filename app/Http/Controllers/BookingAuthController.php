@@ -10,15 +10,21 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\User;
-use App\Models\Booking; // Pastikan Model Booking sudah ada
+use App\Models\Reservation;
 
 class BookingAuthController extends Controller
 {
+    /**
+     * Menampilkan halaman login untuk user booking
+     */
     public function showLogin()
     {
         return view('pages.booking.login');
     }
 
+    /**
+     * Proses login user
+     */
     public function login(Request $request)
     {
         $request->validate([
@@ -31,17 +37,23 @@ class BookingAuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended('/booking')->with('success', 'Login berhasil!');
+            return redirect()->intended('/booking')->with('success', 'Selamat datang kembali!');
         }
 
         return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
     }
 
+    /**
+     * Menampilkan halaman registrasi
+     */
     public function showRegister()
     {
         return view('pages.booking.registrasi');
     }
 
+    /**
+     * Proses registrasi user baru
+     */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -64,17 +76,58 @@ class BookingAuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('booking.login')->with('success', 'Registrasi berhasil! Silakan login.');
+        return redirect()->route('booking.login')->with('success', 'Registrasi berhasil! Silakan login menggunakan akun Anda.');
     }
 
-    // Fungsi Riwayat Baru
+    /**
+     * Menampilkan Riwayat Booking User
+     */
     public function riwayat()
     {
-        // Mengambil data booking berdasarkan user yang login
-        $bookings = Booking::where('user_id', Auth::id())->latest()->get();
+        // Mengambil data booking berdasarkan user_id yang sedang login
+        // Diurutkan dari yang terbaru (latest)
+        $bookings = Reservation::where('user_id', Auth::id())
+                                ->orderBy('created_at', 'desc')
+                                ->get();
+
         return view('pages.booking.riwayat', compact('bookings'));
     }
 
+    /**
+     * Menyimpan data booking dari AJAX/Form
+     */
+    public function storeBooking(Request $request)
+    {
+        $request->validate([
+            'services' => 'required|string',
+            'total_price' => 'required|numeric',
+            'date' => 'required|date',
+            'time' => 'required|string',
+        ]);
+
+        // Simpan ke database
+        $booking = Reservation::create([
+            'user_id'    => Auth::id(),
+            'name'       => Auth::user()->name,
+            'phone'      => Auth::user()->phone ?? '',
+            'email'      => Auth::user()->email,
+            'date'       => $request->date,
+            'time'       => $request->time,
+            'note'       => $request->services, // Menyimpan daftar nama layanan
+            'total_price'=> $request->total_price, // Menyimpan total biaya
+            'status'     => 'pending', // Status awal otomatis pending
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Booking berhasil dibuat!',
+            'redirect' => route('booking.riwayat')
+        ]);
+    }
+
+    /**
+     * Fitur Password Reset
+     */
     public function showReset()
     {
         return view('pages.booking.reset');
@@ -118,10 +171,13 @@ class BookingAuthController extends Controller
         );
 
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('booking.login')->with('success', 'Password berhasil direset. Silakan login.')
+            ? redirect()->route('booking.login')->with('success', 'Password berhasil diperbarui. Silakan login.')
             : back()->withErrors(['email' => __($status)]);
     }
 
+    /**
+     * Proses Logout
+     */
     public function logout(Request $request)
     {
         Auth::logout();
