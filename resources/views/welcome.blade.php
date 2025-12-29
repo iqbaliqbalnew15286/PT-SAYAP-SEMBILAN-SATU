@@ -242,10 +242,14 @@
                     </h3>
 
                     <p class="text-gray-700 text-base leading-relaxed">
-                       Didirikan pada tahun 2005 di Jakarta sebagai perusahaan yang berdedikasi dalam penyediaan barang dan jasa berkualitas tinggi.
-                       Seiring berkembangnya teknologi, fokus utama kami kini menjadi mitra strategis di industri Telekomunikasi dengan jangkauan layanan 
-                       yang mencakup seluruh wilayah Indonesia.Kami memahami bahwa infrastruktur telekomunikasi adalah tulang punggung konektivitas digital. 
-                       Oleh karena itu, <span class="text-[#FF7518] font-semibold">RBM</span> hadir memberikan solusi komprehensif mulai dari pembangunan hingga pemeliharaan infrastruktur menara.
+                        Didirikan pada tahun 2005 di Jakarta sebagai perusahaan yang berdedikasi dalam penyediaan barang dan
+                        jasa berkualitas tinggi.
+                        Seiring berkembangnya teknologi, fokus utama kami kini menjadi mitra strategis di industri
+                        Telekomunikasi dengan jangkauan layanan
+                        yang mencakup seluruh wilayah Indonesia.Kami memahami bahwa infrastruktur telekomunikasi adalah
+                        tulang punggung konektivitas digital.
+                        Oleh karena itu, <span class="text-[#FF7518] font-semibold">RBM</span> hadir memberikan solusi
+                        komprehensif mulai dari pembangunan hingga pemeliharaan infrastruktur menara.
                     </p>
 
                     <p class="mt-4 text-gray-500 text-sm leading-relaxed">
@@ -705,7 +709,7 @@
                             </div>
                             <div>
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Telepon</p>
-                                <p class="text-[#282829] font-bold">0856-1922-827 / 0856-4901-1449</p>
+                                <p class="text-[#282829] font-bold">0813 9488 4596 / 0821 2123 3261</p>
                             </div>
                         </div>
                         <div
@@ -715,7 +719,7 @@
                             </div>
                             <div>
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Email</p>
-                                <p class="text-[#282829] font-bold">smkamaliahciawi@gmail.com</p>
+                                <p class="text-[#282829] font-bold">project@rbmark.co.id</p>
                             </div>
                         </div>
                     </div>
@@ -731,7 +735,7 @@
                 <div class="lg:col-span-8">
                     <div class="relative rounded-[2.5rem] overflow-hidden shadow-xl aspect-video lg:h-[500px]">
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3962.946924765796!2d106.84852937587186!3d-6.653457193341386!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69c9388f8d689b%3A0xc66033481f337a6!2sSMK%20Amaliah%201%20%26%202%20Ciawi!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.347017420738!2d106.8308452!3d-6.2268615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3f1da7a4369%3A0x2421b19a6801489c!2sMenara%20Palma!5e0!3m2!1sid!2sid!4v1733750000000"
                             width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
                             class="grayscale hover:grayscale-0 transition-all duration-1000"></iframe>
                         <div
@@ -741,8 +745,9 @@
                                     class="w-10 h-10 rounded-full bg-[#FF7518] flex items-center justify-center text-white shrink-0 shadow-lg">
                                     <i class="fas fa-map-marker-alt"></i>
                                 </div>
-                                <p class="text-sm text-[#282829] font-medium">Jl. Raya Jl. Tol Jagorawi No.1, Ciawi,
-                                    Kabupaten Bogor, Jawa Barat 16720</p>
+                                <p class="text-sm text-[#282829] font-medium">Menara Palma Lantai 12
+                                    Jl. HR. Rasuna Said Kav. 6 Blok X-2
+                                    Jakarta Selatan 12950</p>
                             </div>
                             <a href="https://maps.app.goo.gl/..." target="_blank"
                                 class="shrink-0 px-6 py-3 bg-[#161f36] text-white text-xs font-bold rounded-xl hover:bg-[#FF7518] transition-all">Buka

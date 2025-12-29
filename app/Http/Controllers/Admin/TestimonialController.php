@@ -91,8 +91,8 @@ class TestimonialController extends Controller
      */
     public function destroy(Testimonial $testimonial)
     {
-        if ($testimonial->image && Storage::disk('public')->exists($testimonial->image)) {
-            Storage::disk('public')->delete($testimonial->image);
+        if ($testimonial->photo && Storage::disk('public')->exists($testimonial->photo)) {
+            Storage::disk('public')->delete($testimonial->photo);
         }
 
         $testimonial->delete();
