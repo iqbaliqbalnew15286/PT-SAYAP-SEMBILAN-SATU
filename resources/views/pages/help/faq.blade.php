@@ -14,8 +14,8 @@
         activeTab: 'umum',
         activeFaq: null,
         faqs: [
-            { id: 1, cat: 'umum', q: 'DI MANA LOKASI KANTOR PUSAT PT. RBM?', a: 'Kantor pusat kami berlokasi di kawasan industri strategis Jakarta. Kami memiliki fasilitas workshop yang modern untuk mendukung operasional teknis.' },
-            { id: 2, cat: 'umum', q: 'BAGAIMANA CARA MENGHUBUNGI TIM SALES?', a: 'Anda dapat menghubungi kami melalui tombol WhatsApp yang tersedia, atau melalui email resmi marketing kami di rbm.official@example.com.' },
+            { id: 1, cat: 'umum', q: 'DI MANA LOKASI KANTOR PUSAT PT. RBM?', a: 'Menara Palma Lantai 12, JL. HR. Rasuna Sair Kav. 6 Blok X-2 Jakarta Selatan 12950' },
+            { id: 2, cat: 'umum', q: 'BAGAIMANA CARA MENGHUBUNGI TIM SALES?', a: 'Anda dapat menghubungi kami melalui tombol WhatsApp yang tersedia, atau melalui email resmi marketing kami di marketing@rbmak.co.id' },
             { id: 3, cat: 'layanan', q: 'APAKAH MELAYANI PROYEK DI LUAR PULAU JAWA?', a: 'Ya, jangkauan layanan kami mencakup seluruh wilayah Indonesia. Kami memiliki tim mobile yang siap dikirim ke lokasi proyek Anda.' },
             { id: 4, cat: 'teknis', q: 'APAKAH PRODUK TOWER MEMILIKI SERTIFIKASI?', a: 'Tentu. Semua produk fabrikasi kami melalui proses QC ketat dan memiliki sertifikasi standar industri internasional untuk keamanan dan durabilitas.' },
             { id: 5, cat: 'layanan', q: 'BERAPA LAMA ESTIMASI PENGERJAAN PROYEK?', a: 'Estimasi waktu sangat bergantung pada skala proyek. Namun, kami selalu memberikan timeline yang transparan sejak tahap awal konsultasi.' },
