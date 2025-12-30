@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\AboutController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\TestimonialController;
+use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\ReservationController;
 
 // Models
@@ -170,6 +171,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('testimonials', TestimonialController::class);
     Route::resource('partners', \App\Http\Controllers\Admin\PartnerController::class);
     Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class);
+
+    Route::resource('feedbacks', FeedbackController::class);
 
     // Manajemen Booking di sisi Admin
     Route::resource('booking', ReservationController::class);

@@ -155,6 +155,10 @@
                     class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.testimonials.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
                     <i class="bi bi-chat-quote me-2"></i> Testimoni
                 </a>
+                <a href="{{ route('admin.feedbacks.index') }}"
+                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.feedbacks.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
+                    <i class="bi bi-chat-quote me-2"></i> Feedback
+                </a>
             </div>
 
             {{-- 2. EDITOR LOGIN (ACCORDION) --}}
