@@ -100,6 +100,10 @@ Route::view('/kontak', 'pages.help.kontak')->name('kontak');
 Route::get('/testimonial', [PublicTestimonialController::class, 'create'])->name('send.testimonial');
 Route::post('/testimonial', [PublicTestimonialController::class, 'store'])->name('testimonial.store');
 
+// Feedback
+Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'create'])->name('feedback.create');
+Route::post('/feedback', [App\Http\Controllers\FeedbackController::class, 'store'])->name('feedback.store');
+
 
 // ==================== 2. BOOKING SYSTEM (USER AUTH) ====================
 Route::prefix('booking')->group(function () {

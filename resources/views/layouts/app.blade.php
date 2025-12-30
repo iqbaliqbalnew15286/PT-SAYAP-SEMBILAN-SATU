@@ -199,7 +199,7 @@
                         class="nav-link {{ Request::is('facilities*') ? 'nav-active' : '' }}">Fasilitas</a>
                     <a href="{{ route('kontak') }}"
                         class="nav-link {{ Request::is('kontak*') ? 'nav-active' : '' }}">Kontak</a>
-                    <a href="https://forms.gle/sveGZa9nd9uX62YE9" target="_blank" class="nav-link">Feedback</a>
+                    <a href="{{ route('feedback.create') }}" class="nav-link">Feedback</a>
 
                     <div class="relative group h-full flex items-center">
                         <button class="nav-link">Bantuan <i
