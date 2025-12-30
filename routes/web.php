@@ -42,7 +42,8 @@ Route::get('/about', function () {
 
 Route::get('/search', function (Request $request) {
     $query = $request->get('query');
-    if (!$query) return redirect()->back()->with('error', 'Silakan masukkan kata kunci.');
+    if (!$query)
+        return redirect()->back()->with('error', 'Silakan masukkan kata kunci.');
 
     $products = Product::where('type', 'barang')
         ->where(function ($q) use ($query) {
@@ -91,7 +92,7 @@ Route::get('/gallery', function () {
 Route::resource('partners', \App\Http\Controllers\Admin\PublicPartnersController::class)->only(['index', 'show']);
 Route::resource('facilities', \App\Http\Controllers\Admin\PublicFacilityController::class)->only(['index', 'show']);
 Route::view('/contact', 'contact')->name('contact');
-Route::view('/consult', 'pages.consult')->name('consult');
+Route::view('/consult', 'pages.help.kontak')->name('consult');
 Route::view('/faq', 'pages.help.faq')->name('faq');
 Route::view('/syaratketentuan', 'pages.help.syaratketentuan')->name('syaratketentuan');
 Route::view('/kontak', 'pages.help.kontak')->name('kontak');
@@ -175,6 +176,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 // ==================== 4. STORAGE FALLBACK ====================
 Route::get('storage/{path}', function ($path) {
     $storagePath = storage_path('app/public/' . $path);
-    if (!Storage::disk('public')->exists($path)) abort(404);
+    if (!Storage::disk('public')->exists($path))
+        abort(404);
     return response()->file($storagePath);
 })->where('path', '.*')->name('storage.local');

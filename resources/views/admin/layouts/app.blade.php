@@ -155,43 +155,12 @@
                     class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.testimonials.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
                     <i class="bi bi-chat-quote me-2"></i> Testimoni
                 </a>
-            </div>
-
-            {{-- 2. EDITOR LOGIN (ACCORDION) --}}
-            @php
-                // Ganti rute di bawah ini dengan rute asli untuk modul Login/Auth jika sudah ada
-                $authRoutes = ['admin.users.*', 'admin.roles.*'];
-                $isAuthActive = collect($authRoutes)->contains(fn($route) => request()->routeIs($route));
-            @endphp
-
-            <a class="nav-link-custom flex items-center justify-between p-3 rounded-xl font-medium mb-1 cursor-pointer
-                @if ($isAuthActive) bg-[var(--hover-bg)] text-[var(--text-dark)] font-semibold @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif"
-                id="authToggle">
-                <div class="flex items-center">
-                    <i
-                        class="bi bi-shield-lock me-2 @if ($isAuthActive) text-[var(--primary-accent)] @endif"></i>
-                    Editor Booking
-                </div>
-                <i id="authIcon" class="bi bi-chevron-right text-base text-[var(--text-muted)] transition-all"></i>
-            </a>
-
-            <div class="submenu overflow-hidden opacity-0 pl-5 transition-all duration-500 ease-in-out
-                @if ($isAuthActive) show max-h-[500px] mb-2 opacity-100 @else max-h-0 @endif"
-                id="authSubmenu">
-
-                <a href="#"
-                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-dark)]">
-                    <i class="bi bi-person-gear me-2"></i> Login Admin
-                </a>
-                <a href="{{ route('admin.booking.index') }}"
+                 <a href="{{ route('admin.booking.index') }}"
                     class="flex items-center py-2 px-3 my-1 rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-dark)]">
                     <i class="bi bi-calendar-event me-2"></i> Daftar Booking
                 </a>
-                <a href="#"
-                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-dark)]">
-                    <i class="bi bi-person-plus me-2"></i> Registrasi Login
-                </a>
             </div>
+
 
         </nav>
 

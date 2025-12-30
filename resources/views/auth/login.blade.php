@@ -61,6 +61,7 @@
             background-color: #FFFFFF;
             border-color: var(--accent-orange);
             box-shadow: 0 0 0 4px rgba(255, 95, 0, 0.1);
+            outline: none;
         }
 
         /* Gradient Button */
@@ -205,16 +206,17 @@
                 <form method="POST" action="{{ route('login.post') }}" class="space-y-5">
                     @csrf
 
+                    {{-- MODIFIED TO USERNAME --}}
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Email
-                            Address</label>
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Admin
+                            Username</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
-                                <i class="fa-solid fa-envelope-open"></i>
+                                <i class="fa-solid fa-user-shield"></i>
                             </span>
-                            <input name="email" type="email" value="{{ old('email') }}"
+                            <input name="username" type="text" value="{{ old('username') }}"
                                 class="w-full rounded-xl py-4 pl-12 pr-4 input-light font-medium focus:ring-0 text-sm"
-                                placeholder="name@company.com" required autofocus>
+                                placeholder="Masukkan username" required autofocus>
                         </div>
                     </div>
 
@@ -232,7 +234,7 @@
                             <input name="password" id="password_field" type="password"
                                 class="w-full rounded-xl py-4 pl-12 pr-12 input-light font-medium focus:ring-0 text-sm"
                                 placeholder="••••••••" required>
-                            <span class="absolute inset-y-0 right-4 flex items-center text-slate-400 password-toggle"
+                            <span class="absolute inset-y-0 right-4 flex items-center text-slate-400 password-toggle cursor-pointer"
                                 onclick="togglePasswordVisibility()">
                                 <i id="toggleIcon" class="fa-solid fa-eye text-sm"></i>
                             </span>
