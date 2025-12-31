@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Image; // Pastikan model Image ada
 use App\Models\Facility;
 use Illuminate\Http\Request;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PublicFacilityController extends Controller
 {

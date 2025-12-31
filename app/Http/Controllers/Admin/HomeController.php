@@ -10,6 +10,7 @@ use App\Models\Partner;
 use App\Models\Facility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class HomeController extends Controller
 {

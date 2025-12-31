@@ -10,12 +10,22 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Pastikan admin tidak dobel
+        // Data Admin 1
         User::updateOrCreate(
             ['email' => 'iqbaliqbalnew15286@gmail.com'],
             [
-                'name' => 'Admin Tower',
-                'password' => Hash::make('tower123'), // ganti dengan password yang kuat
+                'name' => 'Amdev Tower',
+                'password' => Hash::make('tower123'),
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // Data Admin 2 (Tambahan)
+        User::updateOrCreate(
+            ['email' => 'admin.sayap91@gmail.com'],
+            [
+                'name' => 'Support Tower',
+                'password' => Hash::make('sayap91jaya'),
                 'email_verified_at' => now(),
             ]
         );

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Reservation;
 use App\Models\Testimonial;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 // use App\Models\Service; // BARIS INI DIHAPUS
 
 class DashboardController extends Controller

@@ -97,107 +97,83 @@
 
         <nav class="flex-grow overflow-y-auto">
 
-            <div
-                class="menu-section text-[var(--text-muted)] text-xs font-extrabold uppercase my-4 mx-2 tracking-wider">
-                Menu Utama</div>
+    <div class="menu-section text-[var(--text-muted)] text-xs font-extrabold uppercase my-4 mx-2 tracking-wider">
+        Menu Utama
+    </div>
 
-            {{-- DASHBOARD --}}
-            <a href="{{ route('admin.dashboard') }}"
-                class="nav-link-custom flex items-center p-3 rounded-xl font-medium mb-1 transition-colors
-                @if (request()->routeIs('admin.dashboard')) bg-[var(--active-bg)] text-[var(--text-dark)] font-semibold border-l-4 border-[var(--primary-accent)] pl-3
-                @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif">
-                <i
-                    class="bi bi-speedometer2 me-2 @if (request()->routeIs('admin.dashboard')) text-[var(--primary-accent)] @endif"></i>
-                Dashboard
-            </a>
+    {{-- DASHBOARD --}}
+    <a href="{{ route('admin.dashboard') }}"
+        class="nav-link-custom flex items-center p-3 rounded-xl font-medium mb-1 transition-colors
+        @if (request()->routeIs('admin.dashboard')) bg-[var(--active-bg)] text-[var(--text-dark)] font-semibold border-l-4 border-[var(--primary-accent)] pl-3
+        @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif">
+        <i class="bi bi-speedometer2 me-2 @if (request()->routeIs('admin.dashboard')) text-[var(--primary-accent)] @endif"></i>
+        Dashboard
+    </a>
 
-            {{-- 1. EDITOR KONTEN (ACCORDION) --}}
-            @php
-                $editorRoutes = [
-                    'admin.products.*',
-                    'admin.galleries.*',
-                    'admin.testimonials.*',
-                    'admin.abouts.*',
-                    'admin.partners.*',
-                    'admin.facilities.*',
-                ];
-                $isEditorActive = collect($editorRoutes)->contains(fn($route) => request()->routeIs($route));
-            @endphp
+    {{-- 1. EDITOR KONTEN (ACCORDION) --}}
+    @php
+        $editorRoutes = [
+            'admin.products.*',
+            'admin.galleries.*',
+            'admin.testimonials.*',
+            'admin.abouts.*',
+            'admin.partners.*',
+            'admin.facilities.*',
+            'admin.feedbacks.*',
+            'admin.booking.*',
+        ];
+        $isEditorActive = collect($editorRoutes)->contains(fn($route) => request()->routeIs($route));
+    @endphp
 
-            <a class="nav-link-custom flex items-center justify-between p-3 rounded-xl font-medium mb-1 cursor-pointer
-                @if ($isEditorActive) bg-[var(--hover-bg)] text-[var(--text-dark)] font-semibold @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif"
-                id="editorToggle">
-                <div class="flex items-center">
-                    <i
-                        class="bi bi-pencil-square me-2 @if ($isEditorActive) text-[var(--primary-accent)] @endif"></i>
-                    Editor Konten
-                </div>
-                <i id="editorIcon" class="bi bi-chevron-right text-base text-[var(--text-muted)] transition-all"></i>
-            </a>
+    <a class="nav-link-custom flex items-center justify-between p-3 rounded-xl font-medium mb-1 cursor-pointer
+        @if ($isEditorActive) bg-[var(--hover-bg)] text-[var(--text-dark)] font-semibold @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif"
+        id="editorToggle">
+        <div class="flex items-center">
+            <i class="bi bi-pencil-square me-2 @if ($isEditorActive) text-[var(--primary-accent)] @endif"></i>
+            Editor Konten
+        </div>
+        <i id="editorIcon" class="bi bi-chevron-right text-base text-[var(--text-muted)] transition-all @if($isEditorActive) rotate-90 @endif"></i>
+    </a>
 
-            <div class="submenu overflow-hidden opacity-0 pl-5 transition-all duration-500 ease-in-out
-                @if ($isEditorActive) show max-h-[500px] mb-2 opacity-100 @else max-h-0 @endif"
-                id="editorSubmenu">
+    <div class="submenu overflow-hidden opacity-0 pl-5 transition-all duration-500 ease-in-out
+        @if ($isEditorActive) show max-h-[500px] mb-2 opacity-100 @else max-h-0 @endif"
+        id="editorSubmenu">
 
-                <a href="{{ route('admin.abouts.index') }}"
-                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.abouts.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
-                    <i class="bi bi-person-vcard me-2"></i> Tentang Kami
-                </a>
-                <a href="{{ route('admin.products.index') }}"
-                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.products.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
-                    <i class="bi bi-bag-heart me-2"></i> Produk
-                </a>
-                <a href="{{ route('admin.galleries.index') }}"
-                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.galleries.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
-                    <i class="bi bi-images me-2"></i> Galeri
-                </a>
-                <a href="{{ route('admin.testimonials.index') }}"
-                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.testimonials.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
-                    <i class="bi bi-chat-quote me-2"></i> Testimoni
-                </a>
-                <a href="{{ route('admin.feedbacks.index') }}"
-                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.feedbacks.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
-                    <i class="bi bi-chat-quote me-2"></i> Feedback
-                </a>
-            </div>
+        <a href="{{ route('admin.abouts.index') }}"
+            class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.abouts.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
+            <i class="bi bi-person-vcard me-2"></i> Tentang Kami
+        </a>
+        <a href="{{ route('admin.products.index') }}"
+            class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.products.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
+            <i class="bi bi-bag-heart me-2"></i> Produk
+        </a>
+        <a href="{{ route('admin.galleries.index') }}"
+            class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.galleries.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
+            <i class="bi bi-images me-2"></i> Galeri
+        </a>
+        <a href="{{ route('admin.testimonials.index') }}"
+            class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.testimonials.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
+            <i class="bi bi-chat-quote me-2"></i> Testimoni
+        </a>
+        <a href="{{ route('admin.feedbacks.index') }}"
+            class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.feedbacks.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
+            <i class="bi bi-chat-left-text me-2"></i> Feedback
+        </a>
+        <a href="{{ route('admin.booking.index') }}"
+            class="flex items-center py-2 px-3 my-1 rounded-lg text-sm @if (request()->routeIs('admin.booking.index')) text-[var(--text-dark)] font-medium bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)] @else text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
+            <i class="bi bi-calendar-check me-2"></i> Daftar Booking
+        </a>
+    </div>
 
-            {{-- 2. EDITOR LOGIN (ACCORDION) --}}
-            @php
-                // Ganti rute di bawah ini dengan rute asli untuk modul Login/Auth jika sudah ada
-                $authRoutes = ['admin.users.*', 'admin.roles.*'];
-                $isAuthActive = collect($authRoutes)->contains(fn($route) => request()->routeIs($route));
-            @endphp
+    <a href="{{ route('admin.users.index') }}" {{-- Ganti dengan route('admin.users.index') jika sudah ada --}}
+        class="nav-link-custom flex items-center p-3 rounded-xl font-medium mb-1 transition-colors
+        @if (request()->routeIs('admin.users.index')) bg-[var(--active-bg)] text-[var(--text-dark)] font-semibold border-l-4 border-[var(--primary-accent)] pl-3
+        @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif">
+        <i class="bi bi-people me-2 @if (request()->routeIs('admin.users.index')) text-[var(--primary-accent)] @endif"></i>
+        Kelola Users
+    </a>
 
-            <a class="nav-link-custom flex items-center justify-between p-3 rounded-xl font-medium mb-1 cursor-pointer
-                @if ($isAuthActive) bg-[var(--hover-bg)] text-[var(--text-dark)] font-semibold @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif"
-                id="authToggle">
-                <div class="flex items-center">
-                    <i
-                        class="bi bi-shield-lock me-2 @if ($isAuthActive) text-[var(--primary-accent)] @endif"></i>
-                    Editor Booking
-                </div>
-                <i id="authIcon" class="bi bi-chevron-right text-base text-[var(--text-muted)] transition-all"></i>
-            </a>
-
-            <div class="submenu overflow-hidden opacity-0 pl-5 transition-all duration-500 ease-in-out
-                @if ($isAuthActive) show max-h-[500px] mb-2 opacity-100 @else max-h-0 @endif"
-                id="authSubmenu">
-
-                <a href="#"
-                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-dark)]">
-                    <i class="bi bi-person-gear me-2"></i> Login Admin
-                </a>
-                <a href="{{ route('admin.booking.index') }}"
-                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-dark)]">
-                    <i class="bi bi-calendar-event me-2"></i> Daftar Booking
-                </a>
-                <a href="#"
-                    class="flex items-center py-2 px-3 my-1 rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-dark)]">
-                    <i class="bi bi-person-plus me-2"></i> Registrasi Login
-                </a>
-            </div>
-
-        </nav>
+</nav>
 
         {{-- BOTTOM BUTTONS --}}
         <div class="mt-auto pt-4 border-t border-[var(--border-subtle)]">

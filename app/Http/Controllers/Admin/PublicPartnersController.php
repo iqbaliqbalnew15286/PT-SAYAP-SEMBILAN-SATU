@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Image;
 use Illuminate\Http\Request;
 use App\Models\Partner;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PublicPartnersController extends Controller
 {
