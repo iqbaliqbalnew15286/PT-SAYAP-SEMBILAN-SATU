@@ -22,7 +22,7 @@ class PublicPartnersController extends Controller
 
         $partnersImages = Image::whereIn('title', ['PartnersImage', 'main'])->get();
 
-        return view('PublicSide.partners.index', [
+        return view('pages.partners.index', [
             'partners' => $partners,
             'partnersImages' => $partnersImages,
         ]);
@@ -31,7 +31,8 @@ class PublicPartnersController extends Controller
     /**
      * Display the specified partner detail.
      * Menampilkan detail satu partner.
-     */ public function show(Partner $partner)
+     */
+    public function show(Partner $partner)
     {
         // Mengambil 4 mitra lain untuk sugesti, KECUALI mitra yang sedang dibuka
         $randomPartners = Partner::where('id', '!=', $partner->id)
@@ -43,8 +44,8 @@ class PublicPartnersController extends Controller
         $partnersImages = Image::whereIn('title', ['PartnersImage', 'main'])->get();
 
         // Kirim data partner UTAMA ($partner) dan data SUGGESTI ($randomPartners)
-        return view('PublicSide.partners.show', [
-            'partner'        => $partner,
+        return view('pages.partners.show', [
+            'partner' => $partner,
             'randomPartners' => $randomPartners,
             'partnersImages' => $partnersImages,
         ]);

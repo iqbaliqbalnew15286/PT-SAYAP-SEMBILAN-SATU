@@ -6,16 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Testimonial;
 use Illuminate\Support\Facades\Storage;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class TestimonialController extends Controller
 {
     /**
-     * Tampilkan semua testimoni.
+     * Tampilkan semua testimoni (termasuk yang pending).
      */
     public function index()
     {
         $testimonials = Testimonial::latest()->get();
+        // Disamakan dengan path folder yang Anda gunakan di view sebelumnya
         return view('admin.tables.testimonials.index', compact('testimonials'));
     }
 
@@ -33,15 +33,16 @@ class TestimonialController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
             'company' => 'nullable|string|max:255',
-            'message' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+            'message' => 'required|string|max:1000',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'status' => 'required|in:pending,approved,rejected',
         ]);
 
-        // Simpan foto jika ada upload
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('uploads/testimonials', 'public');
+            // Folder penyimpanan disederhanakan ke 'testimonials' agar mudah diakses
+            $data['image'] = $request->file('image')->store('testimonials', 'public');
         }
 
         Testimonial::create($data);
@@ -52,32 +53,51 @@ class TestimonialController extends Controller
     }
 
     /**
+     * Update status testimoni secara cepat (Approve/Reject).
+     * Digunakan untuk tombol centang di halaman daftar table.
+     */
+    public function updateStatus($id, $status)
+    {
+        $testimonial = Testimonial::findOrFail($id);
+
+        if (in_array($status, ['approved', 'pending', 'rejected'])) {
+            // Menggunakan save() agar lebih stabil di SQLite
+            $testimonial->status = $status;
+            $testimonial->save();
+
+            return back()->with('success', "Status testimoni berhasil diubah menjadi " . ucfirst($status));
+        }
+
+        return back()->with('error', 'Status tidak valid.');
+    }
+
+    /**
      * Form edit testimoni.
      */
     public function edit(Testimonial $testimonial)
     {
-        return view('admin.tables.testimonials.edit', compact('testimonial'));
+        return view('admin.testimonials.edit', compact('testimonial'));
     }
 
     /**
-     * Update testimoni.
+     * Update testimoni lengkap.
      */
     public function update(Request $request, Testimonial $testimonial)
     {
         $data = $request->validate([
-            'name' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
             'company' => 'nullable|string|max:255',
-            'message' => 'nullable|string|max:1000',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+            'message' => 'required|string|max:1000',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'status' => 'required|in:pending,approved,rejected',
         ]);
 
-        // Jika ada upload foto baru, hapus foto lama lalu simpan yang baru
-        if ($request->hasFile('photo')) {
-            if ($testimonial->photo && Storage::disk('public')->exists($testimonial->photo)) {
-                Storage::disk('public')->delete($testimonial->photo);
+        if ($request->hasFile('image')) {
+            // Hapus foto lama hanya jika file fisiknya benar-benar ada
+            if ($testimonial->image && Storage::disk('public')->exists($testimonial->image)) {
+                Storage::disk('public')->delete($testimonial->image);
             }
-
-            $data['photo'] = $request->file('photo')->store('uploads/testimonials', 'public');
+            $data['image'] = $request->file('image')->store('testimonials', 'public');
         }
 
         $testimonial->update($data);
@@ -88,12 +108,13 @@ class TestimonialController extends Controller
     }
 
     /**
-     * Hapus testimoni.
+     * Hapus testimoni dan filenya.
      */
     public function destroy(Testimonial $testimonial)
     {
-        if ($testimonial->photo && Storage::disk('public')->exists($testimonial->photo)) {
-            Storage::disk('public')->delete($testimonial->photo);
+        // Bersihkan storage dari gambar terkait agar tidak memenuhi server
+        if ($testimonial->image && Storage::disk('public')->exists($testimonial->image)) {
+            Storage::disk('public')->delete($testimonial->image);
         }
 
         $testimonial->delete();

@@ -100,7 +100,7 @@
         $rbmDark = '#161f36';
         $rbmAccent = '#FF7518';
         $whatsappNumber = '6285649011449';
-        $whatsappMessage = 'Halo PT. Sayap Sembilan Satu, saya ingin bertanya tentang layanan Anda.';
+        $whatsappMessage = 'Halo PT. Rizqallah Boer Makmur, saya ingin bertanya tentang layanan Anda.';
     @endphp
 
     <div x-data="{ searchModalOpen: false }" @keydown.escape.window="searchModalOpen = false">
@@ -130,7 +130,7 @@
             <div class="bg-white border-b border-gray-100 relative z-20">
                 <div class="max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
                     <a href="/" class="flex-shrink-0 flex items-center space-x-3 group">
-                        <img src="{{ asset('assets/img/image.png') }}" alt="Logo PT Sayap Sembilan Satu"
+                        <img src="{{ asset('assets/img/image.png') }}" alt="Logo PT Rizqallah Boer Makmur"
                             class="h-10 w-auto md:h-12 transition-transform group-hover:scale-105">
                         <div class="flex flex-col border-l border-gray-200 pl-3">
                             <span
@@ -188,18 +188,25 @@
                             <a href="{{ route('partners.index') }}"
                                 class="block px-5 py-3 text-sm text-gray-600 hover:bg-orange-50 hover:text-rbm-accent transition-colors">Mitra
                                 Kami</a>
-                            <a href="{{ route('send.testimonial') }}"
+                            <a href="{{ route('testimonials.index') }}"
                                 class="block px-5 py-3 text-sm text-gray-600 hover:bg-orange-50 hover:text-rbm-accent transition-colors">Testimonial</a>
                         </div>
                     </div>
 
                     <a href="{{ route('products') }}"
                         class="nav-link {{ Request::is('products*') ? 'nav-active' : '' }}">Produk</a>
+
+                    <a href="{{ route('news.index') }}"
+                        class="nav-link {{ Request::is('news*') ? 'nav-active' : '' }}">Berita</a>
+
                     <a href="{{ route('facilities.index') }}"
                         class="nav-link {{ Request::is('facilities*') ? 'nav-active' : '' }}">Fasilitas</a>
+
                     <a href="{{ route('kontak') }}"
                         class="nav-link {{ Request::is('kontak*') ? 'nav-active' : '' }}">Kontak</a>
-                    <a href="{{ route('feedback.create') }}" class="nav-link">Feedback</a>
+
+                    <a href="{{ route('feedback.create') }}"
+                        class="nav-link {{ Request::is('feedback*') ? 'nav-active' : '' }}">Feedback</a>
 
                     <div class="relative group h-full flex items-center">
                         <button class="nav-link">Bantuan <i
@@ -231,19 +238,15 @@
                                 :class="{ 'rotate-180': open }"></i>
                         </button>
                         <div x-show="open" x-transition class="bg-gray-50 rounded-xl mx-2 my-1 overflow-hidden">
-                            <a href="{{ route('about') }}" class="block px-6 py-3 text-sm text-gray-600">Tentang
-                                Kami</a>
-                            <a href="{{ route('gallery.index') }}"
-                                class="block px-6 py-3 text-sm text-gray-600">Galeri Proyek</a>
-                            <a href="{{ route('partners.index') }}"
-                                class="block px-6 py-3 text-sm text-gray-600">Mitra
-                                Industri</a>
+                            <a href="{{ route('about') }}" class="block px-6 py-3 text-sm text-gray-600">Tentang Kami</a>
+                            <a href="{{ route('gallery.index') }}" class="block px-6 py-3 text-sm text-gray-600">Galeri Proyek</a>
+                            <a href="{{ route('partners.index') }}" class="block px-6 py-3 text-sm text-gray-600">Mitra Industri</a>
                         </div>
                     </div>
 
                     <a href="{{ route('products') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Produk</a>
-                    <a href="{{ route('facilities.index') }}"
-                        class="px-4 py-3 text-gray-700 font-bold uppercase">Fasilitas</a>
+                    <a href="{{ route('news.index') }}" class="px-4 py-3 text-gray-700 font-bold uppercase {{ Request::is('news*') ? 'text-rbm-accent' : '' }}">Berita</a>
+                    <a href="{{ route('facilities.index') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Fasilitas</a>
                     <a href="{{ route('kontak') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Kontak</a>
 
                     <a href="https://wa.me/{{ $whatsappNumber }}"
@@ -279,7 +282,7 @@
             <div class="max-w-screen-xl mx-auto px-6 sm:px-8 lg:px-8 pb-16">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
                     <div class="space-y-6">
-                        <img src="{{ asset('assets/img/image.png') }}" alt="Logo PT Sayap Sembilan Satu"
+                        <img src="{{ asset('assets/img/image.png') }}" alt="Logo PT Rizqallah Boer Makmur"
                             class="h-14 brightness-0 invert opacity-90">
                         <p class="text-rbm-light-text text-sm leading-relaxed">Berdedikasi untuk memberikan layanan
                             konstruksi dan suplai material kualitas tinggi di seluruh wilayah Indonesia.</p>
@@ -305,16 +308,16 @@
                             </li>
                             <li><a href="{{ route('about') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Tentang
-                                    Kami</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Tentang Kami</a></li>
+                            <li><a href="{{ route('news.index') }}"
+                                    class="hover:text-white transition-colors flex items-center gap-2"><i
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Berita Terbaru</a></li>
                             <li><a href="{{ route('gallery.index') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Galeri
-                                    Proyek</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Galeri Proyek</a></li>
                             <li><a href="{{ route('products') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Produk
-                                    Kami</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Produk Kami</a></li>
                         </ul>
                     </div>
 
@@ -326,16 +329,13 @@
                         <ul class="space-y-4 text-sm text-rbm-light-text font-medium">
                             <li><a href="{{ route('faq') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Pertanyaan
-                                    Umum (FAQ)</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Pertanyaan Umum (FAQ)</a></li>
                             <li><a href="{{ route('kontak') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Hubungi
-                                    Kami</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Hubungi Kami</a></li>
                             <li><a href="{{ route('syaratketentuan') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Syarat &
-                                    Ketentuan</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Syarat & Ketentuan</a></li>
                         </ul>
                     </div>
 
@@ -351,8 +351,8 @@
                             </div>
                             <div class="flex gap-4 items-center">
                                 <i class="fas fa-envelope text-rbm-accent text-lg"></i>
-                                <a href="mailto:info@sayapsembilansatu.co.id"
-                                    class="hover:text-white transition">info@sayapsembilansatu.co.id</a>
+                                <a href="mailto:info@rbm.co.id"
+                                    class="hover:text-white transition">info@rbm.co.id</a>
                             </div>
                             <div class="flex gap-4 items-center">
                                 <i class="fas fa-phone-alt text-rbm-accent text-lg"></i>

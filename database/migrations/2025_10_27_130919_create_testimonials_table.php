@@ -11,8 +11,11 @@ return new class extends Migration
         Schema::create('testimonials', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('company')->nullable(); // Tambahkan ini
             $table->text('message');
-            $table->string('image')->nullable(); // tambahkan baris ini
+            $table->string('image')->nullable();
+            // Tambahkan kolom status
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         });
     }

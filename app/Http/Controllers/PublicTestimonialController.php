@@ -4,31 +4,57 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Testimonial;
+use Illuminate\Support\Facades\Storage;
 
 class PublicTestimonialController extends Controller
 {
     /**
-     * Store a new testimonial from public form.
+     * Menampilkan daftar testimoni yang SUDAH DISETUJUI oleh admin.
      */
-    public function store(Request $request)
+    public function index()
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'company' => 'nullable|string|max:255',
-            'message' => 'required|string|max:1000',
-        ]);
+        // Hanya mengambil yang statusnya 'approved' agar yang 'pending' tidak muncul
+        $testimonials = Testimonial::where('status', 'approved')
+                        ->latest()
+                        ->get();
 
-        // For public submissions, set status or something, but since no status, just create
-        Testimonial::create($data);
-
-        return back()->with('success', 'Terima kasih! Testimoni Anda telah dikirim dan akan ditinjau oleh admin sebelum ditampilkan.');
+        return view('pages.testimonials.index', compact('testimonials'));
     }
 
     /**
-     * Show the testimonial form page (if needed).
+     * Menampilkan halaman form pengiriman testimoni.
      */
     public function create()
     {
-        return view('pages.testimonial.create'); // if needed
+        return view('pages.testimonials.create');
+    }
+
+    /**
+     * Menyimpan testimoni baru dari form publik.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name'    => 'required|string|max:255',
+            'company' => 'nullable|string|max:255',
+            'message' => 'required|string|max:1000',
+            'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi foto
+        ]);
+
+        $data = $request->only(['name', 'company', 'message']);
+
+        // Logika: Secara default status adalah 'pending' (sesuai migration)
+        $data['status'] = 'pending';
+
+        // Menangani upload foto jika ada
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('testimonials', 'public');
+            $data['image'] = $path;
+        }
+
+        Testimonial::create($data);
+
+        // Berikan pesan yang jelas bahwa data tidak langsung muncul
+        return redirect()->route('testimonials.index')->with('success', 'Terima kasih! Testimoni Anda telah terkirim. Admin akan meninjau pesan Anda sebelum dipublikasikan.');
     }
 }

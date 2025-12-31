@@ -1,112 +1,116 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Edit Testimoni')
+@section('title', 'Edit Testimoni - PT. RBM')
 
 @section('content')
 
-{{-- Definisi Warna Kustom --}}
+{{-- Definisi Warna Kustom (RBM Theme) --}}
 <style>
-    .text-dark-tower { color: #2C3E50; } /* Biru Tua/Primary */
-    .bg-dark-tower { background-color: #2C3E50; }
-    .text-accent-tower { color: #FF8C00; } /* Oranye/Accent */
-    .bg-accent-tower { background-color: #FF8C00; }
-    .hover\:bg-accent-dark:hover { background-color: #E67E22; } /* Hover gelap */
+    .text-dark-tower { color: #1e3a8a; } /* Biru Navy RBM */
+    .bg-dark-tower { background-color: #1e3a8a; }
+    .text-accent-tower { color: #FF7518; } /* Oranye RBM */
+    .bg-accent-tower { background-color: #FF7518; }
+    .hover\:bg-accent-dark:hover { background-color: #e66a15; }
     .shadow-soft { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
 
-    /* Gaya khusus untuk input file agar lebih rapi di Tailwind */
     input[type="file"]::file-selector-button {
-        background-color: #e0e0e0;
-        color: #333;
-        border: none;
+        background-color: #f1f5f9;
+        color: #1e3a8a;
+        border: 1px solid #e2e8f0;
         padding: 0.5rem 1rem;
         margin-right: 1rem;
-        border-radius: 0.375rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.2s;
-    }
-
-    input[type="file"]::file-selector-button:hover {
-        background-color: #d0d0d0;
+        transition: all 0.2s;
     }
 </style>
 
-<div class="container mx-auto p-6">
-    <div class="bg-white rounded-xl shadow-soft p-6 md:p-8">
+<div class="container mx-auto p-6 max-w-4xl">
+    <div class="bg-white rounded-2xl shadow-soft p-6 md:p-10 border border-gray-100">
 
         {{-- Header --}}
-        <h4 class="text-2xl font-bold mb-6 text-dark-tower">Edit Testimoni</h4>
+        <div class="mb-8">
+            <h4 class="text-2xl font-black text-dark-tower uppercase tracking-tight">Edit Data Testimoni</h4>
+            <p class="text-sm text-gray-500 italic mt-1">Lakukan perubahan informasi klien atau status publikasi di bawah ini.</p>
+        </div>
 
         <form action="{{ route('admin.testimonials.update', $testimonial->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
-            {{-- Grid Utama --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 {{-- Nama --}}
                 <div class="col-span-1">
-                    <label for="name" class="block text-sm font-medium text-dark-tower mb-1">Nama <span class="text-red-500">*</span></label>
+                    <label for="name" class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
                     <input type="text" name="name" id="name" required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('name') border-red-500 @enderror"
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition @error('name') border-red-500 @enderror"
                            value="{{ old('name', $testimonial->name) }}">
                     @error('name')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-[10px] mt-1 font-bold uppercase">{{ $message }}</p>
                     @enderror
                 </div>
 
-                {{-- Kolom Kosong/Buffer --}}
-                <div class="col-span-1 hidden md:block"></div>
-
-                {{-- Pesan (Membutuhkan 100% lebar) --}}
-                <div class="md:col-span-2">
-                    <label for="message" class="block text-sm font-medium text-dark-tower mb-1">Pesan <span class="text-red-500">*</span></label>
-                    <textarea name="message" id="message" rows="4" required
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('message') border-red-500 @enderror">{{ old('message', $testimonial->message) }}</textarea>
-                    @error('message')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Foto --}}
+                {{-- Perusahaan/Jabatan --}}
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-dark-tower mb-1">Foto Klien (Opsional)</label>
+                    <label for="company" class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Perusahaan / Jabatan</label>
+                    <input type="text" name="company" id="company"
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition"
+                           value="{{ old('company', $testimonial->company) }}">
+                </div>
 
-                    {{-- Pratinjau Foto Saat Ini --}}
-                    @if($testimonial->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($testimonial->image))
-                        <div class="mb-3 flex items-center space-x-3">
+                {{-- Status Moderasi --}}
+                <div class="col-span-1">
+                    <label for="status" class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Status Publikasi</label>
+                    <select name="status" id="status"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition">
+                        <option value="pending" {{ old('status', $testimonial->status) == 'pending' ? 'selected' : '' }}>Moderasi (Pending)</option>
+                        <option value="approved" {{ old('status', $testimonial->status) == 'approved' ? 'selected' : '' }}>Tayangkan (Approved)</option>
+                        <option value="rejected" {{ old('status', $testimonial->status) == 'rejected' ? 'selected' : '' }}>Tolak (Rejected)</option>
+                    </select>
+                </div>
+
+                {{-- Foto (Pratinjau & Input) --}}
+                <div class="col-span-1">
+                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Foto Profil</label>
+                    <div class="flex items-center gap-4 mb-2">
+                        @if($testimonial->image && Storage::disk('public')->exists($testimonial->image))
                             <img src="{{ asset('storage/'.$testimonial->image) }}"
-                                 class="w-16 h-16 rounded-full object-cover shadow-md border border-gray-200"
-                                 alt="Foto Klien Saat Ini">
-                            <span class="text-xs text-gray-500">Foto saat ini</span>
-                        </div>
-                    @else
-                        <span class="text-sm text-gray-500 block mb-3">Belum ada foto terunggah.</span>
-                    @endif
+                                 class="w-12 h-12 rounded-full object-cover border-2 border-orange-500 shadow-sm">
+                        @else
+                            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200">
+                                <i class="fas fa-user text-gray-300 text-xs"></i>
+                            </div>
+                        @endif
+                        <input type="file" name="image" id="image" accept="image/*"
+                               class="flex-1 border border-gray-200 rounded-xl text-sm text-gray-500 focus:outline-none">
+                    </div>
+                    <p class="text-[10px] text-gray-400 italic">Biarkan kosong jika tidak ingin mengganti foto.</p>
+                </div>
 
-                    <input type="file" name="image" id="image" accept="image/*"
-                           class="w-full border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('image') border-red-500 @enderror">
-                    <p class="text-xs text-gray-500 mt-1">Unggah file baru untuk mengganti foto lama.</p>
-
-                    @error('image')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                {{-- Pesan --}}
+                <div class="md:col-span-2">
+                    <label for="message" class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Pesan Testimoni <span class="text-red-500">*</span></label>
+                    <textarea name="message" id="message" rows="5" required
+                              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition @error('message') border-red-500 @enderror">{{ old('message', $testimonial->message) }}</textarea>
+                    @error('message')
+                        <p class="text-red-500 text-[10px] mt-1 font-bold uppercase">{{ $message }}</p>
                     @enderror
                 </div>
 
             </div>
 
             {{-- Tombol Aksi --}}
-            <div class="mt-8 flex items-center space-x-3 pt-4 border-t border-gray-100">
-
-                {{-- Tombol Update (Menggunakan warna Biru Tua/Dark Tower) --}}
+            <div class="mt-10 flex flex-col md:flex-row items-center gap-4 pt-6 border-t border-gray-50">
                 <button type="submit"
-                        class="bg-dark-tower text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition-colors duration-200 shadow-md flex items-center space-x-2 text-sm">
-                    <i class="fas fa-sync-alt me-1"></i> <span>Update</span>
+                        class="w-full md:w-auto bg-dark-tower text-white px-10 py-3 rounded-xl font-bold hover:bg-orange-600 transition-all duration-300 shadow-lg shadow-blue-900/10 flex items-center justify-center space-x-2 text-xs uppercase tracking-widest">
+                    <i class="fas fa-sync-alt"></i> <span>Simpan Perubahan</span>
                 </button>
 
-                {{-- Tombol Kembali (Warna netral/secondary) --}}
                 <a href="{{ route('admin.testimonials.index') }}"
-                   class="bg-gray-200 text-dark-tower px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 shadow-sm text-sm">
-                    Kembali
+                   class="w-full md:w-auto bg-gray-100 text-gray-500 px-10 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all duration-300 text-xs uppercase tracking-widest text-center">
+                    Batal
                 </a>
             </div>
         </form>

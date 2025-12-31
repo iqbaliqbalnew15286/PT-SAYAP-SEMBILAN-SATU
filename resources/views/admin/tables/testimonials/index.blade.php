@@ -1,119 +1,131 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Testimoni - Admin')
+@section('title', 'Testimoni - Admin PT. RBM')
 
 @section('content')
 
 {{-- Inisialisasi Kustom Tailwind CSS --}}
 <style>
-    /* Definisi Warna Kustom (Tower Theme - Dark Blue/Orange) */
-    .text-dark-tower { color: #2C3E50; } /* Biru Tua/Primary */
-    .bg-dark-tower { background-color: #2C3E50; }
-    .text-accent-tower { color: #FF8C00; } /* Oranye/Accent */
-    .bg-accent-tower { background-color: #FF8C00; }
-    .hover\:bg-accent-dark:hover { background-color: #E67E22; }
+    .text-dark-tower { color: #1e3a8a; } /* Biru Navy RBM */
+    .bg-dark-tower { background-color: #1e3a8a; }
+    .text-accent-tower { color: #FF7518; } /* Oranye RBM */
+    .bg-accent-tower { background-color: #FF7518; }
+    .hover\:bg-accent-dark:hover { background-color: #e66a15; }
     .shadow-soft { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
-
-    /* Warna tambahan */
-    .border-subtle-gray { border-color: #e0e0e0; }
 </style>
 
 <div class="container mx-auto p-6">
 
-    {{-- Header Halaman & Tombol Aksi --}}
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold text-dark-tower">Testimoni</h1>
+    {{-- Header Halaman --}}
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-dark-tower tracking-tight uppercase">Manajemen Testimoni</h1>
+            <p class="text-sm text-gray-500 mt-1">Kelola masukan pelanggan dan moderasi persetujuan tampilan.</p>
+        </div>
 
-        {{-- Tombol Tambah --}}
         <a href="{{ route('admin.testimonials.create') }}"
-           class="bg-accent-tower hover:bg-accent-dark text-dark-tower px-4 py-2 rounded-lg font-semibold transition duration-200 shadow-md flex items-center space-x-2 text-sm">
-            <i class="fas fa-plus-circle mr-1"></i> <span>Tambah Testimoni</span>
+           class="bg-accent-tower hover:bg-accent-dark text-white px-5 py-2.5 rounded-xl font-bold transition duration-200 shadow-lg flex items-center justify-center space-x-2 text-sm uppercase tracking-wider">
+            <i class="fas fa-plus-circle"></i> <span>Tambah Manual</span>
         </a>
     </div>
 
-    {{-- Informasi Jumlah Data --}}
-    <div class="flex flex-wrap mb-4">
-        <div class="w-full md:w-1/3 pr-2">
-            <div class="bg-white p-4 rounded-xl shadow-soft border-l-4 border-accent-tower">
-                @php
-                    // Pastikan $testimonials adalah Collection atau memiliki method count()
-                    $totalTestimonials = $testimonials->count() ?? 0;
-                @endphp
-                <p class="text-sm font-medium text-accent-tower uppercase">Total Testimoni</p>
-                <p class="text-2xl font-bold text-dark-tower">{{ $totalTestimonials }}</p>
-            </div>
+    {{-- Statistik Ringkas --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-2xl shadow-soft border-l-4 border-blue-600">
+            <p class="text-xs font-black text-gray-400 uppercase tracking-widest">Total Masuk</p>
+            <p class="text-3xl font-bold text-dark-tower">{{ $testimonials->count() }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-soft border-l-4 border-green-500">
+            <p class="text-xs font-black text-gray-400 uppercase tracking-widest">Disetujui (Live)</p>
+            <p class="text-3xl font-bold text-green-600">{{ $testimonials->where('status', 'approved')->count() }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-soft border-l-4 border-orange-500">
+            <p class="text-xs font-black text-gray-400 uppercase tracking-widest">Pending Moderasi</p>
+            <p class="text-3xl font-bold text-orange-500">{{ $testimonials->where('status', 'pending')->count() }}</p>
         </div>
     </div>
 
-    {{-- Alert sukses --}}
+    {{-- Alert --}}
     @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative mb-4 shadow-md" role="alert">
-            <div class="flex items-center">
-                <i class="fas fa-check-circle mr-2"></i>
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
+        <div class="bg-green-50 border-l-4 border-green-500 text-green-800 px-4 py-4 rounded-xl relative mb-6 shadow-sm flex items-center">
+            <i class="fas fa-check-circle mr-3 text-xl"></i>
+            <span class="font-medium">{{ session('success') }}</span>
         </div>
     @endif
 
-    {{-- Tabel Testimoni --}}
-    <div class="bg-white rounded-xl shadow-soft overflow-hidden">
+    {{-- Tabel Utama --}}
+    <div class="bg-white rounded-2xl shadow-soft overflow-hidden border border-gray-100">
         <div class="overflow-x-auto">
-
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 border-r border-subtle-gray" style="width: 5%;">No</th>
-                        <th class="py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 border-r border-subtle-gray" style="width: 10%;">Foto</th>
-                        <th class="py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-r border-subtle-gray" style="width: 20%;">Nama</th>
-                        <th class="py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-r border-subtle-gray" style="width: 50%;">Pesan</th>
-                        <th class="py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500" style="width: 15%;">Aksi</th>
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-100">
+                        <th class="px-6 py-4 text-left text-xs font-black uppercase text-gray-400">Info Klien</th>
+                        <th class="px-6 py-4 text-left text-xs font-black uppercase text-gray-400">Pesan</th>
+                        <th class="px-6 py-4 text-center text-xs font-black uppercase text-gray-400">Status</th>
+                        <th class="px-6 py-4 text-center text-xs font-black uppercase text-gray-400">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+                <tbody class="divide-y divide-gray-50">
                     @forelse($testimonials as $t)
-                        <tr class="hover:bg-gray-50 transition duration-150">
-                            {{-- No. --}}
-                            <td class="px-4 py-3 text-center text-sm text-gray-500 border-r border-subtle-gray">{{ $loop->iteration }}</td>
+                        <tr class="hover:bg-gray-50/50 transition">
+                            {{-- Info Klien --}}
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-shrink-0">
+                                        @if($t->image && Storage::disk('public')->exists($t->image))
+                                            <img src="{{ asset('storage/'.$t->image) }}" class="w-12 h-12 rounded-full object-cover border-2 border-gray-100 shadow-sm">
+                                        @else
+                                            <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+                                                <i class="fas fa-user text-blue-300"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold text-dark-tower">{{ $t->name }}</div>
+                                        <div class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">{{ $t->company ?? 'Personal' }}</div>
+                                    </div>
+                                </div>
+                            </td>
 
-                            {{-- Foto Testimoni --}}
-                            <td class="px-4 py-3 text-center border-r border-subtle-gray">
-                                @if($t->photo && Storage::disk('public')->exists($t->photo))
-                                    <img src="{{ asset('storage/'.$t->photo) }}" width="50" height="50"
-                                         class="rounded-full mx-auto object-cover border border-gray-200" alt="Foto Klien">
+                            {{-- Pesan --}}
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-gray-600 italic line-clamp-2 leading-relaxed">"{{ $t->message }}"</p>
+                                <span class="text-[10px] text-gray-400 mt-1 block">{{ $t->created_at->format('d/m/Y H:i') }}</span>
+                            </td>
+
+                            {{-- Status --}}
+                            <td class="px-6 py-4 text-center">
+                                @if($t->status == 'approved')
+                                    <span class="px-3 py-1 text-[10px] font-black uppercase bg-green-100 text-green-600 rounded-full">Disetujui</span>
+                                @elseif($t->status == 'pending')
+                                    <span class="px-3 py-1 text-[10px] font-black uppercase bg-orange-100 text-orange-600 rounded-full">Moderasi</span>
                                 @else
-                                    <i class="fas fa-user-circle text-4xl text-gray-400"></i>
+                                    <span class="px-3 py-1 text-[10px] font-black uppercase bg-red-100 text-red-600 rounded-full">Ditolak</span>
                                 @endif
                             </td>
 
-                            {{-- Nama Klien --}}
-                            <td class="px-4 py-3 text-left font-medium text-dark-tower border-r border-subtle-gray">{{ $t->name ?? '-' }}</td>
-
-                            {{-- Pesan --}}
-                            <td class="px-4 py-3 text-left text-sm text-gray-700 border-r border-subtle-gray">{{ Str::limit($t->message ?? '-', 60) }}</td>
-
                             {{-- Aksi --}}
-                            <td class="px-4 py-3 text-center">
-                                <div class="flex justify-center space-x-3">
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex justify-center items-center space-x-2">
+                                    {{-- Tombol Cepat Approve (Jika Status Pending) --}}
+                                    @if($t->status == 'pending')
+                                    <form action="{{ route('admin.testimonials.status', [$t->id, 'approved']) }}" method="POST">
+                                        @csrf @method('PATCH')
+                                        <button class="w-8 h-8 rounded-lg bg-green-500 text-white hover:bg-green-600 transition shadow-sm" title="Setujui">
+                                            <i class="fas fa-check text-xs"></i>
+                                        </button>
+                                    </form>
+                                    @endif
 
-                                    {{-- Show (Menggunakan Icon Mata/Eye) --}}
-                                    <a href="{{ route('admin.testimonials.show', $t->id) }}"
-                                       class="text-gray-500 hover:text-dark-tower transition duration-150" title="Detail">
-                                        <i class="fas fa-eye text-lg"></i>
-                                    </a>
-
-                                    {{-- Edit (Menggunakan Icon Pensil/Edit) --}}
                                     <a href="{{ route('admin.testimonials.edit', $t->id) }}"
-                                       class="text-gray-500 hover:text-accent-tower transition duration-150" title="Edit">
-                                        <i class="fas fa-edit text-lg"></i>
+                                       class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition">
+                                        <i class="fas fa-edit text-xs"></i>
                                     </a>
 
-                                    {{-- Delete (Menggunakan Icon Tong Sampah/Trash) --}}
-                                    <form action="{{ route('admin.testimonials.destroy', $t->id) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-gray-500 hover:text-red-600 transition duration-150" title="Hapus"
-                                            onclick="return confirm('Apakah Anda yakin ingin menghapus testimoni ini secara permanen?')">
-                                            <i class="fas fa-trash-alt text-lg"></i>
+                                    <form action="{{ route('admin.testimonials.destroy', $t->id) }}" method="POST" onsubmit="return confirm('Hapus permanen?')">
+                                        @csrf @method('DELETE')
+                                        <button class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition">
+                                            <i class="fas fa-trash-alt text-xs"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -121,10 +133,11 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-12 bg-gray-50">
-                                <i class="fas fa-comment-dots text-5xl mb-3 text-accent-tower"></i>
-                                <h4 class="text-xl font-semibold text-dark-tower">Belum ada Testimoni.</h4>
-                                <p class="text-gray-500 mt-2">Silakan klik tombol 'Tambah Testimoni' di atas untuk menambahkan masukan klien.</p>
+                            <td colspan="4" class="px-6 py-20 text-center">
+                                <div class="opacity-20 mb-4">
+                                    <i class="fas fa-comments text-6xl"></i>
+                                </div>
+                                <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">Data Testimoni Kosong</p>
                             </td>
                         </tr>
                     @endforelse

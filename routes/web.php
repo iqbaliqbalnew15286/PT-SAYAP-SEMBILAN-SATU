@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\ReservationController;
+use App\Http\Controllers\Admin\NewsController; // Tambahan Controller News
+use App\Http\Controllers\Admin\PartnerController; // Tambahan Controller Partner
 
 // Models
 use App\Models\Product;
@@ -28,7 +30,7 @@ use App\Models\About;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes - PT. RBM System
 |--------------------------------------------------------------------------
 */
 
@@ -37,12 +39,22 @@ Route::get('/', [AdminHomeController::class, 'index'])->name('home');
 
 Route::get('/about', function () {
     $about = About::first();
-    return view('pages.about', compact('about'));
+    $aboutLinks = [
+        ['title' => 'Visi & Misi', 'description' => 'Pelajari visi dan misi kami.', 'url' => '/about#visi-misi', 'icon' => 'fa-eye'],
+        ['title' => 'Sejarah', 'description' => 'Kenali perjalanan panjang kami.', 'url' => '/about#sejarah', 'icon' => 'fa-history'],
+        ['title' => 'Program Unggulan', 'description' => 'Temukan program unggulan kami.', 'url' => '/about#program', 'icon' => 'fa-star'],
+        ['title' => 'Tim Pengajar', 'description' => 'Bertemu dengan tim profesional.', 'url' => '/about#tim', 'icon' => 'fa-users'],
+        ['title' => 'Fasilitas', 'description' => 'Jelajahi fasilitas modern kami.', 'url' => '/facilities', 'icon' => 'fa-building'],
+        ['title' => 'Kontak Kami', 'description' => 'Hubungi kami lebih lanjut.', 'url' => '/contact', 'icon' => 'fa-phone']
+    ];
+    return view('pages.about.index', compact('about', 'aboutLinks'));
 })->name('about');
 
+// Produk, Jasa & Pencarian
 Route::get('/search', function (Request $request) {
     $query = $request->get('query');
-    if (!$query) return redirect()->back()->with('error', 'Silakan masukkan kata kunci.');
+    if (!$query)
+        return redirect()->back()->with('error', 'Silakan masukkan kata kunci.');
 
     $products = Product::where('type', 'barang')
         ->where(function ($q) use ($query) {
@@ -59,7 +71,6 @@ Route::get('/search', function (Request $request) {
     return view('pages.search.results', compact('products', 'services', 'query'));
 })->name('search');
 
-// Produk & Galeri
 Route::get('/products', function () {
     $items = Product::latest()->get();
     return view('pages.products.products', compact('items'));
@@ -82,37 +93,42 @@ Route::get('/services/{slug}', function ($slug) {
     return view('pages.services.show', compact('service', 'recommended_services'));
 })->name('service.show');
 
+// Galeri, News (Berita) & Informasi Lainnya
 Route::get('/gallery', function () {
     $galleries = Gallery::latest()->get();
     return view('pages.gallery.gallery', compact('galleries'));
 })->name('gallery.index');
 
-// Partners, Facilities, & Help
+// Public Route untuk News (Hanya Lihat)
+Route::get('/news', [App\Http\Controllers\Admin\PublicNewsController::class, 'index'])->name('news.index');
+Route::get('/news/{slug}', [App\Http\Controllers\Admin\PublicNewsController::class, 'show'])->name('news.show');
+
 Route::resource('partners', \App\Http\Controllers\Admin\PublicPartnersController::class)->only(['index', 'show']);
 Route::resource('facilities', \App\Http\Controllers\Admin\PublicFacilityController::class)->only(['index', 'show']);
+
 Route::view('/contact', 'contact')->name('contact');
 Route::view('/consult', 'pages.consult')->name('consult');
 Route::view('/faq', 'pages.help.faq')->name('faq');
 Route::view('/syaratketentuan', 'pages.help.syaratketentuan')->name('syaratketentuan');
 Route::view('/kontak', 'pages.help.kontak')->name('kontak');
 
-// Testimonials & Feedback Public
-Route::get('/testimonial', [PublicTestimonialController::class, 'create'])->name('send.testimonial');
-Route::post('/testimonial', [PublicTestimonialController::class, 'store'])->name('testimonial.store');
+// Public Testimonials
+Route::get('/testimonials', [PublicTestimonialController::class, 'index'])->name('testimonials.index');
+Route::get('/testimonial/send', [PublicTestimonialController::class, 'create'])->name('send.testimonial');
+Route::post('/testimonial/send', [PublicTestimonialController::class, 'store'])->name('testimonial.store');
+
+// Feedback
 Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'create'])->name('feedback.create');
 Route::post('/feedback', [App\Http\Controllers\FeedbackController::class, 'store'])->name('feedback.store');
 
 
-// ==================== 2. BOOKING SYSTEM (USER/CLIENT AUTH) ====================
+// ==================== 2. BOOKING SYSTEM (USER AUTH) ====================
 Route::prefix('booking')->group(function () {
-
     Route::middleware('guest')->group(function () {
         Route::get('/login', [BookingAuthController::class, 'showLogin'])->name('booking.login');
         Route::post('/login', [BookingAuthController::class, 'login'])->name('booking.login.post');
         Route::get('/register', [BookingAuthController::class, 'showRegister'])->name('booking.register');
         Route::post('/register', [BookingAuthController::class, 'register'])->name('booking.register.post');
-
-        // Reset Password User Pelanggan (Menggunakan Token Laravel Default)
         Route::get('/reset', [BookingAuthController::class, 'showReset'])->name('booking.reset');
         Route::post('/reset', [BookingAuthController::class, 'sendResetLink'])->name('booking.reset.post');
         Route::get('/reset-password/{token}', [BookingAuthController::class, 'showResetPasswordForm'])->name('password.reset');
@@ -132,49 +148,56 @@ Route::prefix('booking')->group(function () {
     });
 
     Route::get('/verify', function () {
-        return view('pages.booking.verify');
-    })->name('booking.verify');
+        return view('pages.booking.verify'); })->name('booking.verify');
 });
 
 
-// ==================== 3. ADMIN SYSTEM (MANAGEMENT AUTH) ====================
+// ==================== 3. ADMIN SYSTEM (MANAGEMENT) ====================
 
-// Admin Login Routes
+// Admin Auth
 Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
-// Admin Password Reset (Kustom 6-Digit Code)
-Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('/verify-code', [VerifyCodeController::class, 'showVerifyForm'])->name('password.verify');
-Route::post('/verify-code', [VerifyCodeController::class, 'verifyCode'])->name('password.verify.post');
-Route::get('/change-password', [VerifyCodeController::class, 'showChangePasswordForm'])->name('password.change');
-Route::post('/change-password', [VerifyCodeController::class, 'changePassword'])->name('password.change.post');
+// Admin Password Recovery
+Route::controller(ForgotPasswordController::class)->group(function () {
+    Route::get('/forgot-password', 'showLinkRequestForm')->name('password.request');
+    Route::post('/forgot-password', 'sendResetLinkEmail')->name('password.email');
+});
+Route::controller(VerifyCodeController::class)->group(function () {
+    Route::get('/verify-code', 'showVerifyForm')->name('password.verify');
+    Route::post('/verify-code', 'verifyCode')->name('password.verify.post');
+    Route::get('/change-password', 'showChangePasswordForm')->name('password.change');
+    Route::post('/change-password', 'changePassword')->name('password.change.post');
+});
 
-// Admin Dashboard & Resources (Hanya untuk Admin Terverifikasi)
+// Admin Protected Area
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // CMS Management
+    // CMS Resources
     Route::resource('home', AdminHomeController::class);
     Route::resource('abouts', AboutController::class);
+    Route::resource('news', NewsController::class); // News Connected
     Route::resource('products', ProductController::class);
     Route::resource('galleries', GalleryController::class);
-    Route::resource('testimonials', TestimonialController::class);
-    Route::resource('partners', \App\Http\Controllers\Admin\PartnerController::class);
+    Route::resource('partners', PartnerController::class); // Partners Connected
     Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class);
     Route::resource('feedbacks', FeedbackController::class);
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
-
-    // Manajemen Booking di sisi Admin
     Route::resource('booking', ReservationController::class);
+    Route::resource('testimonials', TestimonialController::class);
+
+    // Testimonial Status Update
+    Route::patch('testimonials/{id}/status/{status}', [TestimonialController::class, 'updateStatus'])
+        ->name('testimonials.status');
 });
 
 
 // ==================== 4. UTILITIES ====================
 Route::get('storage/{path}', function ($path) {
     $storagePath = storage_path('app/public/' . $path);
-    if (!Storage::disk('public')->exists($path)) abort(404);
+    if (!Storage::disk('public')->exists($path))
+        abort(404);
     return response()->file($storagePath);
 })->where('path', '.*')->name('storage.local');
