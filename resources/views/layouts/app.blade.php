@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/image.png') }}">
+     <link rel="icon" type="image/png" href="{{ asset('assets/img/image.png') }}">
 
     <title>@yield('title', 'PT. Rizqallah Boer Makmur - Tower Infrastructure')</title>
 
