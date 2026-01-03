@@ -157,7 +157,7 @@
                             ['route' => 'admin.partners.index', 'icon' => 'bi-hand-thumbs-up', 'label' => 'Mitra Kerja'],
                             ['route' => 'admin.testimonials.index', 'icon' => 'bi-chat-quote', 'label' => 'Testimoni'],
                             ['route' => 'admin.feedbacks.index', 'icon' => 'bi-envelope-paper', 'label' => 'Feedback'],
-                            ['route' => 'admin.booking.index', 'icon' => 'bi-calendar2-check', 'label' => 'Daftar Booking'],
+                            ['route' => 'admin.booking.list', 'icon' => 'bi-calendar2-check', 'label' => 'Daftar Booking'],
                         ];
                     @endphp
 

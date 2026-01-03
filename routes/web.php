@@ -186,7 +186,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // --- FITUR KOMUNIKASI & BOOKING ---
-    Route::get('/booking/list', [AdminBookingController::class, 'index'])->name('booking.index');
+    Route::get('/booking/list', [AdminBookingController::class, 'index'])->name('booking.list');
 
     // Perbaikan Route Chat: menggunakan {user_id} agar sinkron dengan navigasi sidebar
     Route::get('/booking/chat/{user_id}', [AdminBookingController::class, 'chat'])->name('booking.chat');
