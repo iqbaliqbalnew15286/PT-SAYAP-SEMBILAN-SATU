@@ -3,258 +3,325 @@
 @section('title', 'WhatsApp Admin - ' . ($user->name ?? 'Chat'))
 
 @section('content')
-<div class="container mx-auto px-4 py-4 h-[calc(100vh-120px)]"
-    x-data="{
+    @php
+        use App\Models\Reservation;
+        use App\Models\Message;
+
+        // =============================
+        // GABUNG USER CHAT + BOOKING
+        // =============================
+        // Mengambil user yang pernah booking
+        $bookingUsers = Reservation::with('user')->get()->pluck('user')->filter();
+
+        // Mengambil user yang ada di tabel chat (meskipun belum/tidak booking)
+        $sidebarUsers = $active_chats
+            ->merge($bookingUsers)
+            ->unique('id')
+            ->values()
+            ->map(function ($u) {
+                // Ambil pesan terakhir untuk setiap user
+                $u->latest_msg = \App\Models\Message::where(function ($q) use ($u) {
+                    $q->where('sender_id', $u->id)->orWhere('receiver_id', $u->id);
+                })
+                    ->latest()
+                    ->first();
+                return $u;
+            });
+
+        // =============================
+        // BOOKING USER AKTIF (HEADER)
+        // =============================
+        $activeBooking = isset($user) ? Reservation::where('user_id', $user->id)->latest()->first() : null;
+    @endphp
+
+    <div class="container mx-auto px-4 py-4 h-[calc(100vh-120px)]" x-data="{
         search: '',
-        isSending: false,
-        imagePreview: null,
-        showDetails: window.innerWidth > 1024,
-        quickReply(msg) {
-            $refs.messageInput.value = msg;
-            $nextTick(() => { $refs.chatForm.submit(); });
+        preview: null,
+        fileName: '',
+        isImage: false,
+        scrollBottom() {
+            this.$nextTick(() => {
+                let box = document.getElementById('chat-box');
+                if (box) box.scrollTop = box.scrollHeight;
+            });
         },
-        scrollToBottom() {
-            const box = document.getElementById('chat-box');
-            if (box) box.scrollTop = box.scrollHeight;
-        },
-        previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
+        handleFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            this.fileName = file.name;
+            this.isImage = file.type.startsWith('image/');
+
+            if (this.isImage) {
                 const reader = new FileReader();
-                reader.onload = (e) => { this.imagePreview = e.target.result; };
+                reader.onload = ev => this.preview = ev.target.result;
                 reader.readAsDataURL(file);
+            } else {
+                this.preview = null;
             }
+        },
+        clearFile() {
+            this.preview = null;
+            this.fileName = '';
+            document.getElementById('file-input').value = '';
         }
-    }"
-    x-init="scrollToBottom();">
+    }" x-init="scrollBottom()">
 
-    <div class="flex h-full bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <div class="flex h-full bg-white rounded-2xl shadow-xl border overflow-hidden">
 
-        {{-- SIDEBAR KIRI: Daftar Pelanggan dari Booking --}}
-        <div class="w-full md:w-80 lg:w-96 border-r border-slate-200 flex flex-col bg-white shrink-0">
-            <div class="p-5 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
-                <h2 class="text-xs font-black text-slate-700 uppercase tracking-widest">Daftar Pelanggan</h2>
-                <span class="bg-orange-500 text-white text-[10px] px-2.5 py-1 rounded-full font-bold shadow-sm">{{ $active_chats->count() }}</span>
-            </div>
+            {{-- ===================== --}}
+            {{-- SIDEBAR KIRI --}}
+            {{-- ===================== --}}
+            <div class="w-80 border-r flex flex-col bg-white">
 
-            <div class="p-4">
-                <div class="relative">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input type="text" x-model="search" placeholder="Cari nama pelanggan..."
-                        class="w-full bg-slate-100 border-none rounded-xl py-2.5 pl-11 pr-4 text-sm focus:ring-2 focus:ring-orange-500 transition-all">
-                </div>
-            </div>
-
-            <div class="flex-1 overflow-y-auto custom-scrollbar">
-                @forelse($active_chats as $sidebarUser)
-                    {{-- Filter Search menggunakan Alpine.js --}}
-                    <div x-show="search === '' || '{{ strtolower($sidebarUser->name) }}'.includes(search.toLowerCase())">
-                        <a href="{{ route('admin.booking.chat', $sidebarUser->id) }}"
-                            class="flex items-center gap-4 p-4 border-b border-slate-50 transition-all hover:bg-slate-50 {{ isset($user) && $user->id == $sidebarUser->id ? 'bg-orange-50 border-l-4 border-l-orange-500' : '' }}">
-
-                            {{-- Avatar --}}
-                            <div class="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 shrink-0 relative text-sm shadow-sm">
-                                {{ strtoupper(substr($sidebarUser->name, 0, 1)) }}
-                                @if($sidebarUser->unread_count > 0)
-                                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-[10px] flex items-center justify-center rounded-full border-2 border-white text-white font-bold animate-bounce">
-                                        {{ $sidebarUser->unread_count }}
-                                    </span>
-                                @endif
-                            </div>
-
-                            {{-- Info Singkat --}}
-                            <div class="flex-1 min-w-0">
-                                <div class="flex justify-between items-center mb-1">
-                                    <h4 class="text-sm font-bold text-slate-800 truncate">{{ $sidebarUser->name }}</h4>
-                                    <span class="text-[10px] text-slate-400 font-medium">
-                                        {{ $sidebarUser->last_interaction ? \Carbon\Carbon::parse($sidebarUser->last_interaction)->diffForHumans(null, true) : '' }}
-                                    </span>
-                                </div>
-                                <p class="text-xs text-slate-500 truncate">
-                                    @if($sidebarUser->latest_msg_image)
-                                        <i class="fas fa-camera text-[10px] mr-1"></i> Gambar
-                                    @else
-                                        {{ $sidebarUser->latest_msg_text ?? 'Belum ada pesan' }}
-                                    @endif
-                                </p>
-                            </div>
-                        </a>
-                    </div>
-                @empty
-                    <div class="p-10 text-center text-slate-400 text-sm italic">Tidak ada data pelanggan</div>
-                @endforelse
-            </div>
-        </div>
-
-        {{-- PANEL CHAT UTAMA --}}
-        <div class="flex-1 flex flex-col bg-[#e5ddd5] relative min-w-0 shadow-inner">
-            {{-- Background WhatsApp Pattern --}}
-            <div class="absolute inset-0 opacity-[0.06] pointer-events-none" style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');"></div>
-
-            @if(isset($user))
-                {{-- HEADER CHAT --}}
-                <div class="p-4 bg-white border-b border-slate-200 flex justify-between items-center z-10 shadow-sm">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-800 leading-tight">{{ $user->name }}</h3>
-                            <div class="flex items-center gap-1.5 mt-0.5">
-                                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                <p class="text-[10px] text-green-600 font-bold uppercase tracking-widest">Aktif</p>
-                            </div>
-                        </div>
-                    </div>
-                    <button @click="showDetails = !showDetails" class="text-slate-400 hover:text-orange-500 transition-colors hidden lg:block">
-                        <i class="fas fa-info-circle text-xl"></i>
-                    </button>
+                <div class="p-4 border-b bg-slate-50">
+                    <h2 class="text-xs font-black uppercase tracking-wider text-slate-600">Daftar Pesan & Booking</h2>
                 </div>
 
-                {{-- AREA HISTORY CHAT --}}
-                <div class="flex-1 overflow-y-auto p-6 space-y-4 z-10 custom-scrollbar scroll-smooth" id="chat-box">
-                    @foreach ($messages as $msg)
-                        <div class="flex {{ $msg->sender_type == 'admin' ? 'justify-end' : 'justify-start' }} animate-fade-in">
-                            <div class="max-w-[70%] group relative {{ $msg->sender_type == 'admin' ? 'bg-[#dcf8c6] text-slate-800 rounded-2xl rounded-tr-none' : 'bg-white text-slate-800 rounded-2xl rounded-tl-none' }} px-4 py-3 shadow-md border border-black/5">
+                {{-- SEARCH ENGINE --}}
+                <div class="p-3">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-3 text-slate-400 text-xs"></i>
+                        <input x-model="search" placeholder="Cari pelanggan..."
+                            class="w-full bg-slate-100 rounded-xl px-9 py-2 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+                    </div>
+                </div>
 
-                                @if ($msg->image)
-                                    <div class="mb-2 overflow-hidden rounded-lg">
-                                        <img src="{{ asset('storage/' . $msg->image) }}" class="max-h-64 w-full object-cover cursor-zoom-in" @click="window.open($el.src, '_blank')">
+                <div class="flex-1 overflow-y-auto custom-scrollbar">
+                    @foreach ($sidebarUsers as $su)
+                        <div x-show="search === '' || '{{ strtolower($su->name) }}'.includes(search.toLowerCase())">
+                            <a href="{{ route('admin.booking.chat', ['user_id' => $su->id]) }}"
+                                class="flex items-center gap-3 p-4 hover:bg-slate-50 transition-all border-b border-slate-50
+            {{ isset($user) && $user->id == $su->id ? 'bg-orange-50 border-l-4 border-orange-500' : '' }}">
+
+                                <div class="relative">
+                                    <div
+                                        class="w-12 h-12 bg-slate-200 rounded-2xl flex items-center justify-center font-black text-slate-600 shadow-sm">
+                                        {{ strtoupper(substr($su->name, 0, 1)) }}
                                     </div>
-                                @endif
-
-                                <p class="text-[14px] leading-relaxed pr-6 whitespace-pre-wrap">{{ $msg->message }}</p>
-
-                                <div class="flex items-center justify-end gap-1.5 mt-1.5 opacity-60">
-                                    <span class="text-[10px] font-bold">{{ $msg->created_at->format('H:i') }}</span>
-                                    @if ($msg->sender_type == 'admin')
-                                        <i class="fas fa-check-double text-[10px] {{ $msg->is_read ? 'text-blue-500' : 'text-slate-400' }}"></i>
-                                    @endif
                                 </div>
 
-                                {{-- Fitur Hapus Pesan (Hanya Pesan Admin) --}}
-                                @if ($msg->sender_type == 'admin')
-                                    <form action="{{ route('admin.chat.delete', $msg->id) }}" method="POST" onsubmit="return confirm('Hapus pesan?')"
-                                        class="absolute top-1 -left-10 opacity-0 group-hover:opacity-100 transition-all">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="text-slate-400 hover:text-red-500 p-2 bg-white rounded-full shadow-sm">
-                                            <i class="fas fa-trash text-xs"></i>
-                                        </button>
-                                    </form>
-                                @endif
-                            </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <p class="font-bold text-sm truncate text-slate-800">{{ $su->name }}</p>
+                                        @if ($su->latest_msg)
+                                            <span
+                                                class="text-[10px] text-slate-400 font-medium">{{ $su->latest_msg->created_at->format('H:i') }}</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-xs text-slate-500 truncate mt-0.5">
+                                        @if ($su->latest_msg)
+                                            @if ($su->latest_msg->sender_type == 'admin')
+                                                <span class="text-orange-500 font-bold">Anda:</span>
+                                            @endif
+                                            {{ $su->latest_msg->image ? '📷 Gambar' : ($su->latest_msg->file ? '📁 File' : $su->latest_msg->message) }}
+                                        @else
+                                            <span class="italic text-slate-400 text-[11px]">Belum ada riwayat pesan</span>
+                                        @endif
+                                    </p>
+                                </div>
+                            </a>
                         </div>
                     @endforeach
                 </div>
+            </div>
 
-                {{-- FOOTER INPUT --}}
-                <div class="bg-[#f0f2f5] z-10 p-4">
-                    {{-- Quick Replies --}}
-                    <div class="flex gap-2 mb-3 overflow-x-auto no-scrollbar pb-1">
-                        @foreach (['Halo, mohon ditunggu ya!', 'Booking sedang diproses.', 'Sudah selesai, terima kasih!'] as $reply)
-                            <button @click="quickReply('{{ $reply }}')"
-                                class="whitespace-nowrap bg-white text-slate-700 hover:bg-orange-500 hover:text-white px-4 py-1.5 rounded-full text-xs font-bold transition-all border border-slate-300 shadow-sm">
-                                {{ $reply }}
-                            </button>
+            {{-- ===================== --}}
+            {{-- PANEL CHAT --}}
+            {{-- ===================== --}}
+            <div class="flex-1 flex flex-col bg-[#F0F2F5]">
+
+                @if (isset($user))
+                    {{-- HEADER CHAT --}}
+                    <div class="p-4 bg-white border-b flex justify-between items-center shadow-sm z-10">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center font-black shadow-inner">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <h3 class="font-black text-slate-800 leading-tight">{{ $user->name }}</h3>
+                                <p class="text-[11px] text-slate-500 font-bold flex items-center gap-1">
+                                    <i class="fas fa-phone text-[9px]"></i> {{ $activeBooking->phone ?? 'Tidak ada nomor' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        @if ($activeBooking)
+                            <div class="flex flex-col items-end">
+                                <span
+                                    class="text-[10px] font-black px-3 py-1 rounded-lg shadow-sm
+            {{ $activeBooking->status == 'pending'
+                ? 'bg-orange-100 text-orange-600 border border-orange-200'
+                : ($activeBooking->status == 'proses'
+                    ? 'bg-blue-100 text-blue-600 border border-blue-200'
+                    : 'bg-green-100 text-green-600 border border-green-200') }}">
+                                    {{ strtoupper($activeBooking->status) }}
+                                </span>
+                                <span class="text-[9px] text-slate-400 mt-1 uppercase tracking-tighter">Booking
+                                    Terakhir</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- AREA CHAT --}}
+                    <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                        @foreach ($messages as $msg)
+                            <div class="flex {{ $msg->sender_type == 'admin' ? 'justify-end' : 'justify-start' }}">
+                                <div
+                                    class="group relative max-w-[70%] px-4 py-2 rounded-2xl shadow-sm
+        {{ $msg->sender_type == 'admin' ? 'bg-orange-600 text-white rounded-tr-none' : 'bg-white border text-slate-800 rounded-tl-none' }}">
+
+                                    {{-- TAMPILAN GAMBAR --}}
+                                    @if ($msg->image)
+                                        <div class="mb-2 mt-1">
+                                            <img src="{{ asset('storage/' . $msg->image) }}"
+                                                class="rounded-lg max-h-72 w-full object-cover cursor-pointer hover:brightness-90 transition"
+                                                onclick="window.open(this.src)">
+                                        </div>
+                                    @endif
+
+                                    {{-- TAMPILAN FILE --}}
+                                    @if ($msg->file)
+                                        <a href="{{ asset('storage/' . $msg->file) }}" target="_blank"
+                                            class="flex items-center gap-3 p-2 mb-2 rounded-lg {{ $msg->sender_type == 'admin' ? 'bg-orange-700' : 'bg-slate-100' }} hover:bg-opacity-80 transition">
+                                            <i class="fas fa-file-alt text-xl"></i>
+                                            <div class="min-w-0">
+                                                <p class="text-xs font-bold truncate">Buka Lampiran File</p>
+                                                <p class="text-[10px] opacity-70 italic">Klik untuk mengunduh</p>
+                                            </div>
+                                        </a>
+                                    @endif
+
+                                    @if ($msg->message)
+                                        <p class="text-sm leading-relaxed">{{ $msg->message }}</p>
+                                    @endif
+
+                                    <div class="flex items-center justify-end gap-1 mt-1">
+                                        <span class="text-[9px] opacity-70">{{ $msg->created_at->format('H:i') }}</span>
+                                        @if ($msg->sender_type == 'admin')
+                                            <i class="fas fa-check-double text-[9px] text-orange-200"></i>
+                                        @endif
+                                    </div>
+
+                                    {{-- TOMBOL HAPUS --}}
+                                    @if ($msg->sender_type == 'admin')
+                                        <form action="{{ route('admin.chat.delete', $msg->id) }}" method="POST"
+                                            onsubmit="return confirm('Hapus pesan ini?')"
+                                            class="absolute -left-10 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all">
+                                            @csrf @method('DELETE')
+                                            <button
+                                                class="w-8 h-8 bg-white text-red-500 rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition">
+                                                <i class="fas fa-trash text-xs"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
                         @endforeach
                     </div>
 
-                    {{-- Image Preview --}}
-                    <div x-show="imagePreview" class="relative inline-block mb-3 p-2 bg-white rounded-xl border-2 border-orange-300 shadow-lg" x-cloak>
-                        <img :src="imagePreview" class="w-20 h-20 object-cover rounded-lg">
-                        <button @click="imagePreview = null; $refs.fileInput.value = ''"
-                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
-                            <i class="fas fa-times text-xs"></i>
-                        </button>
+                    {{-- INPUT PESAN --}}
+                    <div class="p-4 bg-white border-t">
+
+                        {{-- FILE PREVIEW POPUP --}}
+                        <div x-show="fileName" x-transition
+                            class="mb-3 p-3 bg-slate-50 border rounded-2xl flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <template x-if="isImage">
+                                    <img :src="preview" class="w-12 h-12 rounded-lg object-cover border">
+                                </template>
+                                <template x-if="!isImage">
+                                    <div
+                                        class="w-12 h-12 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-file-alt text-xl"></i>
+                                    </div>
+                                </template>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-slate-700 truncate" x-text="fileName"></p>
+                                    <p class="text-[10px] text-slate-500 uppercase font-black">Siap dikirim...</p>
+                                </div>
+                            </div>
+                            <button type="button" @click="clearFile" class="text-slate-400 hover:text-red-500 p-2">
+                                <i class="fas fa-times-circle text-xl"></i>
+                            </button>
+                        </div>
+
+                        <form action="{{ route('admin.chat.send') }}" method="POST" enctype="multipart/form-data"
+                            class="flex gap-2 items-end">
+                            @csrf
+                            <input type="hidden" name="receiver_id" value="{{ $user->id }}">
+
+                            <div class="flex gap-1">
+                                <label
+                                    class="w-12 h-12 bg-slate-100 hover:bg-slate-200 rounded-xl flex items-center justify-center cursor-pointer transition-colors group">
+                                    <i class="fas fa-paperclip text-slate-500 group-hover:text-orange-600"></i>
+                                    <input type="file" name="file" id="file-input" class="hidden"
+                                        @change="handleFile">
+                                </label>
+                            </div>
+
+                            <div class="flex-1 relative">
+                                <textarea name="message" rows="1"
+                                    class="w-full bg-slate-100 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 outline-none transition-all resize-none"
+                                    placeholder="Tulis pesan ke {{ $user->name }}..." @keydown.enter.prevent="$el.form.submit()"></textarea>
+                            </div>
+
+                            <button
+                                class="bg-orange-600 hover:bg-orange-700 text-white w-12 h-12 rounded-xl shadow-lg shadow-orange-200 flex items-center justify-center transition-all active:scale-90">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
                     </div>
-
-                    {{-- Form Kirim Chat --}}
-                    <form action="{{ route('admin.chat.send') }}" method="POST" enctype="multipart/form-data"
-                        x-ref="chatForm" @submit="isSending = true" class="flex items-center gap-3">
-                        @csrf
-                        <input type="hidden" name="receiver_id" value="{{ $user->id }}">
-
-                        <label class="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-orange-600 cursor-pointer bg-white rounded-full shadow-md transition-all hover:scale-105">
-                            <i class="fas fa-camera text-xl"></i>
-                            <input type="file" name="image" class="hidden" x-ref="fileInput" @change="previewImage">
-                        </label>
-
-                        <div class="flex-1 relative">
-                            <textarea name="message" x-ref="messageInput" rows="1"
-                                @keydown.enter.exact.prevent="$refs.chatForm.submit()"
-                                placeholder="Ketik pesan..."
-                                class="w-full bg-white border-none rounded-2xl py-3.5 px-6 text-sm shadow-md focus:ring-2 focus:ring-orange-500 max-h-32"></textarea>
+                @else
+                    <div class="flex-1 flex flex-col items-center justify-center text-slate-400 bg-slate-50">
+                        <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-comments text-4xl text-slate-300"></i>
                         </div>
-
-                        <button type="submit" :disabled="isSending"
-                            class="bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-orange-600 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
-                            <i class="fas fa-paper-plane text-lg" x-show="!isSending"></i>
-                            <i class="fas fa-circle-notch animate-spin text-lg" x-show="isSending" style="display: none;"></i>
-                        </button>
-                    </form>
-                </div>
-            @else
-                <div class="flex-1 flex flex-center flex-col items-center justify-center text-slate-400">
-                    <i class="fas fa-comments text-6xl mb-4"></i>
-                    <p>Pilih pelanggan untuk mulai chat</p>
-                </div>
-            @endif
-        </div>
-
-        {{-- SIDEBAR KANAN: Detail Booking --}}
-        @if(isset($user))
-        <div class="w-72 lg:w-80 border-l border-slate-200 bg-slate-50 flex flex-col shrink-0"
-            x-show="showDetails" x-transition x-cloak>
-            <div class="p-5 bg-white border-b border-slate-200 flex items-center gap-3">
-                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-receipt text-orange-600 text-sm"></i>
-                </div>
-                <h2 class="text-xs font-black text-slate-700 uppercase tracking-widest">Detail Booking</h2>
-            </div>
-
-            <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                @forelse($user->reservations()->latest()->limit(5)->get() as $res)
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-[10px] font-black px-2.5 py-1 rounded-full uppercase
-                                {{ $res->status == 'pending' ? 'bg-orange-100 text-orange-600' :
-                                   ($res->status == 'proses' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600') }}">
-                                {{ $res->status }}
-                            </span>
-                            <span class="text-[10px] font-bold text-slate-400">#{{ $res->id }}</span>
-                        </div>
-                        <h4 class="text-xs font-bold text-slate-800 leading-tight mb-2">{{ $res->services }}</h4>
-                        <div class="flex items-center gap-2 text-[10px] text-slate-500 mb-3">
-                            <i class="far fa-calendar-alt text-orange-500"></i> {{ \Carbon\Carbon::parse($res->date)->format('d M Y') }} | {{ $res->time }}
-                        </div>
-                        <div class="pt-3 border-t border-slate-50 flex justify-between items-center">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase">Total</span>
-                            <span class="text-sm font-black text-slate-800">Rp{{ number_format($res->total_price, 0, ',', '.') }}</span>
-                        </div>
+                        <h3 class="font-bold text-slate-500">Pilih Pelanggan</h3>
+                        <p class="text-xs">Klik pada daftar di sebelah kiri untuk mulai mengobrol.</p>
                     </div>
-                @empty
-                    <div class="text-center py-20 opacity-30">
-                        <i class="fas fa-calendar-times text-4xl mb-4"></i>
-                        <p class="text-xs font-bold">Belum ada booking</p>
-                    </div>
-                @endforelse
+                @endif
             </div>
         </div>
-        @endif
     </div>
-</div>
 
-<style>
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    [x-cloak] { display: none !important; }
-    body { overflow: hidden; }
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
 
-    @keyframes fade-in {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
-</style>
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        /* Animasi bubble chat */
+        #chat-box div {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 @endsection

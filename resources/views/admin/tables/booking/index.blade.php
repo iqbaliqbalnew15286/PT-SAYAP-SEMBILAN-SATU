@@ -63,7 +63,6 @@
                                         <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center font-black text-sm relative shadow-sm">
                                             {{ strtoupper(substr($reservation->user->name ?? 'U', 0, 1)) }}
 
-                                            {{-- Indikator Pesan Baru: Muncul jika ada pesan unread dari user ini --}}
                                             @if ($reservation->user && $reservation->user->unread_messages_count > 0)
                                                 <span class="absolute -top-1 -right-1 flex h-3 w-3">
                                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -105,9 +104,9 @@
                                     </div>
                                 </td>
 
-                                {{-- Status Reservasi (Form Update Langsung) --}}
+                                {{-- Status Reservasi (DIBENARKAN) --}}
                                 <td class="px-6 py-4 text-center">
-                                    <form action="{{ route('admin.bookings.update', $reservation->id) }}" method="POST">
+                                    <form action="{{ route('admin.booking.update', $reservation->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <select name="status" onchange="this.form.submit()"
@@ -127,7 +126,6 @@
                                 {{-- Kolom Aksi --}}
                                 <td class="px-6 py-4">
                                     <div class="flex flex-col gap-2 items-center">
-                                        {{-- Tombol Hubungi: Mengarah ke chat spesifik user --}}
                                         @if($reservation->user_id)
                                             <a href="{{ route('admin.booking.chat', ['user_id' => $reservation->user_id]) }}"
                                                 class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-orange-600 text-white rounded-xl shadow-lg shadow-slate-200 transition-all group/btn">
@@ -140,7 +138,6 @@
                                             </button>
                                         @endif
 
-                                        {{-- Tombol Hapus --}}
                                         <form action="{{ route('admin.booking.destroy', $reservation->id) }}"
                                             method="POST" onsubmit="return confirm('Hapus data booking ini?')"
                                             class="w-full">
