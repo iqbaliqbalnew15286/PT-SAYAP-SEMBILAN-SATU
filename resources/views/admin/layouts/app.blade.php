@@ -127,14 +127,14 @@
                             ['route' => 'admin.partners.index', 'icon' => 'bi-hand-thumbs-up', 'label' => 'Mitra Kerja'],
                             ['route' => 'admin.testimonials.index', 'icon' => 'bi-chat-quote', 'label' => 'Testimoni'],
                             ['route' => 'admin.feedbacks.index', 'icon' => 'bi-envelope-paper', 'label' => 'Feedback'],
-                            ['route' => 'admin.booking.index', 'icon' => 'bi-calendar2-check', 'label' => 'Daftar Booking'],
+                            ['route' => 'admin.booking.list', 'icon' => 'bi-calendar2-check', 'label' => 'Daftar Booking'],
                         ];
                     @endphp
-                    @foreach ($editorMenus as [$route, $label])
-                        <a href="{{ route($route) }}"
+                    @foreach ($submenus as $menu)
+                        <a href="{{ route($menu['route']) }}"
                             class="block py-2 px-6 text-xs rounded-r-lg transition-all
-                            {{ request()->routeIs($route) ? 'text-[var(--primary)] font-bold bg-orange-50/50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
-                            {{ $label }}
+                            {{ request()->routeIs($menu['route']) ? 'text-[var(--primary)] font-bold bg-orange-50/50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
+                            <i class="{{ $menu['icon'] }} me-2"></i>{{ $menu['label'] }}
                         </a>
                     @endforeach
                 </div>
