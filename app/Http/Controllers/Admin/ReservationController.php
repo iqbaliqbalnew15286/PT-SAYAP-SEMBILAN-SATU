@@ -16,8 +16,8 @@ class ReservationController extends Controller
         // Ambil data terbaru dengan relasi user
         $reservations = Reservation::with('user')->latest()->paginate(10);
 
-        // Arahkan ke folder resources/views/admin/booking/index.blade.php
-        return view('admin.booking.index', compact('reservations'));
+        // Arahkan ke folder resources/views/admin/tables/booking/index.blade.php
+        return view('admin.tables.booking.index', compact('reservations'));
     }
 
     /**
@@ -55,8 +55,8 @@ class ReservationController extends Controller
             $reservation = Reservation::findOrFail($id);
             $reservation->delete();
 
-            // SINKRONKAN: Jika di web.php namanya admin.booking.index
-            return redirect()->route('admin.booking.index')
+            // SINKRONKAN: Jika di web.php namanya admin.reservations.index
+            return redirect()->route('admin.reservations.index')
                 ->with('success', 'Data booking berhasil dihapus.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menghapus data.');
@@ -71,7 +71,7 @@ class ReservationController extends Controller
         // Konteks: Admin ingin chat spesifik tentang reservasi ini
         $reservation = Reservation::with('user')->findOrFail($id);
 
-        // Mengarahkan ke resources/views/admin/booking/chat.blade.php
-        return view('admin.booking.chat', compact('reservation'));
+        // Mengarahkan ke resources/views/admin/tables/booking/chat.blade.php
+        return view('admin.tables.booking.chat', compact('reservation'));
     }
 }

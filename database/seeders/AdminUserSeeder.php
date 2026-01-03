@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'iqbaliqbalnew15286@gmail.com'],
             [
-                'name' => 'Amdev Tower',
+                'name' => ' ADMIN PT RIZQALLAH BOER MAKMUR',
                 'password' => Hash::make('tower123'),
                 'email_verified_at' => now(),
             ]

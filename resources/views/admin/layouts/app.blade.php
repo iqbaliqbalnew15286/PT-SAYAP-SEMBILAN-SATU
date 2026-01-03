@@ -111,7 +111,7 @@
                     :class="editorOpen ? 'bg-slate-50 text-slate-900 shadow-sm' : 'hover:bg-slate-50 text-slate-500'">
                     <span class="flex items-center gap-3">
                         <i class="bi bi-pencil-square"></i>
-                        <span class="text-sm font-medium">Editor Konten</span>
+                        <span class="text-sm font-medium">Manajeman public</span>
                     </span>
                     <i class="bi bi-chevron-right text-[10px] transition-transform duration-300"
                         :class="editorOpen ? 'rotate-90' : ''"></i>
