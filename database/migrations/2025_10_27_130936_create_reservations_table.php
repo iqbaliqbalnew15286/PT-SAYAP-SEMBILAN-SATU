@@ -14,28 +14,37 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
 
-            // Data dasar dari pemesan
-            $table->string('name');
-            $table->string('phone');
-            $table->string('email')->nullable();
+            // Relasi ke User (Pemesan)
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->onDelete('cascade');
 
-            // Relasi ke tabel services (bisa kosong jika belum dipilih)
-            $table->foreignId('service_id')
-                ->nullable()
-                ->constrained('services')
-                ->nullOnDelete();
+            // Data pesanan
+            $table->text('services'); // Menyimpan list layanan/barang
 
-            // Informasi waktu reservasi
-            $table->date('date')->nullable();
-            $table->time('time')->nullable();
+            // Menggunakan decimal (15,2) sudah tepat untuk uang
+            $table->decimal('total_price', 15, 2)->default(0);
 
-            // Catatan tambahan dari pengguna
+            // Jadwal
+            $table->date('date');
+            $table->string('time');
+
+            // Catatan dari pembeli
             $table->text('note')->nullable();
 
-            // Status reservasi (pending, accepted, done)
+            /** * PERBAIKAN STATUS & CHAT LOGIC
+             */
+            // Gunakan enum atau string untuk status agar konsisten
             $table->string('status')->default('pending');
 
-            // Timestamp created_at dan updated_at
+            // Tambahan: Flag untuk mengetahui apakah ada pesan baru (Logika WA)
+            // 'customer' berarti customer baru nge-chat, admin harus balas.
+            // 'admin' berarti admin sudah balas terakhir kali.
+            $table->enum('last_message_from', ['customer', 'admin'])->nullable();
+
+            // Catatan internal admin (Opsional, untuk pengingat admin saja)
+            $table->text('admin_note')->nullable();
+
             $table->timestamps();
         });
     }

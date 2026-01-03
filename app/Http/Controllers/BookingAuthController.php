@@ -2,26 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Auth\Events\PasswordReset;
 use App\Models\User;
 use App\Models\Reservation;
+use App\Models\Message;
 
 class BookingAuthController extends Controller
 {
     /**
-     * Menampilkan halaman login.
-     * Mencegah user yang sudah login mengakses halaman login kembali.
+     * Menampilkan halaman login
      */
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->intended('/booking');
+            return redirect()->route('booking.index');
         }
         return view('pages.booking.login');
     }
@@ -31,19 +31,21 @@ class BookingAuthController extends Controller
      */
     public function login(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|string|min:8',
+            'password' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('/booking')->with('success', 'Selamat datang kembali!');
+
+            return redirect()->intended(route('booking.index'))
+                ->with('success', 'Selamat datang kembali!');
         }
 
-        return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
+        return back()->withErrors([
+            'email' => 'Email atau password yang Anda masukkan salah.',
+        ])->withInput();
     }
 
     /**
@@ -51,6 +53,9 @@ class BookingAuthController extends Controller
      */
     public function showRegister()
     {
+        if (Auth::check()) {
+            return redirect()->route('booking.index');
+        }
         return view('pages.booking.registrasi');
     }
 
@@ -72,7 +77,7 @@ class BookingAuthController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        User::create([
+        $user = User::create([
             'name' => $request->first_name . ' ' . $request->last_name,
             'email' => $request->email,
             'phone' => $request->phone,
@@ -83,37 +88,78 @@ class BookingAuthController extends Controller
     }
 
     /**
-     * Fitur Password Reset - Menampilkan Halaman Input Email
+     * SIMPAN BOOKING (Method Baru untuk AJAX)
+     * Menangani request dari dashboard booking
+     */
+    public function storeBooking(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'services' => 'required|string',
+            'total_price' => 'required|numeric',
+            'date' => 'required|date|after_or_equal:today',
+            'time' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validasi gagal, silakan cek kembali inputan Anda.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $reservation = Reservation::create([
+                'user_id' => Auth::id(),
+                'services' => $request->services,
+                'total_price' => $request->total_price,
+                'date' => $request->date,
+                'time' => $request->time,
+                'status' => 'pending',
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Booking berhasil disimpan!',
+                'data' => $reservation
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menyimpan ke database: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Menampilkan Riwayat Booking
+     */
+    public function riwayat()
+    {
+        $bookings = Reservation::where('user_id', Auth::id())->latest()->get();
+        return view('pages.booking.riwayat', compact('bookings'));
+    }
+
+    /**
+     * Fitur Password Reset
      */
     public function showReset()
     {
         return view('pages.booking.reset');
     }
 
-    /**
-     * Mengirim Link Reset ke Email menggunakan Password Broker
-     */
     public function sendResetLink(Request $request)
     {
         $request->validate(['email' => 'required|email']);
 
-        // Menggunakan Password Broker agar fitur "Throttle/Please Wait" terkelola otomatis
-        $status = Password::broker()->sendResetLink(
-            $request->only('email')
-        );
+        $status = Password::broker()->sendResetLink($request->only('email'));
 
-        // Jika berhasil, Laravel mengembalikan 'passwords.sent'
-        if ($status === Password::RESET_LINK_SENT) {
-            return back()->with('status', __($status));
-        }
-
-        // Jika gagal (Throttle/Email salah), kirim pesan error
-        return back()->withErrors(['email' => __($status)]);
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('status', __($status))
+            : back()->withErrors(['email' => __($status)]);
     }
 
-    /**
-     * Menampilkan Form Password Baru (dari link email)
-     */
     public function showResetPasswordForm(Request $request, $token = null)
     {
         return view('pages.booking.reset-password')->with([
@@ -122,9 +168,6 @@ class BookingAuthController extends Controller
         ]);
     }
 
-    /**
-     * Proses Update Password Baru ke Database
-     */
     public function resetPassword(Request $request)
     {
         $request->validate([
@@ -151,12 +194,54 @@ class BookingAuthController extends Controller
     }
 
     /**
-     * Menampilkan Riwayat Booking
+     * Chat dengan Admin
      */
-    public function riwayat()
+    public function chat()
     {
-        $bookings = Reservation::where('user_id', Auth::id())->latest()->get();
-        return view('pages.booking.riwayat', compact('bookings'));
+        // Ambil percakapan aktif dengan admin
+        $messages = Message::where(function ($q) {
+            $q->where('sender_id', auth()->id())->where('receiver_id', 1); // Assuming admin ID is 1
+        })->orWhere(function ($q) {
+            $q->where('sender_id', 1)->where('receiver_id', auth()->id());
+        })->orderBy('created_at', 'asc')->get();
+
+        return view('pages.booking.chat', compact('messages'));
+    }
+
+    /**
+     * Kirim pesan ke Admin
+     */
+    public function sendChat(Request $request)
+    {
+        $request->validate([
+            'message' => 'required|string|max:1000'
+        ]);
+
+        Message::create([
+            'sender_id' => auth()->id(),
+            'receiver_id' => 1, // Admin ID
+            'message' => $request->message,
+            'sender_type' => 'user',
+            'is_read' => false,
+        ]);
+
+        return back()->with('success', 'Pesan berhasil dikirim!');
+    }
+
+    /**
+     * Hapus pesan user
+     */
+    public function deleteMessage($id)
+    {
+        $message = Message::where('id', $id)->where('sender_id', auth()->id())->firstOrFail();
+
+        if ($message->image) {
+            Storage::disk('public')->delete($message->image);
+        }
+
+        $message->delete();
+
+        return back()->with('success', 'Pesan berhasil dihapus!');
     }
 
     /**
@@ -171,7 +256,7 @@ class BookingAuthController extends Controller
         return redirect()->route('home')->withHeaders([
             'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
             'Pragma' => 'no-cache',
-            'Expires' => 'Sun, 02 Jan 1990 00:00:00 GMT',
+            'Expires' => 'Fri, 01 Jan 1990 00:00:00 GMT',
         ]);
     }
 }

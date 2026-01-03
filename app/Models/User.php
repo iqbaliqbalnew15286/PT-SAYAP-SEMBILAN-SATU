@@ -5,36 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * Atribut yang bisa diisi (Mass Assignable).
-     * Saya tambahkan 'phone' agar sesuai dengan form registrasi kamu.
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'phone',
-    ];
+    protected $fillable = ['name', 'email', 'password', 'phone'];
 
-    /**
-     * Atribut yang disembunyikan.
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
-    /**
-     * Casting atribut.
-     */
     protected function casts(): array
     {
         return [
@@ -43,38 +24,31 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * CUSTOM NOTIFIKASI RESET PASSWORD
-     * Method ini akan otomatis terpanggil saat user meminta reset password.
-     */
-    public function sendPasswordResetNotification($token)
+    // Relasi Reservasi
+    public function reservations()
     {
-        // URL tujuan yang dikirim ke email
-        $url = route('password.reset', [
-            'token' => $token,
-            'email' => $this->email,
-        ]);
+        return $this->hasMany(Reservation::class);
+    }
 
-        // Mengirim Email dengan tampilan kustom
-        $this->notify(new class($url) extends ResetPasswordNotification {
-            protected $resetUrl;
+    // Relasi Pesan sebagai Pengirim
+    public function messagesAsSender()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
 
-            public function __construct($url)
-            {
-                $this->resetUrl = $url;
-            }
+    // Relasi Pesan sebagai Penerima
+    public function messagesAsReceiver()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
 
-            public function toMail($notifiable)
-            {
-                return (new MailMessage)
-                    ->subject('Atur Ulang Password - Tower Booking')
-                    ->greeting('Halo, ' . $notifiable->name . '!')
-                    ->line('Kami menerima permintaan untuk mengatur ulang password akun Anda di Booking Tower Management.')
-                    ->action('Atur Ulang Password Sekarang', $this->resetUrl)
-                    ->line('Link reset password ini akan kadaluarsa dalam 60 menit.')
-                    ->line('Jika Anda tidak merasa meminta ini, abaikan saja email ini.')
-                    ->salutation('Salam hangat, ' . config('app.name'));
-            }
-        });
+    // Mengambil pesan terakhir secara spesifik antara User ini dan Admin login
+    public function latestMessageWithAdmin()
+    {
+        return Message::where(function($q) {
+            $q->where('sender_id', $this->id)->where('receiver_id', auth()->id());
+        })->orWhere(function($q) {
+            $q->where('sender_id', auth()->id())->where('receiver_id', $this->id);
+        })->latest()->first();
     }
 }

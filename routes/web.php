@@ -18,10 +18,15 @@ use App\Http\Controllers\Admin\AboutController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\TestimonialController;
-use App\Http\Controllers\Admin\FeedbackController;
+use App\Http\Controllers\Admin\FeedbackController as AdminFeedbackController;
 use App\Http\Controllers\Admin\ReservationController;
-use App\Http\Controllers\Admin\NewsController; // Tambahan Controller News
-use App\Http\Controllers\Admin\PartnerController; // Tambahan Controller Partner
+use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\PartnerController;
+use App\Http\Controllers\Admin\PublicNewsController;
+use App\Http\Controllers\Admin\PublicPartnersController;
+use App\Http\Controllers\Admin\PublicFacilityController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\Admin\AdminBookingController;
 
 // Models
 use App\Models\Product;
@@ -50,7 +55,7 @@ Route::get('/about', function () {
     return view('pages.about.index', compact('about', 'aboutLinks'));
 })->name('about');
 
-// Produk, Jasa & Pencarian
+// Pencarian
 Route::get('/search', function (Request $request) {
     $query = $request->get('query');
     if (!$query)
@@ -71,8 +76,9 @@ Route::get('/search', function (Request $request) {
     return view('pages.search.results', compact('products', 'services', 'query'));
 })->name('search');
 
+// Katalog
 Route::get('/products', function () {
-    $items = Product::latest()->get();
+    $items = Product::where('type', 'barang')->latest()->get();
     return view('pages.products.products', compact('items'));
 })->name('products');
 
@@ -93,18 +99,17 @@ Route::get('/services/{slug}', function ($slug) {
     return view('pages.services.show', compact('service', 'recommended_services'));
 })->name('service.show');
 
-// Galeri, News (Berita) & Informasi Lainnya
+// Informasi Publik
 Route::get('/gallery', function () {
     $galleries = Gallery::latest()->get();
     return view('pages.gallery.gallery', compact('galleries'));
 })->name('gallery.index');
 
-// Public Route untuk News (Hanya Lihat)
-Route::get('/news', [App\Http\Controllers\Admin\PublicNewsController::class, 'index'])->name('news.index');
-Route::get('/news/{slug}', [App\Http\Controllers\Admin\PublicNewsController::class, 'show'])->name('news.show');
+Route::get('/news', [PublicNewsController::class, 'index'])->name('news.index');
+Route::get('/news/{slug}', [PublicNewsController::class, 'show'])->name('news.show');
 
-Route::resource('partners', \App\Http\Controllers\Admin\PublicPartnersController::class)->only(['index', 'show']);
-Route::resource('facilities', \App\Http\Controllers\Admin\PublicFacilityController::class)->only(['index', 'show']);
+Route::resource('partners', PublicPartnersController::class)->only(['index', 'show']);
+Route::resource('facilities', PublicFacilityController::class)->only(['index', 'show']);
 
 Route::view('/contact', 'contact')->name('contact');
 Route::view('/consult', 'pages.consult')->name('consult');
@@ -112,23 +117,24 @@ Route::view('/faq', 'pages.help.faq')->name('faq');
 Route::view('/syaratketentuan', 'pages.help.syaratketentuan')->name('syaratketentuan');
 Route::view('/kontak', 'pages.help.kontak')->name('kontak');
 
-// Public Testimonials
+// Feedback & Testimonials
 Route::get('/testimonials', [PublicTestimonialController::class, 'index'])->name('testimonials.index');
 Route::get('/testimonial/send', [PublicTestimonialController::class, 'create'])->name('send.testimonial');
 Route::post('/testimonial/send', [PublicTestimonialController::class, 'store'])->name('testimonial.store');
 
-// Feedback
-Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'create'])->name('feedback.create');
-Route::post('/feedback', [App\Http\Controllers\FeedbackController::class, 'store'])->name('feedback.store');
+Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback.create');
+Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
 
 
 // ==================== 2. BOOKING SYSTEM (USER AUTH) ====================
 Route::prefix('booking')->group(function () {
+
     Route::middleware('guest')->group(function () {
         Route::get('/login', [BookingAuthController::class, 'showLogin'])->name('booking.login');
         Route::post('/login', [BookingAuthController::class, 'login'])->name('booking.login.post');
         Route::get('/register', [BookingAuthController::class, 'showRegister'])->name('booking.register');
         Route::post('/register', [BookingAuthController::class, 'register'])->name('booking.register.post');
+
         Route::get('/reset', [BookingAuthController::class, 'showReset'])->name('booking.reset');
         Route::post('/reset', [BookingAuthController::class, 'sendResetLink'])->name('booking.reset.post');
         Route::get('/reset-password/{token}', [BookingAuthController::class, 'showResetPasswordForm'])->name('password.reset');
@@ -143,54 +149,73 @@ Route::prefix('booking')->group(function () {
         })->name('booking.index');
 
         Route::get('/riwayat', [BookingAuthController::class, 'riwayat'])->name('booking.riwayat');
-        Route::post('/riwayat', [BookingAuthController::class, 'storeBooking'])->name('booking.riwayat.store');
+        Route::post('/riwayat/store', [BookingAuthController::class, 'storeBooking'])->name('booking.riwayat.store');
+        Route::get('/chat', [BookingAuthController::class, 'chat'])->name('chat.index');
+        Route::post('/chat/send', [BookingAuthController::class, 'sendChat'])->name('chat.send');
+        Route::delete('/chat/message/{id}', [BookingAuthController::class, 'deleteMessage'])->name('chat.delete');
         Route::post('/logout', [BookingAuthController::class, 'logout'])->name('booking.logout');
     });
 
     Route::get('/verify', function () {
-        return view('pages.booking.verify'); })->name('booking.verify');
+        return view('pages.booking.verify');
+    })->name('booking.verify');
 });
 
 
 // ==================== 3. ADMIN SYSTEM (MANAGEMENT) ====================
 
-// Admin Auth
-Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
-Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+});
 
-// Admin Password Recovery
 Route::controller(ForgotPasswordController::class)->group(function () {
-    Route::get('/forgot-password', 'showLinkRequestForm')->name('password.request');
-    Route::post('/forgot-password', 'sendResetLinkEmail')->name('password.email');
-});
-Route::controller(VerifyCodeController::class)->group(function () {
-    Route::get('/verify-code', 'showVerifyForm')->name('password.verify');
-    Route::post('/verify-code', 'verifyCode')->name('password.verify.post');
-    Route::get('/change-password', 'showChangePasswordForm')->name('password.change');
-    Route::post('/change-password', 'changePassword')->name('password.change.post');
+    Route::get('/admin/forgot-password', 'showLinkRequestForm')->name('password.request');
+    Route::post('/admin/forgot-password', 'sendResetLinkEmail')->name('password.email');
 });
 
-// Admin Protected Area
+Route::controller(VerifyCodeController::class)->group(function () {
+    Route::get('/admin/verify-code', 'showVerifyForm')->name('password.verify');
+    Route::post('/admin/verify-code', 'verifyCode')->name('password.verify.post');
+    Route::get('/admin/change-password', 'showChangePasswordForm')->name('password.change');
+    Route::post('/admin/change-password', 'changePassword')->name('password.change.post');
+});
+
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // --- FITUR KOMUNIKASI & BOOKING ---
+    Route::get('/booking/list', [AdminBookingController::class, 'index'])->name('booking.index');
+
+    // Perbaikan Route Chat: menggunakan {user_id} agar sinkron dengan navigasi sidebar
+    Route::get('/booking/chat/{user_id}', [AdminBookingController::class, 'chat'])->name('booking.chat');
+
+    // Route POST untuk mengirim pesan (Teks & Gambar)
+    Route::post('/booking/chat/send', [AdminBookingController::class, 'sendChat'])->name('chat.send');
+
+    // Route DELETE untuk hapus pesan satuan (Ala WhatsApp)
+    Route::delete('/booking/chat/message/{id}', [AdminBookingController::class, 'deleteMessage'])->name('chat.delete');
+
+    Route::put('/booking/update-status/{id}', [AdminBookingController::class, 'update'])->name('bookings.update');
+    Route::delete('/booking/destroy/{id}', [AdminBookingController::class, 'destroy'])->name('booking.destroy');
 
     // CMS Resources
     Route::resource('home', AdminHomeController::class);
     Route::resource('abouts', AboutController::class);
-    Route::resource('news', NewsController::class); // News Connected
+    Route::resource('news', NewsController::class);
     Route::resource('products', ProductController::class);
     Route::resource('galleries', GalleryController::class);
-    Route::resource('partners', PartnerController::class); // Partners Connected
+    Route::resource('partners', PartnerController::class);
     Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class);
-    Route::resource('feedbacks', FeedbackController::class);
+    Route::resource('feedbacks', AdminFeedbackController::class);
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
-    Route::resource('booking', ReservationController::class);
     Route::resource('testimonials', TestimonialController::class);
 
-    // Testimonial Status Update
-    Route::patch('testimonials/{id}/status/{status}', [TestimonialController::class, 'updateStatus'])
-        ->name('testimonials.status');
+    // Resource Standar
+    Route::resource('booking', ReservationController::class);
+
+    Route::patch('testimonials/{id}/status/{status}', [TestimonialController::class, 'updateStatus'])->name('testimonials.status');
 });
 
 
