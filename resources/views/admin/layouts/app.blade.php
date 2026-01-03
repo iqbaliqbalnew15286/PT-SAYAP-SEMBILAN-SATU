@@ -5,149 +5,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{ asset('assets/img/image.png') }}">
-    <title>@yield('title', 'Dashboard - PT Rizqallah Boer Makmur')</title>
+    <title>@yield('title', 'Admin - PT Rizqallah Boer Makmur')</title>
 
-    {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    {{-- Font Awesome & Bootstrap Icons --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <style>
         :root {
-            --bg-light-main: #F2F4F8;
-            --bg-card: #FCFDFE;
-            --primary-accent: #FF7518;
-            --text-dark: #2C3E50;
-            --text-muted: #7F8C8D;
-            --border-subtle: #DDE1E8;
-            --hover-bg: #E7EBF1;
-            --active-bg: #DCE0E6;
+            --primary: #FF7518;
+            --sidebar-bg: #FCFDFE;
+            --main-bg: #F2F4F8;
         }
 
         body {
-            font-family: "Poppins", sans-serif;
-            background: var(--bg-light-main);
-            color: var(--text-dark);
+            font-family: "Plus Jakarta Sans", sans-serif;
+            background: var(--main-bg);
+            color: #1e293b;
         }
 
-        *,
-        *::before,
-        *::after {
-            transition: all .25s ease;
+        [x-cloak] {
+            display: none !important;
         }
 
-        .sidebar {
-            width: 260px;
-            transform: translateX(-260px);
-            z-index: 2000;
+        .sidebar-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @media (min-width: 992px) {
-            .sidebar {
-                transform: translateX(0);
-            }
-
-            .main {
-                margin-left: 260px;
-            }
-        }
-
-        .sidebar.show {
-            transform: translateX(0);
-        }
-
-        .main {
-            padding: 30px;
-        }
-
-        nav::-webkit-scrollbar {
+        .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }
 
-        nav::-webkit-scrollbar-thumb {
-            background: var(--border-subtle);
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
             border-radius: 10px;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
 
-<body>
+<body x-data="{
+    mobileMenu: false,
+    editorOpen: {{ collect([
+        'admin.abouts.*',
+        'admin.news.*',
+        'admin.products.*',
+        'admin.facilities.*',
+        'admin.galleries.*',
+        'admin.partners.*',
+        'admin.testimonials.*',
+        'admin.feedbacks.*',
+    ])->contains(fn($r) => request()->routeIs($r))
+        ? 'true'
+        : 'false' }}
+}" class="antialiased">
 
-    {{-- Mobile Toggle --}}
-    <button
-        class="lg:hidden fixed top-4 left-4 p-3 rounded-xl bg-[var(--primary-accent)] text-white text-xl z-[3000] shadow-lg"
-        id="sidebarToggle">
-        <i class="bi bi-list"></i>
-    </button>
+    <div x-show="mobileMenu" x-cloak x-transition.opacity @click="mobileMenu = false"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[40] lg:hidden"></div>
 
-    <aside
-        class="sidebar fixed top-0 left-0 h-screen flex flex-col p-4 bg-[var(--bg-card)] border-r border-[var(--border-subtle)] shadow-xl lg:shadow-none transition-transform duration-300"
-        id="sidebar">
+    <aside :class="mobileMenu ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+        class="sidebar-transition fixed top-0 left-0 h-screen bg-[var(--sidebar-bg)] border-r border-slate-200 z-[50] flex flex-col shadow-2xl lg:shadow-none"
+        style="width:280px">
 
-        {{-- BRANDING --}}
-        <div
-            class="brand p-4 mb-6 rounded-xl border border-[var(--primary-accent)] border-l-4 bg-[var(--bg-card)] shadow-md">
-            <div class="flex items-center gap-3">
-                <img src="{{ asset('assets/img/image.png') }}" alt="Logo" class="w-10 h-10 rounded-lg object-cover">
-                <div class="flex flex-col">
-                    <div class="font-bold text-[var(--text-dark)] leading-tight text-sm uppercase">PT RIZQALLAH</div>
-                    <small class="text-[10px] text-[var(--text-muted)] font-bold tracking-widest uppercase">Admin Tower</small>
+        <div class="p-6">
+            <div
+                class="flex items-center gap-3 p-3 rounded-2xl bg-white border border-slate-100 shadow-sm border-l-4 border-l-[var(--primary)]">
+                <img src="{{ asset('assets/img/image.png') }}" class="w-10 h-10 rounded-xl object-cover">
+                <div class="overflow-hidden">
+                    <p class="font-black text-[11px] uppercase leading-tight">PT RIZQALLAH</p>
+                    <p class="text-[9px] text-orange-500 font-bold uppercase tracking-widest mt-0.5">Admin Panel</p>
                 </div>
             </div>
         </div>
 
-        <nav class="flex-grow overflow-y-auto pr-2">
-            <div
-                class="menu-section text-[var(--text-muted)] text-[10px] font-black uppercase my-4 mx-2 tracking-[2px]">
+        <nav class="flex-1 overflow-y-auto px-4 custom-scrollbar space-y-1">
+
+            <div class="text-[10px] font-black uppercase text-slate-400 px-3 mb-2 mt-4 tracking-[2px]">
                 Menu Utama
             </div>
 
-            {{-- DASHBOARD --}}
             <a href="{{ route('admin.dashboard') }}"
-                class="flex items-center p-3 rounded-xl font-medium mb-1 transition-all
-                @if (request()->routeIs('admin.dashboard')) bg-[var(--active-bg)] text-[var(--text-dark)] border-l-4 border-[var(--primary-accent)] pl-3 @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif">
-                <i
-                    class="bi bi-grid-1x2-fill me-3 @if (request()->routeIs('admin.dashboard')) text-[var(--primary-accent)] @endif"></i>
-                Dashboard
+                class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                {{ request()->routeIs('admin.dashboard') ? 'bg-orange-50 text-[var(--primary)] font-bold shadow-sm' : 'text-slate-500 hover:bg-slate-50' }}">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span class="text-sm">Dashboard</span>
             </a>
 
-            {{-- EDITOR KONTEN --}}
-            @php
-                $editorRoutes = [
-                    'admin.abouts.*',
-                    'admin.news.*',
-                    'admin.products.*',
-                    'admin.galleries.*',
-                    'admin.partners.*',
-                    'admin.testimonials.*',
-                    'admin.feedbacks.*',
-                    'admin.booking.index',
-                ];
-                $isEditorActive = collect($editorRoutes)->contains(fn($route) => request()->routeIs($route));
-            @endphp
+            <a href="{{ route('admin.users.index') }}"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                {{ request()->routeIs('admin.users.*') ? 'bg-orange-50 text-[var(--primary)] font-bold shadow-sm' : 'text-slate-500 hover:bg-slate-50' }}">
+                <i class="bi bi-people-fill"></i>
+                <span class="text-sm">Manajemen User</span>
+            </a>
 
-            <div class="mb-1">
-                <button
-                    class="w-full flex items-center justify-between p-3 rounded-xl font-medium transition-all outline-none
-                    @if ($isEditorActive) bg-[var(--hover-bg)] text-[var(--text-dark)] @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif"
-                    id="editorToggle">
-                    <div class="flex items-center">
-                        <i
-                            class="bi bi-pencil-square me-3 @if ($isEditorActive) text-[var(--primary-accent)] @endif"></i>
-                        Editor Konten
-                    </div>
-                    <i id="editorIcon"
-                        class="bi bi-chevron-right text-xs transition-transform @if ($isEditorActive) rotate-90 @endif"></i>
+            <div class="pt-1">
+                <button @click="editorOpen = !editorOpen"
+                    class="w-full flex justify-between items-center px-4 py-3 rounded-xl transition-all"
+                    :class="editorOpen ? 'bg-slate-50 text-slate-900 shadow-sm' : 'hover:bg-slate-50 text-slate-500'">
+                    <span class="flex items-center gap-3">
+                        <i class="bi bi-pencil-square"></i>
+                        <span class="text-sm font-medium">Editor Konten</span>
+                    </span>
+                    <i class="bi bi-chevron-right text-[10px] transition-transform duration-300"
+                        :class="editorOpen ? 'rotate-90' : ''"></i>
                 </button>
 
-                <div class="submenu overflow-hidden transition-all duration-300 ease-in-out pl-4
-                @if ($isEditorActive) max-h-[1000px] opacity-100 mt-2 @else max-h-0 opacity-0 @endif"
-                    id="editorSubmenu">
-
+                <div x-show="editorOpen" x-collapse x-cloak class="mt-1 ml-4 border-l-2 border-slate-100 space-y-1">
                     @php
                         $submenus = [
                             ['route' => 'admin.abouts.index', 'icon' => 'bi-info-circle', 'label' => 'Tentang Kami'],
@@ -157,103 +127,72 @@
                             ['route' => 'admin.partners.index', 'icon' => 'bi-hand-thumbs-up', 'label' => 'Mitra Kerja'],
                             ['route' => 'admin.testimonials.index', 'icon' => 'bi-chat-quote', 'label' => 'Testimoni'],
                             ['route' => 'admin.feedbacks.index', 'icon' => 'bi-envelope-paper', 'label' => 'Feedback'],
-                            ['route' => 'admin.booking.list', 'icon' => 'bi-calendar2-check', 'label' => 'Daftar Booking'],
+                            ['route' => 'admin.booking.index', 'icon' => 'bi-calendar2-check', 'label' => 'Daftar Booking'],
                         ];
                     @endphp
-
-                    @foreach ($submenus as $menu)
-                        <a href="{{ Route::has($menu['route']) ? route($menu['route']) : '#' }}"
-                            class="flex items-center py-2 px-3 my-1 rounded-lg text-sm transition-all
-                        @if (request()->routeIs($menu['route']) || request()->is(str_replace('.index', '', $menu['route']) . '/*')) text-[var(--text-dark)] font-semibold bg-[var(--active-bg)] border-l-2 border-[var(--primary-accent)]
-                        @else
-                            text-[var(--text-muted)] hover:text-[var(--text-dark)] @endif">
-                            <i class="{{ $menu['icon'] }} me-3"></i> {{ $menu['label'] }}
+                    @foreach ($editorMenus as [$route, $label])
+                        <a href="{{ route($route) }}"
+                            class="block py-2 px-6 text-xs rounded-r-lg transition-all
+                            {{ request()->routeIs($route) ? 'text-[var(--primary)] font-bold bg-orange-50/50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
+                            {{ $label }}
                         </a>
                     @endforeach
                 </div>
             </div>
 
-            {{-- USERS --}}
-            <a href="{{ Route::has('admin.users.index') ? route('admin.users.index') : '#' }}"
-                class="flex items-center p-3 rounded-xl font-medium mb-1 transition-all
-                @if (request()->routeIs('admin.users.index')) bg-[var(--active-bg)] text-[var(--text-dark)] border-l-4 border-[var(--primary-accent)] pl-3 @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif">
-                <i
-                    class="bi bi-people-fill me-3 @if (request()->routeIs('admin.users.index')) text-[var(--primary-accent)] @endif"></i>
-                Kelola Users
-            </a>
-
-            {{-- SEPARATOR KOMUNIKASI --}}
-            <div class="menu-section text-[var(--text-muted)] text-[10px] font-black uppercase my-4 mx-2 tracking-[2px]">
+            <div class="text-[10px] font-black uppercase text-slate-400 px-3 py-6 tracking-[2px]">
                 Komunikasi
             </div>
 
-            {{-- CHAT BOOKING (Logika: Menuju Halaman Index Chat / Inbox) --}}
             <a href="{{ route('admin.booking.index') }}"
-                class="flex items-center p-3 rounded-xl font-medium mb-1 transition-all
-                @if (request()->routeIs('admin.booking.chat*')) bg-[var(--active-bg)] text-[var(--text-dark)] border-l-4 border-[var(--primary-accent)] pl-3 @else text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-dark)] @endif">
-                <i class="bi bi-chat-dots-fill me-3 @if (request()->routeIs('admin.booking.chat*')) text-[var(--primary-accent)] @endif"></i>
-                Chat Booking
+                class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                {{ request()->routeIs('admin.booking.index') ? 'bg-orange-50 text-[var(--primary)] font-bold shadow-sm' : 'text-slate-500 hover:bg-slate-50' }}">
+                <i class="bi bi-calendar2-check-fill"></i>
+                <span class="text-sm">Daftar Booking</span>
+            </a>
+
+            <a href="{{ route('admin.booking.index') }}"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                {{ request()->routeIs('admin.booking.index') ? 'bg-orange-50 text-[var(--primary)] font-bold shadow-sm' : 'text-slate-500 hover:bg-slate-50' }}">
+                <i class="bi bi-chat-dots-fill"></i>
+                <span class="text-sm">Chat Booking</span>
             </a>
         </nav>
 
-        {{-- BOTTOM BUTTONS --}}
-        <div class="mt-auto pt-4 border-t border-[var(--border-subtle)] space-y-2">
-            <a href="{{ url('/') }}"
-                class="w-full flex items-center justify-center p-3 rounded-xl font-bold text-white bg-[var(--primary-accent)] hover:brightness-110 shadow-lg transition-all text-xs uppercase tracking-wider"
-                target="_blank">
-                Lihat Website <i class="bi bi-box-arrow-up-right ms-2"></i>
+        <div class="p-6 border-t border-slate-100 space-y-3 bg-white/50">
+            <a href="{{ url('/') }}" target="_blank"
+                class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-slate-900 text-white text-xs font-black hover:bg-[var(--primary)] transition-all shadow-lg shadow-slate-200">
+                <i class="bi bi-globe"></i> LIHAT WEBSITE
             </a>
 
-            <form action="{{ route('admin.logout') }}" method="POST">
+            <form method="POST" action="{{ route('admin.logout') }}">
                 @csrf
-                <button type="submit"
-                    class="w-full flex items-center justify-center p-3 rounded-xl font-bold bg-white border border-[var(--border-subtle)] text-[var(--text-muted)] hover:border-red-500 hover:text-red-500 transition-all text-xs uppercase tracking-wider">
-                    <i class="bi bi-power me-2"></i> Log Out
+                <button
+                    class="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-slate-200 text-slate-500 text-xs font-bold hover:text-red-600 hover:bg-red-50 hover:border-red-100 transition-all">
+                    <i class="bi bi-box-arrow-right"></i> LOGOUT
                 </button>
             </form>
         </div>
     </aside>
 
-    <main class="main">
-        @yield('content')
+    <header
+        class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 px-4 flex items-center justify-between z-[40]">
+        <div class="flex items-center gap-3">
+            <img src="{{ asset('assets/img/image.png') }}" class="w-8 h-8 rounded-lg">
+            <span class="font-black text-xs tracking-tight uppercase">PT RIZQALLAH</span>
+        </div>
+        <button @click="mobileMenu = true" class="p-2 bg-slate-50 rounded-xl border border-slate-100 text-slate-600">
+            <i class="bi bi-list text-2xl"></i>
+        </button>
+    </header>
+
+    <main class="sidebar-transition min-h-screen pt-20 lg:pt-0 lg:ml-[280px]">
+        <div class="p-6 md:p-8 lg:p-10 max-w-[1600px] mx-auto">
+            @yield('content')
+        </div>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const editorToggle = document.getElementById('editorToggle');
-            const editorSubmenu = document.getElementById('editorSubmenu');
-            const editorIcon = document.getElementById('editorIcon');
-
-            editorToggle.addEventListener('click', () => {
-                const isClosed = editorSubmenu.classList.contains('max-h-0');
-
-                if (isClosed) {
-                    editorSubmenu.classList.remove('max-h-0', 'opacity-0');
-                    editorSubmenu.classList.add('max-h-[1000px]', 'opacity-100', 'mt-2');
-                    editorIcon.classList.add('rotate-90');
-                } else {
-                    editorSubmenu.classList.add('max-h-0', 'opacity-0');
-                    editorSubmenu.classList.remove('max-h-[1000px]', 'opacity-100', 'mt-2');
-                    editorIcon.classList.remove('rotate-90');
-                }
-            });
-
-            // Mobile Sidebar Toggle
-            const sidebarToggle = document.getElementById("sidebarToggle");
-            const sidebar = document.getElementById("sidebar");
-
-            sidebarToggle.onclick = (e) => {
-                e.stopPropagation();
-                sidebar.classList.toggle("show");
-            };
-
-            document.addEventListener('click', (e) => {
-                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
-                    sidebar.classList.remove('show');
-                }
-            });
-        });
-    </script>
+    @yield('scripts')
 </body>
 
 </html>

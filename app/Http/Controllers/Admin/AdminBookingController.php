@@ -54,11 +54,11 @@ class AdminBookingController extends Controller
             ->get()
             ->map(function ($u) {
                 // Mengambil pesan terakhir untuk preview di sidebar
-                $lastMsg = Message::where(function($q) use ($u) {
-                        $q->where('sender_id', Auth::id())->where('receiver_id', $u->id);
-                    })->orWhere(function($q) use ($u) {
-                        $q->where('sender_id', $u->id)->where('receiver_id', Auth::id());
-                    })->latest()->first();
+                $lastMsg = Message::where(function ($q) use ($u) {
+                    $q->where('sender_id', Auth::id())->where('receiver_id', $u->id);
+                })->orWhere(function ($q) use ($u) {
+                    $q->where('sender_id', $u->id)->where('receiver_id', Auth::id());
+                })->latest()->first();
 
                 $u->last_interaction = $lastMsg ? $lastMsg->created_at : $u->created_at;
                 $u->latest_msg_text = $lastMsg ? $lastMsg->message : 'Belum ada pesan';
@@ -87,12 +87,12 @@ class AdminBookingController extends Controller
 
         // Simpan pesan dengan sender_type 'admin'
         Message::create([
-            'sender_id'   => Auth::id(),
+            'sender_id' => Auth::id(),
             'receiver_id' => $request->receiver_id,
-            'message'     => $request->message ?? '',
+            'message' => $request->message ?? '',
             'sender_type' => 'admin', // Ini krusial agar di view public bisa dideteksi sebagai pesan admin
-            'image'       => $imagePath,
-            'is_read'     => false,
+            'image' => $imagePath,
+            'is_read' => false,
         ]);
 
         return back();
@@ -108,5 +108,29 @@ class AdminBookingController extends Controller
 
         $message->delete();
         return back()->with('success', 'Pesan dihapus.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,process,success',
+            'payment_status' => 'nullable|in:paid,unpaid'
+        ]);
+
+        $reservation = Reservation::findOrFail($id);
+        $reservation->update([
+            'status' => $request->status,
+            'payment_status' => $request->payment_status ?? $reservation->payment_status
+        ]);
+
+        return back()->with('success', 'Status booking berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        $reservation->delete();
+
+        return back()->with('success', 'Booking berhasil dihapus.');
     }
 }

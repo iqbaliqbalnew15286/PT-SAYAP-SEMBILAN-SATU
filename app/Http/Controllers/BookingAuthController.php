@@ -205,7 +205,10 @@ class BookingAuthController extends Controller
             $q->where('sender_id', 1)->where('receiver_id', auth()->id());
         })->orderBy('created_at', 'asc')->get();
 
-        return view('pages.booking.chat', compact('messages'));
+        // Ambil booking terakhir user untuk sidebar
+        $booking = Reservation::where('user_id', auth()->id())->latest()->first();
+
+        return view('pages.booking.chat', compact('messages', 'booking'));
     }
 
     /**
