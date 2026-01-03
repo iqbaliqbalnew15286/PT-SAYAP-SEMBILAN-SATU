@@ -45,8 +45,8 @@ Route::get('/', [AdminHomeController::class, 'index'])->name('home');
 Route::get('/about', function () {
     $about = About::first();
     $aboutLinks = [
-        ['title' => 'Visi & Misi', 'description' => 'Pelajari visi dan misi kami.', 'url' => '/about#visi-misi', 'icon' => 'fa-eye'],
-        ['title' => 'Sejarah', 'description' => 'Kenali perjalanan panjang kami.', 'url' => '/about#sejarah', 'icon' => 'fa-history'],
+        ['title' => 'Visi & Misi', 'description' => 'Pelajari visi dan misi kami.', 'url' => '/vision', 'icon' => 'fa-eye'],
+        ['title' => 'Sejarah', 'description' => 'Kenali perjalanan panjang kami.', 'url' => '/history', 'icon' => 'fa-history'],
         ['title' => 'Program Unggulan', 'description' => 'Temukan program unggulan kami.', 'url' => '/about#program', 'icon' => 'fa-star'],
         ['title' => 'Tim Pengajar', 'description' => 'Bertemu dengan tim profesional.', 'url' => '/about#tim', 'icon' => 'fa-users'],
         ['title' => 'Fasilitas', 'description' => 'Jelajahi fasilitas modern kami.', 'url' => '/facilities', 'icon' => 'fa-building'],
@@ -54,6 +54,17 @@ Route::get('/about', function () {
     ];
     return view('pages.about.index', compact('about', 'aboutLinks'));
 })->name('about');
+
+Route::get('/history', function () {
+    $mainImages = \App\Models\Image::where('type', 'main')->get();
+    $historyContent = \App\Models\About::first();
+    return view('pages.about.history', compact('mainImages', 'historyContent'));
+})->name('history');
+
+Route::get('/vision', function () {
+    $mainImages = \App\Models\Image::where('type', 'main')->get();
+    return view('pages.about.vision', compact('mainImages'));
+})->name('vision');
 
 // Pencarian
 Route::get('/search', function (Request $request) {

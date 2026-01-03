@@ -19,12 +19,6 @@
                 'url' => '/vision',
                 'icon' => 'fa-bullseye'
             ],
-            [
-                'title' => 'Yayasan',
-                'description' => 'Sinergi manajemen untuk keberlanjutan bisnis.',
-                'url' => '/foundation',
-                'icon' => 'fa-city'
-            ],
         ];
     @endphp
     <div>

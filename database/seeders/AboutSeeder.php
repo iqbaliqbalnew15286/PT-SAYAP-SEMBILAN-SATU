@@ -9,11 +9,17 @@ class AboutSeeder extends Seeder
 {
     public function run(): void
     {
+        // Kosongkan data sebelumnya (opsional tapi aman)
+        About::truncate();
+
         About::create([
-            'vision'  => 'Menjadi layanan Mom & Baby Spa terpercaya di Indonesia.',
-            'mission' => 'Memberikan pelayanan terbaik dengan tenaga profesional dan penuh kasih.',
-            'goal'    => 'Meningkatkan kesehatan dan kebahagiaan ibu serta bayi secara menyeluruh.',
-            'image'   => 'uploads/about/about.jpg',
+            'vision' => 'Menjadi perusahaan pendukung industri telekomunikasi dengan pelayanan terbaik dan mampu memberi solusi yang menguntungkan bagi pelanggan.',
+
+            'mission' => 'Memberi respon dan solusi yang cepat kepada pelanggan, meningkatkan kesejahteraan kepada karyawan, serta melakukan efisiensi dalam bekerja.',
+
+            'goal' => null,
+
+            'image' => 'assets/images/about/about-company.jpg',
         ]);
     }
 }
