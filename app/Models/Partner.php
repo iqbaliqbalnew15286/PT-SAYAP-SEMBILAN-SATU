@@ -16,6 +16,7 @@ class Partner extends Model
      */
     protected $fillable = [
         'name',
+        'slug', // Tambahkan ini agar database mengizinkan pengisian slug
         'description',
         'logo',
         'sector',
@@ -24,4 +25,12 @@ class Partner extends Model
         'publisher',
         'partnership_date',
     ];
+
+    /**
+     * Menggunakan ID untuk Route Model Binding agar konsisten dengan penggunaan ID di admin.
+     */
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
 }

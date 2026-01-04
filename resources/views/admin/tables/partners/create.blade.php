@@ -42,21 +42,23 @@
                             <option value="TOWER PROVIDER" {{ old('sector') == 'TOWER PROVIDER' ? 'selected' : '' }}>TOWER PROVIDER</option>
                             <option value="NON TOWER PROVIDER" {{ old('sector') == 'NON TOWER PROVIDER' ? 'selected' : '' }}>NON TOWER PROVIDER</option>
                         </select>
-                        @error('sector') <p class="text-red-500 text-xs mt-1">{{ $message }} @enderror
+                        @error('sector') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="city" class="block text-sm font-semibold text-slate-700 mb-2">Kota / Lokasi</label>
-                            <input type="text" name="city" id="city"
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#FF8C00]/20 focus:border-[#FF8C00] outline-none transition-all"
-                                placeholder="Jakarta, Surabaya, dll" value="{{ old('city') }}">
+                            <label for="city" class="block text-sm font-semibold text-slate-700 mb-2">Kota / Lokasi <span class="text-red-500">*</span></label>
+                            <input type="text" name="city" id="city" required
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#FF8C00]/20 focus:border-[#FF8C00] outline-none transition-all @error('city') border-red-500 @enderror"
+                                placeholder="Jakarta, Bogor, dll" value="{{ old('city') }}">
+                            @error('city') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label for="partnership_date" class="block text-sm font-semibold text-slate-700 mb-2">Tanggal Kerja Sama <span class="text-red-500">*</span></label>
                             <input type="date" name="partnership_date" id="partnership_date" required
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#FF8C00]/20 focus:border-[#FF8C00] outline-none transition-all"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#FF8C00]/20 focus:border-[#FF8C00] outline-none transition-all @error('partnership_date') border-red-500 @enderror"
                                 value="{{ old('partnership_date') }}">
+                            @error('partnership_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>
 
@@ -71,13 +73,13 @@
                 {{-- Right Column: Media & Description --}}
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2 text-center lg:text-left">Logo Mitra</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2 text-center lg:text-left">Logo Mitra <span class="text-red-500">*</span></label>
                         <div class="relative group">
-                            <div class="w-full h-48 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center bg-slate-50 group-hover:bg-slate-100 transition-all overflow-hidden relative">
+                            <div class="w-full h-48 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center bg-slate-50 group-hover:bg-slate-100 transition-all overflow-hidden relative @error('logo') border-red-300 @enderror">
                                 <i class="fas fa-cloud-upload-alt text-3xl text-slate-300 mb-2 group-hover:text-[#FF8C00] transition-colors"></i>
                                 <span class="text-xs text-slate-400 font-medium">Klik untuk upload logo (PNG/JPG)</span>
                                 <input type="file" name="logo" id="logo" onchange="previewImage(this)"
-                                    class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                                    class="absolute inset-0 opacity-0 cursor-pointer z-10" required>
                                 <img id="imgPreview" class="absolute inset-0 w-full h-full object-contain p-4 bg-white hidden z-0">
                             </div>
                         </div>

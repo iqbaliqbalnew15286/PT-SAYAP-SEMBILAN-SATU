@@ -7,21 +7,21 @@ use App\Models\Partner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Str;
 
 class PartnerController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar mitra industri.
      */
     public function index()
     {
-        $partners = Partner::all();
+        $partners = Partner::latest()->get();
         return view('admin.tables.partners.index', compact('partners'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan form tambah mitra.
      */
     public function create()
     {
@@ -29,21 +29,20 @@ class PartnerController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data mitra baru ke database.
      */
     public function store(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'string',
-            'logo' => 'image|mimes:jpeg,png,jpg,svg|max:2048',
-            'sector' => 'string|max:255',
-            'city' => 'string|max:255',
+            'description' => 'nullable|string',
+            'logo' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
+            'sector' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
             'company_contact' => 'nullable|string|max:255',
             'partnership_date' => 'required|date',
         ], [
             'name.required' => 'Nama mitra harus diisi.',
-            'description.required' => 'Deskripsi harus diisi.',
             'logo.required' => 'Logo harus diunggah.',
             'logo.image' => 'File harus berupa gambar.',
             'logo.mimes' => 'Format gambar yang diizinkan adalah jpeg, png, jpg, atau svg.',
@@ -51,9 +50,9 @@ class PartnerController extends Controller
             'sector.required' => 'Sektor harus diisi.',
             'city.required' => 'Kota harus diisi.',
             'partnership_date.required' => 'Tanggal kerja sama harus diisi.',
-            'partnership_date.date' => 'Tanggal kerja sama harus dalam format tanggal yang valid.',
         ]);
 
+        $validatedData['slug'] = Str::slug($request->name);
         $validatedData['publisher'] = Auth::user()->name;
 
         if ($request->hasFile('logo')) {
@@ -67,7 +66,7 @@ class PartnerController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan detail mitra.
      */
     public function show(Partner $partner)
     {
@@ -75,7 +74,7 @@ class PartnerController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Menampilkan form edit mitra.
      */
     public function edit(Partner $partner)
     {
@@ -83,13 +82,13 @@ class PartnerController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Memperbarui data mitra di database.
      */
     public function update(Request $request, Partner $partner)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
             'sector' => 'required|string|max:255',
             'city' => 'required|string|max:255',
@@ -97,22 +96,20 @@ class PartnerController extends Controller
             'partnership_date' => 'required|date',
         ], [
             'name.required' => 'Nama mitra harus diisi.',
-            'description.required' => 'Deskripsi harus diisi.',
-            'logo.image' => 'File harus berupa gambar.',
-            'logo.mimes' => 'Format gambar yang diizinkan adalah jpeg, png, jpg, atau svg.',
-            'logo.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
             'sector.required' => 'Sektor harus diisi.',
             'city.required' => 'Kota harus diisi.',
             'partnership_date.required' => 'Tanggal kerja sama harus diisi.',
-            'partnership_date.date' => 'Tanggal kerja sama harus dalam format tanggal yang valid.',
         ]);
 
+        $validatedData['slug'] = Str::slug($request->name);
         $validatedData['publisher'] = Auth::user()->name;
 
         if ($request->hasFile('logo')) {
-            if ($partner->logo) {
+            // Hapus logo lama jika ada dan bukan dari assets (seeder)
+            if ($partner->logo && !str_contains($partner->logo, 'assets/img')) {
                 Storage::disk('public')->delete($partner->logo);
             }
+
             $logoPath = $request->file('logo')->store('partner_logos', 'public');
             $validatedData['logo'] = $logoPath;
         }
@@ -123,11 +120,11 @@ class PartnerController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus mitra.
      */
     public function destroy(Partner $partner)
     {
-        if ($partner->logo) {
+        if ($partner->logo && !str_contains($partner->logo, 'assets/img')) {
             Storage::disk('public')->delete($partner->logo);
         }
 
