@@ -16,8 +16,9 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             FacilitySeeder::class,
             ImageSeeder::class,
-            // Tambahkan PartnerSeeder di bawah ini
+                // Tambahkan PartnerSeeder di bawah ini
             PartnerSeeder::class,
+            UpdateNewsSlugsSeeder::class,
         ]);
     }
 }

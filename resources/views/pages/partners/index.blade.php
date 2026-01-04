@@ -13,9 +13,17 @@
         x-data="{
             activeSector: 'all',
             search: '',
+            {{-- PERBAIKAN LOGIKA: Memastikan perbandingan string sangat akurat --}}
             isVisible(sector, name) {
-                const matchSector = this.activeSector === 'all' || sector.toUpperCase() === this.activeSector.toUpperCase();
+                if (!sector) return false;
+
+                // Bersihkan string dari spasi berlebih dan samakan jadi UPPERCASE
+                const cleanSector = sector.trim().toUpperCase();
+                const cleanActive = this.activeSector.trim().toUpperCase();
+
+                const matchSector = this.activeSector === 'all' || cleanSector === cleanActive;
                 const matchSearch = name.toLowerCase().includes(this.search.toLowerCase());
+
                 return matchSector && matchSearch;
             }
         }">
@@ -76,10 +84,12 @@
                     @forelse ($partners as $partner)
                         <div x-show="isVisible('{{ $partner->sector }}', '{{ $partner->name }}')"
                             x-transition:enter="transition ease-out duration-400"
+                            x-transition:enter-start="opacity-0 scale-95"
+                            x-transition:enter-end="opacity-100 scale-100"
                             class="group bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-sm hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 flex flex-col"
                             data-aos="fade-up" x-cloak>
 
-                            {{-- Logo Area - Warna Asli & Link ke Public Show --}}
+                            {{-- Logo Area --}}
                             <a href="{{ route('partners.show', $partner->id) }}" class="w-full h-44 flex items-center justify-center mb-6 bg-white rounded-[2rem] p-6 shadow-inner transition-all duration-500 relative overflow-hidden border border-gray-50">
                                 @php
                                     $logoPath = $partner->logo;
@@ -109,7 +119,8 @@
                             {{-- Partner Info --}}
                             <div class="flex-grow">
                                 <div class="flex items-center gap-2 mb-3">
-                                    <span class="w-2 h-2 rounded-full {{ strtoupper($partner->sector) === 'TOWER PROVIDER' ? 'bg-blue-500' : 'bg-[#FF7518]' }}"></span>
+                                    {{-- Titik indikator warna dinamis --}}
+                                    <span class="w-2 h-2 rounded-full {{ strtoupper(trim($partner->sector)) === 'TOWER PROVIDER' ? 'bg-blue-500' : 'bg-[#FF7518]' }}"></span>
                                     <span class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">{{ $partner->sector }}</span>
                                 </div>
                                 <h3 class="text-lg font-black text-[#161f36] uppercase leading-tight mb-3 group-hover:text-[#FF7518] transition-colors">
@@ -126,7 +137,6 @@
                                     <p class="text-[8px] font-black text-gray-300 uppercase tracking-widest">Base City</p>
                                     <p class="text-xs font-bold text-[#161f36]">{{ $partner->city ?? 'Indonesia' }}</p>
                                 </div>
-                                {{-- Link ke Public Show --}}
                                 <a href="{{ route('partners.show', $partner->id) }}" class="w-10 h-10 rounded-xl bg-[#161f36] text-white flex items-center justify-center hover:bg-[#FF7518] transition-all duration-300 shadow-md">
                                     <i class="fas fa-arrow-right text-[10px]"></i>
                                 </a>

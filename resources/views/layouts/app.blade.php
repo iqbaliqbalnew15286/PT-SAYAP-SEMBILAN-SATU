@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8" />
@@ -130,6 +130,14 @@
         }
 
         [x-cloak] { display: none !important; }
+
+        /* Language Switcher Custom */
+        .lang-btn {
+            @apply flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-300 text-[11px] font-bold border border-transparent;
+        }
+        .lang-active {
+            @apply bg-orange-50 text-rbm-accent border-orange-100 shadow-sm;
+        }
     </style>
 </head>
 
@@ -151,6 +159,7 @@
         $rbmAccent = '#FF7518';
         $whatsappNumber = '6285649011449';
         $whatsappMessage = 'Halo PT. Rizqallah Boer Makmur, saya ingin bertanya tentang layanan Anda.';
+        $currentLocale = app()->getLocale();
     @endphp
 
     <div x-data="{ searchModalOpen: false }" @keydown.escape.window="searchModalOpen = false">
@@ -191,11 +200,22 @@
                         </div>
                     </a>
 
-                    <div class="hidden lg:flex items-center space-x-5">
+                    <div class="hidden lg:flex items-center space-x-6">
+                        {{-- LANGUAGE SWITCHER --}}
+                        <div class="flex items-center bg-gray-50 p-1 rounded-xl border border-gray-100">
+                            <a href="{{ url('lang/id') }}" class="lang-btn {{ $currentLocale == 'id' ? 'lang-active' : 'text-gray-400 hover:text-rbm-dark' }}">
+                                <img src="https://flagcdn.com/w40/id.png" class="w-4 h-3 object-cover rounded-sm shadow-sm" alt="ID"> ID
+                            </a>
+                            <a href="{{ url('lang/en') }}" class="lang-btn {{ $currentLocale == 'en' ? 'lang-active' : 'text-gray-400 hover:text-rbm-dark' }}">
+                                <img src="https://flagcdn.com/w40/gb.png" class="w-4 h-3 object-cover rounded-sm shadow-sm" alt="EN"> EN
+                            </a>
+                        </div>
+
                         <button @click="searchModalOpen = true"
                             class="text-gray-500 hover:text-rbm-accent transition-all p-2 bg-gray-50 rounded-full">
                             <i class="fa-solid fa-magnifying-glass text-lg"></i>
                         </button>
+
                         <a href="https://wa.me/{{ $whatsappNumber }}?text={{ urlencode($whatsappMessage) }}"
                             target="_blank"
                             class="bg-[#FF7518] text-white px-6 py-2.5 rounded-full font-bold hover:bg-orange-600 transition-all text-xs shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5">
@@ -204,7 +224,12 @@
                     </div>
 
                     {{-- Hamburger --}}
-                    <div class="lg:hidden flex items-center space-x-2">
+                    <div class="lg:hidden flex items-center space-x-3">
+                        {{-- Mobile Lang Switcher --}}
+                        <div class="flex bg-gray-50 rounded-lg p-1 scale-90">
+                            <a href="{{ url('lang/id') }}" class="px-2 py-1 {{ $currentLocale == 'id' ? 'text-rbm-accent' : 'text-gray-400' }}"><i class="fa-solid fa-language"></i></a>
+                            <a href="{{ url('lang/en') }}" class="px-2 py-1 {{ $currentLocale == 'en' ? 'text-rbm-accent' : 'text-gray-400' }}"><i class="fa-solid fa-globe"></i></a>
+                        </div>
                         <button @click="searchModalOpen = true" class="text-gray-600 p-2"><i class="fa-solid fa-magnifying-glass"></i></button>
                         <button @click="mobileMenuOpen = !mobileMenuOpen"
                             class="text-2xl text-rbm-dark p-2 focus:outline-none bg-gray-50 rounded-lg">
@@ -384,17 +409,13 @@
     let showLoaderTimeout;
     let loaderShown = false;
 
-    // Deteksi koneksi lambat
     function isSlowConnection() {
         if (!navigator.connection) return false;
-
         const slowTypes = ['slow-2g', '2g', '3g'];
         return slowTypes.includes(navigator.connection.effectiveType);
     }
 
-    // Jalankan saat DOM siap
     document.addEventListener('DOMContentLoaded', () => {
-        // Jika koneksi lambat → siapkan loader
         if (isSlowConnection()) {
             showLoaderTimeout = setTimeout(() => {
                 preloader.style.display = 'flex';
@@ -402,7 +423,6 @@
                 loaderShown = true;
             }, 300);
         } else {
-            // Jika koneksi normal → hanya tampil jika loading terlalu lama
             showLoaderTimeout = setTimeout(() => {
                 preloader.style.display = 'flex';
                 preloader.style.opacity = '1';
@@ -411,10 +431,8 @@
         }
     });
 
-    // Saat halaman benar-benar selesai load
     window.addEventListener('load', () => {
         clearTimeout(showLoaderTimeout);
-
         if (loaderShown) {
             setTimeout(() => {
                 preloader.style.opacity = '0';
@@ -423,7 +441,6 @@
                 }, 500);
             }, 400);
         } else {
-            // Jika loader belum sempat muncul → pastikan hidden
             preloader.style.display = 'none';
         }
     });
