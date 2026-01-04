@@ -128,6 +128,8 @@
                             ['route' => 'admin.testimonials.index', 'icon' => 'bi-chat-quote', 'label' => 'Testimoni'],
                             ['route' => 'admin.feedbacks.index', 'icon' => 'bi-envelope-paper', 'label' => 'Feedback'],
                             ['route' => 'admin.booking.list', 'icon' => 'bi-calendar2-check', 'label' => 'Daftar Booking'],
+                            ['route' => 'admin.facilities.index', 'icon' => 'bi-building-gear', 'label' => 'Fasilitas'],
+
                         ];
                     @endphp
                     @foreach ($submenus as $menu)

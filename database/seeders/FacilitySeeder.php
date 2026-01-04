@@ -15,14 +15,14 @@ class FacilitySeeder extends Seeder
         DB::table('facilities')->insert([
 
             /*
-            |--------------------------------------------------------------------------
+            |------------------------------------------------------------------
             | PERALATAN PABRIKASI
-            |--------------------------------------------------------------------------
+            |------------------------------------------------------------------
             */
             [
                 'name' => 'Mesin Plasma Cutting',
-                'description' => 'Mesin pemotong baja presisi tinggi menggunakan teknologi plasma untuk kebutuhan fabrikasi struktur.',
-                'image' => 'assets/images/facilities/pabrikasi/plasma-cutting.jpg',
+                'description' => 'Mesin pemotong baja presisi tinggi menggunakan teknologi plasma.',
+                'image' => 'assets/img/pabrikasi/Mesin-Plasma-Cutting.jpg',
                 'type' => 'Peralatan Pabrikasi',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -30,8 +30,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Mesin Bending',
-                'description' => 'Mesin pembengkok plat baja untuk membentuk komponen struktur sesuai desain.',
-                'image' => 'assets/images/facilities/pabrikasi/mesin-bending.jpg',
+                'description' => 'Mesin pembengkok plat baja untuk kebutuhan fabrikasi.',
+                'image' => 'assets/img/pabrikasi/Mesin-bending.jpeg',
                 'type' => 'Peralatan Pabrikasi',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -39,8 +39,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Mesin Las CO 3 Phase',
-                'description' => 'Mesin las industri 3 phase untuk penyambungan struktur baja skala besar.',
-                'image' => 'assets/images/facilities/pabrikasi/mesin-las.jpg',
+                'description' => 'Mesin las industri 3 phase untuk struktur baja.',
+                'image' => 'assets/img/pabrikasi/Mesin-las-CO3-Phase.jpg',
                 'type' => 'Peralatan Pabrikasi',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -48,8 +48,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Mesin Grinding',
-                'description' => 'Mesin penghalus dan perapih hasil las serta permukaan material baja.',
-                'image' => 'assets/images/facilities/pabrikasi/mesin-grinding.jpg',
+                'description' => 'Mesin penghalus dan perapih hasil las.',
+                'image' => 'assets/img/pabrikasi/Mesin-Grinding.jpg',
                 'type' => 'Peralatan Pabrikasi',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -57,8 +57,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Mesin Cutting Circle',
-                'description' => 'Mesin pemotong material berbentuk lingkaran untuk kebutuhan fabrikasi presisi.',
-                'image' => 'assets/images/facilities/pabrikasi/cutting-circle.jpg',
+                'description' => 'Mesin pemotong material berbentuk lingkaran.',
+                'image' => 'assets/img/pabrikasi/Mesin-Cutting-Circle.jpg',
                 'type' => 'Peralatan Pabrikasi',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -66,8 +66,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Mesin Kompresor',
-                'description' => 'Penyedia tekanan udara untuk mendukung operasional peralatan pabrikasi.',
-                'image' => 'assets/images/facilities/pabrikasi/kompresor.jpg',
+                'description' => 'Penyedia tekanan udara operasional.',
+                'image' => 'assets/img/pabrikasi/Mesin-Kompressor.jpg',
                 'type' => 'Peralatan Pabrikasi',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -75,8 +75,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Mesin Drilling Magnet',
-                'description' => 'Mesin bor magnetik untuk pengeboran material baja dengan tingkat akurasi tinggi.',
-                'image' => 'assets/images/facilities/pabrikasi/drilling-magnet.jpg',
+                'description' => 'Mesin bor magnetik presisi tinggi.',
+                'image' => 'assets/img/pabrikasi/Mesin-Drill-Magnet.jpg',
                 'type' => 'Peralatan Pabrikasi',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -84,8 +84,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Tools Kit Pabrikasi',
-                'description' => 'Perlengkapan tools lengkap untuk mendukung pekerjaan fabrikasi dan produksi.',
-                'image' => 'assets/images/facilities/pabrikasi/tools-kit.jpg',
+                'description' => 'Perlengkapan tools fabrikasi.',
+                'image' => 'assets/img/pabrikasi/Tools-Kit-Pabrikasi.jpg',
                 'type' => 'Peralatan Pabrikasi',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -93,14 +93,14 @@ class FacilitySeeder extends Seeder
             ],
 
             /*
-            |--------------------------------------------------------------------------
+            |------------------------------------------------------------------
             | PERALATAN MAINTENANCE
-            |--------------------------------------------------------------------------
+            |------------------------------------------------------------------
             */
             [
                 'name' => 'Tension Meter',
-                'description' => 'Alat ukur ketegangan kabel untuk pekerjaan maintenance tower dan struktur.',
-                'image' => 'assets/images/facilities/maintenance/tension-meter.jpg',
+                'description' => 'Alat ukur ketegangan kabel.',
+                'image' => 'assets/img/maintenance/TensionMeter.jpg',
                 'type' => 'Peralatan Maintenance',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -108,8 +108,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Ampere Pliers',
-                'description' => 'Alat ukur arus listrik untuk pengecekan sistem kelistrikan di lapangan.',
-                'image' => 'assets/images/facilities/maintenance/ampere-pliers.jpg',
+                'description' => 'Alat ukur arus listrik.',
+                'image' => 'assets/img/maintenance/Ampere-Pliers.jpeg',
                 'type' => 'Peralatan Maintenance',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -117,8 +117,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Grounding Tester',
-                'description' => 'Alat penguji sistem grounding untuk memastikan keamanan instalasi listrik.',
-                'image' => 'assets/images/facilities/maintenance/grounding-tester.jpg',
+                'description' => 'Alat uji grounding.',
+                'image' => 'assets/img/maintenance/Grounding-Tester.jpg',
                 'type' => 'Peralatan Maintenance',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -126,8 +126,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Theodolite',
-                'description' => 'Alat ukur sudut dan elevasi untuk pekerjaan survey dan instalasi tower.',
-                'image' => 'assets/images/facilities/maintenance/theodolite.jpg',
+                'description' => 'Alat ukur sudut dan elevasi.',
+                'image' => 'assets/img/maintenance/Theodolite.jpg',
                 'type' => 'Peralatan Maintenance',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -135,8 +135,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Vernier Caliper',
-                'description' => 'Alat ukur presisi untuk pengukuran dimensi komponen teknik.',
-                'image' => 'assets/images/facilities/maintenance/vernier-caliper.jpg',
+                'description' => 'Alat ukur presisi.',
+                'image' => 'assets/img/maintenance/Vernier-Caliper.jpg',
                 'type' => 'Peralatan Maintenance',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -144,8 +144,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Tools Kit Maintenance',
-                'description' => 'Perlengkapan tools lapangan untuk pekerjaan perawatan dan perbaikan.',
-                'image' => 'assets/images/facilities/maintenance/tools-kit.jpg',
+                'description' => 'Tools lapangan maintenance.',
+                'image' => 'assets/img/maintenance/Tools-Kit-Maintenance.jpg',
                 'type' => 'Peralatan Maintenance',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -153,14 +153,14 @@ class FacilitySeeder extends Seeder
             ],
 
             /*
-            |--------------------------------------------------------------------------
+            |------------------------------------------------------------------
             | KENDARAAN OPERASIONAL
-            |--------------------------------------------------------------------------
+            |------------------------------------------------------------------
             */
             [
                 'name' => 'Head Truck',
-                'description' => 'Kendaraan operasional utama untuk pengangkutan material dan peralatan proyek.',
-                'image' => 'assets/images/facilities/kendaraan/head-truck.jpg',
+                'description' => 'Kendaraan pengangkut material.',
+                'image' => 'assets/img/kendaraan/HeadTruck.png',
                 'type' => 'Kendaraan Operasional',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -168,8 +168,8 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Pick Up',
-                'description' => 'Kendaraan pick up untuk mobilisasi cepat peralatan dan tim lapangan.',
-                'image' => 'assets/images/facilities/kendaraan/pickup.jpg',
+                'description' => 'Mobilisasi cepat lapangan.',
+                'image' => 'assets/img/kendaraan/PickUp.png',
                 'type' => 'Kendaraan Operasional',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -177,14 +177,13 @@ class FacilitySeeder extends Seeder
             ],
             [
                 'name' => 'Minibus',
-                'description' => 'Kendaraan minibus untuk transportasi personel operasional dan teknisi.',
-                'image' => 'assets/images/facilities/kendaraan/minibus.jpg',
+                'description' => 'Transportasi teknisi.',
+                'image' => 'assets/img/kendaraan/MiniBus.jpg',
                 'type' => 'Kendaraan Operasional',
                 'publisher' => 'Admin',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-
         ]);
     }
 }

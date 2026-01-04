@@ -16,12 +16,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Definisi Warna Kustom (Tower Theme) */
-        .text-dark-tower { color: #2C3E50; } /* Biru Tua/Dark Blue */
+        .text-dark-tower { color: #2C3E50; }
         .bg-dark-tower { background-color: #2C3E50; }
-        .text-accent-tower { color: #FF8C00; } /* Oranye/Emas */
+        .text-accent-tower { color: #FF8C00; }
         .bg-accent-tower { background-color: #FF8C00; }
-        .hover\:bg-accent-dark:hover { background-color: #E67E22; } /* Hover gelap */
+        .hover\:bg-accent-dark:hover { background-color: #E67E22; }
         .shadow-soft { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
 
         body {
@@ -54,7 +53,13 @@
                 {{-- Kolom Kiri: Gambar --}}
                 <div class="lg:col-span-1">
                     <h2 class="text-lg font-semibold text-dark-tower mb-3 border-b border-accent-tower/50 pb-1">Foto Fasilitas</h2>
-                    <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}"
+
+                    {{-- Logika Penanganan Gambar --}}
+                    @php
+                        $imagePath = str_contains($facility->image, 'assets/') ? asset($facility->image) : asset('storage/' . $facility->image);
+                    @endphp
+
+                    <img src="{{ $imagePath }}" alt="{{ $facility->name }}"
                         class="w-full h-auto max-h-96 object-cover rounded-xl shadow-lg border border-gray-200">
 
                     {{-- Metadata Ringkas --}}
@@ -64,31 +69,32 @@
                         </p>
 
                         @php
-                            // Logika untuk menentukan warna badge berdasarkan kategori peralatan baru
+                            // Perbaikan typo 'Pabrikas' menjadi 'Pabrikasi' agar badge muncul
                             $badgeClass = match(trim($facility->type)) {
-                                'Peralatan Pabrikas' => 'bg-accent-tower text-white',
+                                'Peralatan Pabrikasi' => 'bg-accent-tower text-white',
                                 'Peralatan Maintenance' => 'bg-blue-500 text-white',
-                                'Kendaraan Operasional' => 'bg-green-500 text-white',
-                                default => 'bg-gray-400 text-white', // Untuk kategori lain/default
+                                'Kendaraan Operasional' => 'bg-green-600 text-white',
+                                default => 'bg-gray-400 text-white',
                             };
                         @endphp
 
-                        <span class="px-3 py-1 text-sm font-bold rounded-full shadow-md {{ $badgeClass }}">
+                        <span class="px-3 py-1 text-xs font-bold rounded-full shadow-sm {{ $badgeClass }}">
                             {{ $facility->type }}
                         </span>
 
                         <p class="text-sm font-semibold text-dark-tower mt-4 flex items-center">
-                            <i class="fas fa-user-circle text-dark-tower mr-2"></i> Dipublikasikan oleh
+                            <i class="fas fa-calendar-alt text-dark-tower mr-2"></i> Tanggal Input
                         </p>
-                        <p class="text-sm text-gray-700 ml-5">{{ $facility->publisher ?? 'Administrator' }}</p>
+                        <p class="text-sm text-gray-700 ml-6">{{ $facility->created_at->format('d M Y') }}</p>
                     </div>
                 </div>
 
                 {{-- Kolom Kanan: Deskripsi --}}
                 <div class="lg:col-span-2">
                     <h2 class="text-lg font-semibold text-dark-tower mb-3 border-b border-accent-tower/50 pb-1">Deskripsi Fasilitas</h2>
-                    <div class="text-gray-700 leading-relaxed text-base">
-                        <p>{{ $facility->description }}</p>
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-100 text-gray-700 leading-relaxed text-base min-h-[200px]">
+                        {{-- Menggunakan nl2br jika deskripsi memiliki enter/paragraf --}}
+                        {!! nl2br(e($facility->description)) !!}
                     </div>
                 </div>
 
@@ -96,20 +102,18 @@
 
             {{-- Tombol Aksi --}}
             <div class="mt-10 flex justify-end space-x-3 border-t pt-6 border-gray-100">
-                {{-- Tombol Edit --}}
                 <a href="{{ route('admin.facilities.edit', $facility->id) }}"
                     class="bg-accent-tower text-white px-6 py-2 rounded-lg font-semibold hover:bg-accent-dark transition-colors duration-200 shadow-md flex items-center">
                     <i class="fas fa-edit mr-2"></i>Edit Fasilitas
                 </a>
 
-                {{-- Tombol Hapus --}}
                 <form action="{{ route('admin.facilities.destroy', $facility->id) }}" method="POST"
-                    onsubmit="return confirm('PERINGATAN! Apakah Anda yakin ingin menghapus fasilitas {{ $facility->name }} ini secara permanen?');">
+                    onsubmit="return confirm('PERINGATAN! Menghapus data ini tidak dapat dibatalkan. Lanjutkan?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit"
                         class="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors duration-200 shadow-md flex items-center">
-                        <i class="fas fa-trash-alt mr-2"></i>Hapus Fasilitas
+                        <i class="fas fa-trash-alt mr-2"></i>Hapus
                     </button>
                 </form>
             </div>
@@ -117,6 +121,5 @@
     </div>
 
 </body>
-
 </html>
 @endsection

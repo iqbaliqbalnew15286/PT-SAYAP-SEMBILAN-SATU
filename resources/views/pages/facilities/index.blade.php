@@ -4,15 +4,13 @@
 
 @section('content')
     {{-- Resource & Fonts --}}
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @php
         /**
-         * Solusi Error: Kita buat logic yang tidak memanggil Storage::disk()
-         * jika driver tidak terdaftar.
+         * Helper untuk mengambil URL gambar yang fleksibel
          */
         function getFacilityImageUrl($facility)
         {
@@ -27,41 +25,31 @@
                 return $facility->image;
             }
 
-            // 2. Jika path Cloudinary tapi driver tidak ada, berikan default
-            if (str_starts_with($facility->image, 'cloudinary://')) {
-                return $default;
+            // 2. Jika path dari Seeder (dimulai dengan assets/)
+            if (str_starts_with($facility->image, 'assets/')) {
+                return asset($facility->image);
             }
 
-            // 3. Jika path lokal (Public Storage)
-            try {
-                return Storage::url($facility->image);
-            } catch (\Exception $e) {
-                return $default;
-            }
+            // 3. Jika path lokal dari Upload (Public Storage)
+            return asset('storage/' . $facility->image);
         }
 
-        // Ambil data gambar (Perbaikan typo 'Pabrikas' menjadi 'Pabrikasi' jika di DB sudah benar)
+        // Ambil data untuk Hero & Dynamic Grid
         $fHero1 = getFacilityImageUrl($facilities->where('type', 'Peralatan Pabrikasi')->first() ?? $facilities->first());
         $fHero2 = getFacilityImageUrl($facilities->where('type', 'Kendaraan Operasional')->first() ?? $facilities->last());
 
-        $fGrid1 = $facilities->skip(1)->first() ? getFacilityImageUrl($facilities->skip(1)->first()) : $fHero1;
-        $fGrid2 = $facilities->skip(2)->first() ? getFacilityImageUrl($facilities->skip(2)->first()) : $fHero2;
-        $fGrid3 = $facilities->skip(3)->first() ? getFacilityImageUrl($facilities->skip(3)->first()) : $fHero1;
+        $fGrid1 = $facilities->skip(0)->first() ? getFacilityImageUrl($facilities->skip(0)->first()) : $fHero1;
+        $fGrid2 = $facilities->skip(1)->first() ? getFacilityImageUrl($facilities->skip(1)->first()) : $fHero2;
+        $fGrid3 = $facilities->skip(2)->first() ? getFacilityImageUrl($facilities->skip(2)->first()) : $fHero1;
     @endphp
 
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #fcfcfc;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfc; }
         .heading-tight { letter-spacing: -0.04em; }
         .text-orange-main { color: #FF7518; }
         .bg-orange-main { background-color: #FF7518; }
         .bg-navy { background-color: #161f36; }
-        @keyframes slow-zoom {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+        @keyframes slow-zoom { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         .animate-slow-zoom { animation: slow-zoom 20s infinite ease-in-out; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -138,6 +126,7 @@
         <section class="py-20 bg-[#fcfcfc]">
             <div class="max-w-7xl mx-auto px-6">
 
+                {{-- Filter bar --}}
                 <div class="flex flex-col lg:flex-row gap-6 justify-between items-center mb-16 bg-white p-4 rounded-[2.5rem] shadow-sm border border-gray-100">
                     <div class="relative w-full lg:w-1/3">
                         <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-orange-main"></i>
@@ -174,7 +163,7 @@
                         @php $filtered = $facilities->where('type', $dbValue); @endphp
 
                         @if ($filtered->count() > 0)
-                            <div x-show="activeTab === 'all' || activeTab === '{{ $dbValue }}'" x-transition.fade>
+                            <div x-show="activeTab === 'all' || activeTab === '{{ $dbValue }}'" x-transition:enter.duration.500ms>
                                 <div class="flex items-center gap-4 mb-10">
                                     <h3 class="text-2xl font-black text-[#161f36] uppercase tracking-tighter">{{ $label }}</h3>
                                     <div class="flex-1 h-[1px] bg-gray-100"></div>
@@ -190,7 +179,7 @@
                                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                                             </div>
                                             <div class="p-6">
-                                                <h4 class="text-sm font-black text-[#161f36] mb-2 group-hover:text-orange-main transition-colors uppercase leading-tight">{{ $f->name }}</h4>
+                                                <h4 class="text-sm font-black text-[#161f36] mb-2 group-hover:text-orange-main transition-colors uppercase leading-tight line-clamp-1">{{ $f->name }}</h4>
                                                 <p class="text-gray-400 text-[10px] leading-relaxed mb-6 italic line-clamp-2">"{{ $f->description }}"</p>
                                                 <div class="pt-4 border-t border-gray-50 flex justify-between items-center">
                                                     <span class="text-[9px] font-bold text-gray-300 uppercase">ASET-{{ str_pad($f->id, 3, '0', STR_PAD_LEFT) }}</span>
@@ -211,7 +200,7 @@
         </section>
     </div>
 
-    {{-- 📞 6. CTA FINAL --}}
+    {{-- 📞 5. CTA FINAL --}}
     <section class="pb-24 px-6">
         <div class="max-w-7xl mx-auto bg-[#161f36] rounded-[4rem] p-12 md:p-24 text-center relative overflow-hidden shadow-2xl">
             <div class="absolute -top-24 -right-24 w-96 h-96 bg-orange-main opacity-20 rounded-full blur-[120px]"></div>

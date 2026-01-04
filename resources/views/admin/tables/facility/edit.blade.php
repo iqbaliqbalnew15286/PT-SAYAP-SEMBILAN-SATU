@@ -17,11 +17,11 @@
 
         <style>
             /* Definisi Warna Kustom (Tower Theme) */
-            .text-dark-tower { color: #2C3E50; } /* Biru Tua/Dark Blue */
+            .text-dark-tower { color: #2C3E50; }
             .bg-dark-tower { background-color: #2C3E50; }
-            .text-accent-tower { color: #FF8C00; } /* Oranye/Emas */
+            .text-accent-tower { color: #FF8C00; }
             .bg-accent-tower { background-color: #FF8C00; }
-            .hover\:bg-accent-dark:hover { background-color: #E67E22; } /* Hover gelap */
+            .hover\:bg-accent-dark:hover { background-color: #E67E22; }
             .focus\:ring-accent-tower:focus { ring-color: #FF8C00; }
             .shadow-soft { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
 
@@ -30,7 +30,6 @@
                 background-color: #f0f2f5;
             }
 
-            /* Gaya khusus untuk input file */
             input[type="file"]::file-selector-button {
                 background-color: #e0e0e0;
                 color: #333;
@@ -56,7 +55,7 @@
                 {{-- Header Form --}}
                 <div class="flex justify-between items-center mb-8">
                     <h1 class="text-2xl font-bold text-dark-tower flex items-center">
-                        <i class="fas fa-edit text-accent-tower mr-2"></i> Edit Fasilitas: **{{ $facility->name }}**
+                        <i class="fas fa-edit text-accent-tower mr-2"></i> Edit Fasilitas: <span class="ml-2">{{ $facility->name }}</span>
                     </h1>
 
                     {{-- Tombol Kembali --}}
@@ -93,7 +92,11 @@
                         @if($facility->image)
                             <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 inline-block">
                                 <p class="text-xs text-dark-tower font-medium mb-2">Foto Saat Ini:</p>
-                                <img src="{{ asset('storage/' . $facility->image) }}" alt="Foto Fasilitas"
+                                {{-- Penyesuaian Path: Mengecek apakah path dari seeder (assets/...) atau upload (storage/...) --}}
+                                @php
+                                    $imagePath = str_contains($facility->image, 'assets/') ? asset($facility->image) : asset('storage/' . $facility->image);
+                                @endphp
+                                <img src="{{ $imagePath }}" alt="Foto Fasilitas"
                                     class="w-24 h-24 object-cover rounded-md shadow-sm border border-gray-300">
                             </div>
                         @endif
@@ -113,14 +116,15 @@
                         @enderror
                     </div>
 
-                    {{-- Jenis Fasilitas (Menggunakan Select) --}}
+                    {{-- Jenis Fasilitas (Disesuaikan dengan Seeder) --}}
                     <div class="mb-6">
                         <label for="type" class="block text-sm font-medium text-dark-tower mb-1">Jenis Fasilitas <span class="text-red-500">*</span></label>
                         <select name="type" id="type" required
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-tower focus:border-accent-tower transition @error('type') border-red-500 @enderror">
                             <option value="" disabled>Pilih Jenis Fasilitas</option>
-                            <option value="Utama" {{ old('type', $facility->type) == 'Utama' ? 'selected' : '' }}>Utama</option>
-                            <option value="Pendukung" {{ old('type', $facility->type) == 'Pendukung' ? 'selected' : '' }}>Pendukung</option>
+                            <option value="Peralatan Pabrikasi" {{ old('type', $facility->type) == 'Peralatan Pabrikasi' ? 'selected' : '' }}>Peralatan Pabrikasi</option>
+                            <option value="Peralatan Maintenance" {{ old('type', $facility->type) == 'Peralatan Maintenance' ? 'selected' : '' }}>Peralatan Maintenance</option>
+                            <option value="Kendaraan Operasional" {{ old('type', $facility->type) == 'Kendaraan Operasional' ? 'selected' : '' }}>Kendaraan Operasional</option>
                         </select>
                         @error('type')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
