@@ -3,291 +3,333 @@
 @section('title', 'Layanan Kami - PT SAYAP SEMBILAN SATU')
 
 @push('styles')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<style>
-    /* -------------------------------------
-        COLOR THEME: SOFT LIGHT (WHITE & AMBER/GOLD)
-    ---------------------------------------*/
-    :root {
-        --accent: #FFC300;
-        /* Kuning Emas/Amber */
-        --accent-soft: #FFD700;
-        /* Kuning Lebih Terang */
-        --bg-light: #F8F9FB;
-        /* Latar Belakang Utama */
-        --bg-card: #FFFFFF;
-        /* Latar Belakang Card Putih */
-        --text-dark: #2C3E50;
-        /* Teks Utama (Dark Accent) */
-        --text-muted: #7F8C8D;
-        /* Teks Sekunder */
-        --border-subtle: #E9ECEF;
-        /* Border tipis */
-        --shadow-subtle: 0 4px 15px rgba(0, 0, 0, 0.08);
-    }
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --accent: #D4AF37;
+            /* Gold Metallic */
+            --accent-dark: #B8860B;
+            --primary-dark: #161f36;
+            /* Navy Deep */
+            --bg-soft: #F4F7FA;
+            --text-main: #2D3436;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
 
-    body {
-        background: var(--bg-light);
-        color: var(--text-dark);
-        font-family: 'Poppins', sans-serif;
-    }
+        body {
+            background: var(--bg-soft);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-    /* Hero */
-    .service-header {
-        background: var(--bg-card);
-        color: var(--text-dark);
-        padding: 130px 0 100px;
-        text-align: center;
-        border-bottom: 5px solid var(--accent);
-    }
+        /* -------------------------------------
+           HERO SECTION: MODERN & BOLD
+        ---------------------------------------*/
+        .service-header {
+            background: var(--primary-dark);
+            padding: 160px 0 120px;
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+        }
 
-    .service-header .tag {
-        letter-spacing: 3px;
-        font-size: .9rem;
-        color: var(--accent);
-        font-weight: 700;
-        text-transform: uppercase;
-    }
+        .service-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(to left, rgba(212, 175, 55, 0.1), transparent);
+            clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
 
-    .service-header h1 {
-        font-size: 3.5rem;
-        font-weight: 800;
-        color: var(--text-dark);
-        margin-bottom: 20px;
-    }
+        .service-header .tag {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--accent);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
 
-    .service-header p {
-        max-width: 800px;
-        margin: auto;
-        color: var(--text-muted);
-        font-size: 1.1rem;
-    }
+        .service-header h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.1;
+            letter-spacing: -2px;
+        }
 
-    /* Section Content */
-    .section-bg {
-        background: var(--bg-light);
-        padding: 60px 0 100px;
-    }
+        .service-header p {
+            color: #a0aec0;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-top: 20px;
+        }
 
-    /* Card */
-    .service-card {
-        background: var(--bg-card);
-        border-radius: 18px;
-        overflow: hidden;
-        border: 1px solid var(--border-subtle);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        transition: .35s ease;
-        display: flex;
-        flex-direction: column;
-    }
+        /* -------------------------------------
+           FILTER BAR: GLASSMORPHISM
+        ---------------------------------------*/
+        .sticky-filter {
+            margin-top: -40px;
+            position: relative;
+            z-index: 10;
+        }
 
-    .service-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--accent);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-    }
+        .filter-wrapper {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            padding: 25px 35px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .service-card img {
-        height: 250px;
-        object-fit: cover;
-        transition: .4s;
-        width: 100%;
-    }
+        /* -------------------------------------
+           SERVICE CARD: PREMIUM LOOK
+        ---------------------------------------*/
+        .service-card {
+            background: #fff;
+            border-radius: 24px;
+            border: 1px solid #edf2f7;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
 
-    .service-card:hover img {
-        transform: scale(1.03);
-    }
+        .img-container {
+            position: relative;
+            overflow: hidden;
+            margin: 12px;
+            border-radius: 18px;
+        }
 
-    .card-content {
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-    }
+        .service-card img {
+            height: 220px;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
 
-    /* Text */
-    .service-card h5 {
-        font-weight: 700;
-        color: var(--text-dark);
-        font-size: 1.2rem;
-    }
+        .card-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--primary-dark);
+            color: var(--accent);
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 5px 12px;
+            border-radius: 8px;
+            z-index: 2;
+        }
 
-    .price {
-        font-size: 1.4rem;
-        color: var(--text-dark);
-        font-weight: 800;
-        line-height: 1.1;
-    }
+        .service-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--accent);
+            box-shadow: 0 30px 60px rgba(22, 31, 54, 0.1);
+        }
 
-    .price span {
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: var(--text-muted);
-        display: block;
-    }
+        .service-card:hover img {
+            transform: scale(1.1);
+        }
 
-    .description {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        min-height: 40px;
-        max-height: 40px;
-        overflow: hidden;
-        margin-bottom: 15px;
-    }
+        .card-content {
+            padding: 10px 25px 25px;
+        }
 
-    /* Button (Primary Amber) */
-    .btn-accent-outline {
-        border: 2px solid var(--accent);
-        color: var(--text-dark);
-        background: var(--bg-card);
-        border-radius: 8px;
-        font-weight: 700;
-        padding: 10px 0;
-        transition: .3s;
-    }
+        .service-card h5 {
+            font-weight: 800;
+            color: var(--primary-dark);
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
 
-    .btn-accent-outline:hover {
-        background: var(--accent);
-        color: var(--text-dark);
-        box-shadow: 0 0 18px rgba(255, 195, 0, 0.4);
-        transform: translateY(-2px);
-    }
+        .price-tag {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 20px;
+            transition: all 0.4s;
+        }
 
-    /* Stars */
-    .card-stars i {
-        color: var(--accent);
-    }
+        .service-card:hover .price-tag {
+            background: var(--primary-dark);
+        }
 
-    /* Filter bar */
-    .filter-bar {
-        border-bottom: 1px solid var(--border-subtle);
-        padding-bottom: 15px;
-        margin-bottom: 40px !important;
-    }
+        .price-tag .label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #718096;
+            text-transform: uppercase;
+            display: block;
+        }
 
-    .filter-bar h4 {
-        color: var(--text-dark);
-        font-weight: 700;
-        font-size: 1.3rem;
-    }
+        .price-tag .value {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--primary-dark);
+        }
 
-    .filter-link {
-        color: var(--accent);
-        font-weight: 700;
-        transition: color .2s;
-    }
-    .filter-link:hover {
-        color: var(--accent-soft);
-    }
+        .service-card:hover .value {
+            color: #fff;
+        }
 
-    /* Load More Button */
-    .load-more-btn {
-        border: 2px solid var(--accent);
-        color: var(--text-dark);
-        background: var(--bg-card);
-        padding: 12px 45px;
-        border-radius: 8px;
-        font-weight: 700;
-        transition: .3s ease;
-    }
+        .service-card:hover .label {
+            color: var(--accent);
+        }
 
-    .load-more-btn:hover {
-        background: var(--accent);
-        color: var(--text-dark);
-        box-shadow: 0 0 20px rgba(255, 195, 0, 0.35);
-        transform: translateY(-3px);
-    }
+        /* Button Detail */
+        .btn-detail {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            color: var(--primary-dark);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.4s;
+            text-decoration: none;
+        }
 
-    @media(max-width: 767px) {
-        .service-header h1 { font-size: 2.5rem; }
-    }
-</style>
+        .service-card:hover .btn-detail {
+            background: #fff;
+            transform: rotate(-45deg);
+        }
+
+        /* -------------------------------------
+           LOAD MORE
+        ---------------------------------------*/
+        .load-more-btn {
+            background: var(--primary-dark);
+            color: #fff;
+            border: none;
+            padding: 16px 45px;
+            border-radius: 15px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .load-more-btn:hover {
+            background: var(--accent);
+            color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        @media(max-width: 767px) {
+            .service-header h1 {
+                font-size: 2.8rem;
+            }
+
+            .filter-wrapper {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
 
-{{-- Header --}}
-<section class="service-header" data-aos="fade-down">
-    <div class="container">
-        <div class="tag mb-2">PELAYANAN KAMI</div>
-        <h1 class="mb-3">Layanan Eksklusif Tower</h1>
-        <p>Kami hadir dengan pelayanan terbaik dan profesional</p>
-    </div>
-</section>
+    {{-- Header --}}
+    <section class="service-header">
+        <div class="container">
+            <div class="tag" data-aos="fade-right">PREMIUM SERVICES</div>
+            <h1 data-aos="fade-right" data-aos-delay="100">Solusi Infrastruktur <br><span style="color: var(--accent)">Menara
+                    Unggulan</span></h1>
+            <p data-aos="fade-right" data-aos-delay="200">Menyediakan layanan fabrikasi, instalasi, dan pemeliharaan tower
+                dengan standar keamanan tinggi dan ketepatan waktu maksimal.</p>
+        </div>
+    </section>
 
-{{-- Content --}}
-<section class="section-bg">
-<div class="container">
-
-    {{-- Filter Bar --}}
-    <div class="d-flex justify-content-between align-items-center filter-bar mb-4" data-aos="fade-up">
-        {{-- LOGIKA: Menghitung jumlah layanan --}}
-        <h4>Semua Layanan ({{ count($items) }})</h4>
-        <a href="#" class="filter-link text-decoration-none fw-bold small">
-            <i class="bi bi-funnel"></i> Filter Kategori
-        </a>
-    </div>
-
-    {{-- Grid Layanan --}}
-    <div class="row g-4">
-        @forelse($items as $service)
-        {{-- LOGIKA: Looping data layanan --}}
-        <div class="col-lg-3 col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-            <div class="service-card h-100">
-
-                <a href="{{ route('service.show', $service->slug ?? $service->id) }}">
-                    {{-- LOGIKA: Menampilkan Gambar Layanan --}}
-                    <div style="overflow: hidden;">
-                        <img src="{{ asset('storage/'.$service->image) }}" class="img-fluid w-100" alt="{{ $service->name }}">
-                    </div>
+    {{-- Content --}}
+    <section class="section-bg pb-5">
+        <div class="container sticky-filter">
+            {{-- Filter Bar --}}
+            <div class="filter-wrapper mb-5" data-aos="zoom-in">
+                <h4 class="m-0 fw-900" style="color: var(--primary-dark); font-weight: 800;">
+                    <span class="text-muted fw-light">Total:</span> {{ count($items) }} Layanan
+                </h4>
+                <a href="#" class="btn py-2 px-4 rounded-pill fw-bold text-decoration-none"
+                    style="background: rgba(212,175,55,0.1); color: var(--accent-dark);">
+                    <i class="bi bi-sliders2-vertical me-2"></i>Kategori Layanan
                 </a>
-
-                <div class="card-content">
-                    {{-- LOGIKA: Menampilkan Nama Layanan --}}
-                    <h5 class="text-truncate mb-1">{{ $service->name }}</h5>
-
-                    <div class="card-stars mb-2 small">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
-                        <span class="text-muted small ms-1">(4.8)</span>
-                    </div>
-
-                    {{-- LOGIKA: Menampilkan Deskripsi Singkat --}}
-                    <p class="description mb-3">{{ Str::limit(strip_tags($service->description ?? 'Layanan perawatan terbaik untuk Bunda dan Buah Hati.'), 65) }}</p>
-
-                    <div class="mt-auto">
-                        {{-- LOGIKA: Menampilkan Harga --}}
-                        <p class="price mb-3">
-                            <span>Harga Mulai Dari</span>
-                            Rp {{ number_format($service->price, 0, ',', '.') }}
-                        </p>
-
-                        {{-- LOGIKA: Tautan ke Halaman Detail Layanan --}}
-                        <a href="{{ route('service.show', $service->slug ?? $service->id) }}" class="btn btn-accent-outline w-100">
-                            Detail Layanan <i class="bi bi-arrow-right-short"></i>
-                        </a>
-                    </div>
-                </div>
-
             </div>
-        </div>
-        @empty
-        {{-- LOGIKA: Pesan jika tidak ada layanan --}}
-        <div class="col-12 text-center py-5">
-            <i class="bi bi-heart-pulse-fill fs-1 mb-3" style="color: var(--accent);"></i>
-            <h5 class="text-dark">Layanan Sedang Diperbarui</h5>
-            <p class="text-muted">Mohon maaf, saat ini belum ada layanan yang ditampilkan. Silakan hubungi kami untuk informasi lebih lanjut.</p>
-        </div>
-        @endforelse
-    </div>
 
-    {{-- Load More --}}
-    @if(count($items) > 8)
-    {{-- LOGIKA: Menampilkan tombol Load More jika item > 8 --}}
-    <div class="text-center mt-5">
-        <button class="load-more-btn">Muat Lebih Banyak</button>
-    </div>
-    @endif
+            {{-- Grid Layanan --}}
+            <div class="row g-4">
+                @forelse($items as $service)
+                    <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
+                        <div class="service-card h-100 d-flex flex-column">
 
-</div>
-</section>
+                            <div class="img-container">
+                                <span class="card-badge">TOWER TECH</span>
+                                <a href="{{ route('service.show', $service->slug ?? $service->id) }}">
+                                    <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}">
+                                </a>
+                            </div>
+
+                            <div class="card-content flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="text-truncate" title="{{ $service->name }}">{{ $service->name }}</h5>
+                                </div>
+
+                                <div class="mb-3">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <i class="bi bi-star-fill" style="color: var(--accent); font-size: 0.75rem;"></i>
+                                    @endfor
+                                    <span class="text-muted small ms-2">5.0</span>
+                                </div>
+
+                                <p class="text-muted small" style="line-height: 1.6; height: 45px; overflow: hidden;">
+                                    {{ Str::limit(strip_tags($service->description ?? 'Deskripsi layanan konstruksi dan pemeliharaan infrastruktur menara profesional.'), 70) }}
+                                </p>
+
+                                <div class="d-flex align-items-center justify-content-between mt-auto">
+                                    <div class="price-tag flex-grow-1 me-3">
+                                        <span class="label">Mulai Dari</span>
+                                        <span class="value">Rp {{ number_format($service->price, 0, ',', '.') }}</span>
+                                    </div>
+                                    <a href="{{ route('service.show', $service->slug ?? $service->id) }}"
+                                        class="btn-detail">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-12 text-center py-5">
+                        <div class="py-5 bg-white rounded-4 border border-dashed">
+                            <i class="bi bi-box-seam fs-1 mb-3 text-muted"></i>
+                            <h5 class="fw-bold">Layanan Tidak Ditemukan</h5>
+                            <p class="text-muted">Kami sedang memperbarui daftar layanan kami. Silakan kembali sesaat lagi.
+                            </p>
+                        </div>
+                    </div>
+                @endforelse
+            </div>
+
+            {{-- Load More --}}
+            @if (count($items) > 8)
+                <div class="text-center mt-5 pt-4">
+                    <button class="load-more-btn shadow-lg">
+                        JELAJAHI LEBIH BANYAK <i class="bi bi-chevron-down ms-2"></i>
+                    </button>
+                </div>
+            @endif
+        </div>
+    </section>
 @endsection
