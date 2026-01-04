@@ -122,7 +122,7 @@ Route::get('/news/{slug}', [PublicNewsController::class, 'show'])->name('news.sh
 Route::resource('partners', PublicPartnersController::class)->only(['index', 'show']);
 Route::resource('facilities', PublicFacilityController::class)->only(['index', 'show']);
 
-Route::view('/contact', 'contact')->name('contact');
+Route::view('/contact', 'pages.help.kontak')->name('contact');
 Route::view('/consult', 'pages.consult')->name('consult');
 Route::view('/faq', 'pages.help.faq')->name('faq');
 Route::view('/syaratketentuan', 'pages.help.syaratketentuan')->name('syaratketentuan');
