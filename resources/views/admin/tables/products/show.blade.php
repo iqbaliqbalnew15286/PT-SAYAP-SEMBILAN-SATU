@@ -1,121 +1,144 @@
 @extends('admin.layouts.app')
-@section('title', 'Detail Produk')
+
+@section('title', 'Detail Produk - ' . $product->name)
 
 @section('content')
 
-{{-- Container Utama --}}
-<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+<!DOCTYPE html>
+<html lang="id">
 
-    {{-- Judul Halaman --}}
-    <h3 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center">
-        <svg class="w-8 h-8 mr-3 text-gray-700" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zm4.364 1.636a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zm-4.364 8a1 1 0 100 2h.01a1 1 0 100-2H10zm2.828-6.657a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM15 10a1 1 0 11-2 0 1 1 0 012 0zm-7 0a1 1 0 11-2 0 1 1 0 012 0zM17.364 14.364a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM5.636 14.364a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zM18 10a1 1 0 01-1 1H3a1 1 0 01-1-1 1 1 0 011-1h14a1 1 0 011 1z" clip-rule="evenodd"></path></svg>
-        Detail Produk
-    </h3>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{-- Tailwind CSS --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- Font Awesome --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    {{-- Google Fonts: Poppins --}}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .text-dark-tower { color: #2C3E50; }
+        .bg-dark-tower { background-color: #2C3E50; }
+        .text-accent-tower { color: #FF8C00; }
+        .bg-accent-tower { background-color: #FF8C00; }
+        .hover\:bg-accent-dark:hover { background-color: #E67E22; }
+        .shadow-soft { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
 
-    {{-- Kartu Produk (Product Card) --}}
-    <div class="bg-white rounded-xl shadow-2xl p-6 md:p-8 transition duration-300 ease-in-out hover:shadow-xl">
-        <div class="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start">
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+        }
+    </style>
+</head>
 
-            {{-- GAMBAR PRODUK --}}
-            <div class="w-full lg:w-5/12 text-center">
-                @if($product->image)
-                    {{-- Menggunakan h-96 untuk tinggi tetap --}}
-                    <img src="{{ asset('storage/'.$product->image) }}"
-                        class="w-full h-96 object-cover rounded-lg shadow-md"
-                        alt="Gambar Produk">
-                @else
-                    <div class="bg-gray-100 flex items-center justify-center rounded-lg h-96 border border-dashed border-gray-300">
-                        <span class="text-gray-500 italic">Tidak ada gambar</span>
-                    </div>
-                @endif
+<body class="bg-gray-100">
+
+    <div class="main-content flex-1 p-4 sm:p-6">
+        <div class="max-w-5xl mx-auto">
+
+            {{-- Breadcrumb & Tombol Kembali --}}
+            <div class="flex justify-between items-center mb-6">
+                <nav class="text-sm font-medium text-gray-500">
+                    <a href="{{ route('admin.products.index') }}" class="hover:text-accent-tower transition-colors">Produk</a>
+                    <span class="mx-2">/</span>
+                    <span class="text-dark-tower">Detail Produk</span>
+                </nav>
+                <a href="{{ route('admin.products.index') }}" class="flex items-center text-sm font-semibold text-gray-600 hover:text-dark-tower transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i> Kembali
+                </a>
             </div>
 
-            {{-- INFORMASI PRODUK --}}
-            <div class="w-full lg:w-7/12">
+            <div class="bg-white rounded-xl shadow-soft overflow-hidden">
+                <div class="flex flex-col md:flex-row">
 
-                {{-- Nama dan Tipe --}}
-                <div class="flex items-center mb-4">
-                    <h4 class="text-3xl font-bold text-gray-800 mr-4">{{ $product->name }}</h4>
-
-                    {{-- Tampilkan Tipe Produk --}}
-                    @if($product->type == 'barang')
-                        <span class="px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">Barang</span>
-                    @elseif($product->type == 'jasa')
-                        <span class="px-3 py-1 text-sm font-semibold text-indigo-800 bg-indigo-100 rounded-full">Jasa</span>
-                    @endif
-                </div>
-
-                {{-- INFORMASI DETAIL --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 border-b pb-4 border-gray-100">
-
-                    {{-- Slug --}}
-                    <div>
-                        <p class="text-sm font-semibold text-gray-500 mb-1">Slug (URL Identitas)</p>
-                        <p class="text-gray-700 font-medium break-words">{{ $product->slug ?? '-' }}</p>
+                    {{-- Bagian Kiri: Gambar --}}
+                    <div class="w-full md:w-2/5 bg-gray-50 p-6 flex flex-col items-center justify-center border-r border-gray-100">
+                        @if($product->image)
+                            @php
+                                $path = str_contains($product->image, 'assets/') ? asset($product->image) : asset('storage/' . $product->image);
+                            @endphp
+                            <div class="relative group">
+                                <img src="{{ $path }}"
+                                     alt="{{ $product->name }}"
+                                     class="w-full h-80 object-contain rounded-lg shadow-md bg-white p-2">
+                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-lg"></div>
+                            </div>
+                        @else
+                            <div class="w-full h-80 bg-gray-200 rounded-lg flex flex-col items-center justify-center border-2 border-dashed border-gray-300 text-gray-400">
+                                <i class="fas fa-image fa-4x mb-4"></i>
+                                <p class="text-sm">Tidak ada gambar produk</p>
+                            </div>
+                        @endif
                     </div>
 
-                    {{-- Harga --}}
-                    <div>
-                        <p class="text-sm font-semibold text-gray-500 mb-1">Harga</p>
-                        <p class="text-2xl font-bold text-green-600">
-                            {{ $product->price ? 'Rp ' . number_format($product->price, 0, ',', '.') : 'Gratis / Tanyakan Harga' }}
+                    {{-- Bagian Kanan: Detail Informasi --}}
+                    <div class="w-full md:w-3/5 p-8 flex flex-col">
+                        <div class="mb-4">
+                            @if($product->type == 'barang')
+                                <span class="bg-indigo-100 text-indigo-700 py-1 px-3 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                                    <i class="fas fa-box mr-1"></i> Barang
+                                </span>
+                            @else
+                                <span class="bg-emerald-100 text-emerald-700 py-1 px-3 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                                    <i class="fas fa-concierge-bell mr-1"></i> Jasa
+                                </span>
+                            @endif
+                        </div>
+
+                        <h1 class="text-4xl font-bold text-dark-tower mb-2">{{ $product->name }}</h1>
+                        <p class="text-3xl font-bold text-accent-tower mb-6">
+                            Rp {{ number_format($product->price, 0, ',', '.') }}
                         </p>
+
+                        <div class="space-y-6 flex-grow">
+                            {{-- Info Ringkas --}}
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                    <p class="text-[10px] uppercase font-semibold text-gray-400">ID Produk</p>
+                                    <p class="text-sm font-medium text-gray-700">#PRD-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                    <p class="text-[10px] uppercase font-semibold text-gray-400">Slug</p>
+                                    <p class="text-sm font-medium text-gray-700 truncate" title="{{ $product->slug }}">{{ $product->slug ?: '-' }}</p>
+                                </div>
+                            </div>
+
+                            {{-- Deskripsi --}}
+                            <div>
+                                <h3 class="text-sm font-bold text-dark-tower uppercase tracking-widest mb-2 border-b pb-1">Deskripsi</h3>
+                                <p class="text-gray-600 leading-relaxed text-sm italic">
+                                    {{ $product->description ?: 'Belum ada deskripsi untuk produk ini.' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        {{-- Metadata --}}
+                        <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4 text-[11px] text-gray-400">
+                            <span class="flex items-center"><i class="far fa-calendar-plus mr-2"></i> Dibuat: {{ $product->created_at->format('d M Y, H:i') }}</span>
+                            <span class="flex items-center"><i class="far fa-edit mr-2"></i> Diupdate: {{ $product->updated_at->format('d M Y, H:i') }}</span>
+                        </div>
+
+                        {{-- Tombol Aksi --}}
+                        <div class="mt-8 flex gap-3">
+                            <a href="{{ route('admin.products.edit', $product->id) }}"
+                               class="flex-1 bg-dark-tower text-white text-center py-3 rounded-lg font-semibold hover:bg-gray-700 transition-all flex items-center justify-center">
+                                <i class="fas fa-edit mr-2"></i> Edit Produk
+                            </a>
+                            <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Hapus produk ini secara permanen?');" class="flex-1">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="w-full bg-red-50 text-red-600 border border-red-100 py-3 rounded-lg font-semibold hover:bg-red-600 hover:text-white transition-all flex items-center justify-center">
+                                    <i class="fas fa-trash-alt mr-2"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
 
-                <hr class="my-4 border-gray-200">
-
-                {{-- Deskripsi --}}
-                <p class="text-sm font-semibold text-gray-500 mb-2">Deskripsi</p>
-                <div class="text-gray-600 leading-relaxed mb-6">
-                    {{ $product->description ?? 'Belum ada deskripsi untuk produk ini.' }}
-                </div>
-
-                <hr class="my-4 border-gray-200">
-
-                {{-- Waktu Pembuatan/Pembaruan --}}
-                <div class="flex flex-col sm:flex-row justify-between text-xs text-gray-500 italic mb-6">
-                    <p class="flex items-center mb-2 sm:mb-0">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Dibuat: {{ $product->created_at->isoFormat('D MMM YYYY, H:mm') }}
-                    </p>
-                    <p class="flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.962 8.962 0 0112 20a9 9 0 01-8.632-12.441M12 2v2m0 16v2m-4.5-5.5h-2.164m.926 2.39-1.442 1.442M18 10h2.164m-.926 2.39 1.442 1.442M12 6a4 4 0 100 8 4 4 0 000-8z"></path></svg>
-                        Diperbarui: {{ $product->updated_at->isoFormat('D MMM YYYY, H:mm') }}
-                    </p>
-                </div>
-
-                {{-- TOMBOL AKSI --}}
-                <div class="flex flex-wrap gap-3 mt-4 pt-4 border-t border-gray-100">
-
-                    {{-- Tombol Edit --}}
-                    <a href="{{ route('admin.products.edit', $product->id) }}"
-                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        Edit
-                    </a>
-
-                    {{-- Tombol Hapus --}}
-                    <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini secara permanen? Tindakan ini tidak dapat dibatalkan.')" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            Hapus
-                        </button>
-                    </form>
-
-                    {{-- Tombol Kembali --}}
-                    <a href="{{ route('admin.products.index') }}"
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out ml-auto">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path></svg>
-                        Kembali ke Daftar
-                    </a>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+</body>
+</html>
 
 @endsection

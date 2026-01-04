@@ -57,7 +57,7 @@
             currentIndex: 0,
             newsCount: {{ $latestNews->count() }},
             showModal: false,
-        
+
             init() {
                 /**
                  * MUNCUL 1x PER SESI TAB
@@ -71,14 +71,14 @@
                     }, 800);
                 }
             },
-        
+
             next() {
                 this.currentIndex++;
                 if (this.currentIndex >= this.newsCount) {
                     this.showModal = false;
                 }
             },
-        
+
             closeAll() {
                 this.showModal = false;
             }
@@ -373,73 +373,93 @@
 
                 <p class="text-gray-700 text-base leading-relaxed">
                     Didirikan pada tahun 2005 di Jakarta sebagai perusahaan yang berdedikasi dalam penyediaan barang dan
-                    jasa berkualitas tinggi.
-                    Seiring berkembangnya teknologi, fokus utama kami kini menjadi mitra strategis di industri
-                    Telekomunikasi dengan jangkauan layanan
-                    yang mencakup seluruh wilayah Indonesia.Kami memahami bahwa infrastruktur telekomunikasi adalah
+                    jasa berkualitas tinggi. Kami memahami bahwa infrastruktur telekomunikasi adalah
                     tulang punggung konektivitas digital.
                     Oleh karena itu, <span class="text-[#FF7518] font-semibold">RBM</span> hadir memberikan solusi
-                    komprehensif mulai dari pembangunan hingga pemeliharaan infrastruktur menara.
+                    komprehensif mulai dari pembangunan hingga pemeliharaan infrastruktur menara di seluruh wilayah
+                    Indonesia.
                 </p>
 
-                <p class="mt-4 text-gray-500 text-sm leading-relaxed">
-                    Solusi infrastruktur profesional untuk mendukung konektivitas digital
-                    yang stabil, aman, dan berkelanjutan di seluruh Indonesia.
+                <p class="mt-4 text-gray-500 text-sm leading-relaxed italic">
+                    "Solusi infrastruktur profesional untuk konektivitas yang stabil, aman, dan berkelanjutan."
                 </p>
             </div>
 
-            {{-- CTA --}}
+            {{-- CTA Button --}}
             <div class="flex flex-col sm:flex-row gap-4">
-                <a href="{{ route('products') }}"
+                <a href="{{ Route::has('products') ? route('products') : '/products' }}"
                     class="group inline-flex items-center justify-center px-8 py-4 rounded-xl bg-[#161f36] text-white font-semibold transition-all duration-300 hover:bg-[#FF7518] hover:shadow-lg hover:shadow-orange-500/30">
-                    <span>CEK PRODUK</span>
-                    <span
-                        class="ml-4 p-2 rounded-lg bg-white/20 group-hover:bg-white group-hover:text-[#FF7518] transition">
+                    <span>LIHAT KATALOG</span>
+                    <span class="ml-4 p-2 rounded-lg bg-white/20 group-hover:bg-white group-hover:text-[#FF7518] transition">
                         <i class="fas fa-arrow-right text-sm"></i>
                     </span>
                 </a>
 
-                <a href="{{ route('about') }}"
+                <a href="/about"
                     class="inline-flex items-center justify-center px-8 py-4 rounded-xl border border-[#161f36] text-[#161f36] font-semibold transition-all hover:bg-[#161f36] hover:text-white">
                     TENTANG KAMI
                 </a>
             </div>
         </div>
 
-        {{-- Right Product Grid --}}
+        {{-- Right Product & Service Grid (Bento Style - 5 Data) --}}
         <div class="grid grid-cols-2 md:grid-cols-3 auto-rows-[160px] gap-4 reveal">
 
             @php
-                $gridProducts = isset($products) ? $products->take(5) : collect();
+                // Gabungkan semua data agar slot ke-5 pasti terisi
+                $combined = collect();
+                if(isset($products)) { $combined = $combined->concat($products); }
+                if(isset($services)) { $combined = $combined->concat($services); }
+                if(isset($items)) { $combined = $combined->concat($items); }
+
+                // Pastikan kita mengambil 5 item untuk ditampilkan
+                $displayItems = $combined->take(5);
             @endphp
 
             @for ($i = 0; $i < 5; $i++)
                 @php
-                    $product = $gridProducts->get($i);
-                    $class = $i === 0 ? 'md:row-span-2' : ($i === 1 ? 'md:col-span-2 md:row-span-2' : '');
+                    $item = $displayItems->get($i);
+
+                    // Layout: Item 1 (Tinggi), Item 2 (Lebar & Tinggi), 3-5 (Kotak Standar)
+                    $gridClass = ($i === 0) ? 'md:row-span-2' : (($i === 1) ? 'md:col-span-2 md:row-span-2' : '');
+
+                    // Penanganan Gambar
+                    $imageUrl = null;
+                    if ($item && $item->image) {
+                        $cleanPath = ltrim($item->image, '/');
+                        // Cek jika dari seeder (folder assets) atau upload (folder storage)
+                        $imageUrl = str_contains($cleanPath, 'assets/') ? asset($cleanPath) : asset('storage/' . $cleanPath);
+                    }
                 @endphp
 
-                <div
-                    class="{{ $class }} relative overflow-hidden rounded-2xl bg-[#161f36] group border border-transparent hover:border-[#FF7518] transition-all duration-500">
+                <div class="{{ $gridClass }} relative overflow-hidden rounded-2xl bg-[#161f36] group border border-transparent hover:border-[#FF7518] transition-all duration-500 shadow-lg">
 
-                    @if ($product && $product->image)
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    @if ($item && $imageUrl)
+                        {{-- Menampilkan Gambar --}}
+                        <img src="{{ $imageUrl }}" alt="{{ $item->name }}"
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+                            onerror="this.onerror=null;this.src='https://placehold.co/600x400/161f36/white?text=Image+Not+Found';">
 
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-5">
-                            <h4 class="text-white text-sm font-bold uppercase tracking-tight">
-                                {{ $product->name }}
+                        {{-- Overlay Info --}}
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#161f36] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-5">
+                            <span class="text-[#FF7518] text-[9px] font-bold uppercase tracking-widest mb-1">
+                                {{ (isset($item->category_id) || isset($item->category)) ? 'Produk' : 'Layanan' }}
+                            </span>
+                            <h4 class="text-white text-xs font-bold uppercase leading-tight">
+                                {{ $item->name }}
                             </h4>
-                            <span class="w-8 h-[2px] bg-[#FF7518] mt-2"></span>
+                            <div class="w-0 group-hover:w-full h-[2px] bg-[#FF7518] mt-3 transition-all duration-500"></div>
                         </div>
 
-                        <a href="{{ route('product.show', $product->slug) }}" class="absolute inset-0 z-10"></a>
+                        {{-- Link Detail --}}
+                        <a href="/products/{{ $item->slug ?? $item->id }}" class="absolute inset-0 z-10"></a>
                     @else
-                        <div
-                            class="w-full h-full flex flex-col items-center justify-center border border-dashed border-white/20">
-                            <i class="fas fa-tower-broadcast text-[#FF7518] text-xl opacity-40 mb-2"></i>
-                            <span class="text-white/40 text-[10px] uppercase font-semibold">Waiting for Data</span>
+                        {{-- Fallback jika data kurang dari 5 --}}
+                        <div class="w-full h-full flex flex-col items-center justify-center border border-dashed border-white/10 bg-[#1a243d]">
+                            <i class="fas fa-tower-broadcast text-[#FF7518] text-xl opacity-20 mb-2"></i>
+                            <span class="text-white/20 text-[9px] uppercase font-bold tracking-widest text-center px-2">
+                                DATA {{ $i + 1 }} <br> RBM INFRASTRUCTURE
+                            </span>
                         </div>
                     @endif
                 </div>
@@ -447,6 +467,7 @@
         </div>
     </div>
 </section>
+
 
 {{-- ================= PARTNER SECTION (FIXED & STABLE) ================= --}}
 <section class="bg-white py-20 reveal">

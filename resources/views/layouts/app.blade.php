@@ -51,54 +51,31 @@
         /* --- PRELOADER STYLING --- */
         #preloader {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: white;
             z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.5s ease;
         }
 
         .loader-logo {
-            width: 80px;
-            margin-bottom: 20px;
+            width: 80px; margin-bottom: 20px;
             animation: pulse 1.5s infinite ease-in-out;
         }
 
         .loader-bar {
-            width: 150px;
-            height: 4px;
-            background: #f3f3f3;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
+            width: 150px; height: 4px; background: #f3f3f3; border-radius: 10px;
+            overflow: hidden; position: relative;
         }
 
         .loader-bar::after {
-            content: '';
-            width: 40%;
-            height: 100%;
-            background: var(--accent);
-            position: absolute;
-            left: -100%;
+            content: ''; width: 40%; height: 100%; background: var(--accent);
+            position: absolute; left: -100%;
             animation: loading 1.5s infinite ease;
         }
 
-        @keyframes loading {
-            0% { left: -40%; }
-            50% { left: 100%; }
-            100% { left: 100%; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-        }
+        @keyframes loading { 0% { left: -40%; } 50% { left: 100%; } 100% { left: 100%; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } }
 
         /* Navbar Styling */
         .nav-link {
@@ -106,8 +83,7 @@
         }
 
         .nav-link::after {
-            content: '';
-            background-color: var(--accent);
+            content: ''; background-color: var(--accent);
             @apply absolute left-1/2 -bottom-1 w-0 h-[3px] transition-all duration-300 ease-in-out -translate-x-1/2 rounded-full;
         }
 
@@ -117,27 +93,15 @@
         .nav-active::after { @apply w-full; }
 
         .dropdown-content {
-            opacity: 0;
-            transform: translateY(10px);
-            visibility: hidden;
+            opacity: 0; transform: translateY(10px); visibility: hidden;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .group:hover .dropdown-content {
-            opacity: 1;
-            transform: translateY(0);
-            visibility: visible;
+            opacity: 1; transform: translateY(0); visibility: visible;
         }
 
         [x-cloak] { display: none !important; }
-
-        /* Language Switcher Custom */
-        .lang-btn {
-            @apply flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-300 text-[11px] font-bold border border-transparent;
-        }
-        .lang-active {
-            @apply bg-orange-50 text-rbm-accent border-orange-100 shadow-sm;
-        }
     </style>
 </head>
 
@@ -159,7 +123,6 @@
         $rbmAccent = '#FF7518';
         $whatsappNumber = '6285649011449';
         $whatsappMessage = 'Halo PT. Rizqallah Boer Makmur, saya ingin bertanya tentang layanan Anda.';
-        $currentLocale = app()->getLocale();
     @endphp
 
     <div x-data="{ searchModalOpen: false }" @keydown.escape.window="searchModalOpen = false">
@@ -201,35 +164,20 @@
                     </a>
 
                     <div class="hidden lg:flex items-center space-x-6">
-                        {{-- LANGUAGE SWITCHER --}}
-                        <div class="flex items-center bg-gray-50 p-1 rounded-xl border border-gray-100">
-                            <a href="{{ url('lang/id') }}" class="lang-btn {{ $currentLocale == 'id' ? 'lang-active' : 'text-gray-400 hover:text-rbm-dark' }}">
-                                <img src="https://flagcdn.com/w40/id.png" class="w-4 h-3 object-cover rounded-sm shadow-sm" alt="ID"> ID
-                            </a>
-                            <a href="{{ url('lang/en') }}" class="lang-btn {{ $currentLocale == 'en' ? 'lang-active' : 'text-gray-400 hover:text-rbm-dark' }}">
-                                <img src="https://flagcdn.com/w40/gb.png" class="w-4 h-3 object-cover rounded-sm shadow-sm" alt="EN"> EN
-                            </a>
-                        </div>
-
                         <button @click="searchModalOpen = true"
-                            class="text-gray-500 hover:text-rbm-accent transition-all p-2 bg-gray-50 rounded-full">
-                            <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                            class="text-gray-500 hover:text-rbm-accent transition-all p-2.5 bg-gray-100 rounded-full">
+                            <i class="fa-solid fa-magnifying-glass text-base"></i>
                         </button>
 
                         <a href="https://wa.me/{{ $whatsappNumber }}?text={{ urlencode($whatsappMessage) }}"
                             target="_blank"
-                            class="bg-[#FF7518] text-white px-6 py-2.5 rounded-full font-bold hover:bg-orange-600 transition-all text-xs shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5">
-                            <i class="fab fa-whatsapp text-sm"></i> WHATSAPP KAMI
+                            class="bg-[#FF7518] text-white px-8 py-3 rounded-full font-bold hover:bg-orange-600 transition-all text-xs shadow-lg flex items-center gap-2 transform hover:-translate-y-1 active:scale-95">
+                            <i class="fab fa-whatsapp text-sm"></i> HUBUNGI KAMI
                         </a>
                     </div>
 
                     {{-- Hamburger --}}
                     <div class="lg:hidden flex items-center space-x-3">
-                        {{-- Mobile Lang Switcher --}}
-                        <div class="flex bg-gray-50 rounded-lg p-1 scale-90">
-                            <a href="{{ url('lang/id') }}" class="px-2 py-1 {{ $currentLocale == 'id' ? 'text-rbm-accent' : 'text-gray-400' }}"><i class="fa-solid fa-language"></i></a>
-                            <a href="{{ url('lang/en') }}" class="px-2 py-1 {{ $currentLocale == 'en' ? 'text-rbm-accent' : 'text-gray-400' }}"><i class="fa-solid fa-globe"></i></a>
-                        </div>
                         <button @click="searchModalOpen = true" class="text-gray-600 p-2"><i class="fa-solid fa-magnifying-glass"></i></button>
                         <button @click="mobileMenuOpen = !mobileMenuOpen"
                             class="text-2xl text-rbm-dark p-2 focus:outline-none bg-gray-50 rounded-lg">
@@ -242,7 +190,7 @@
 
             {{-- MAIN NAV DESKTOP --}}
             <nav class="hidden lg:block bg-white border-b border-gray-100 relative z-10">
-                <div class="max-w-screen-xl mx-auto flex items-center justify-center gap-x-8 px-4 h-12">
+                <div class="max-w-screen-xl mx-auto flex items-center justify-center gap-x-10 px-4 h-12">
                     <a href="/" class="nav-link {{ Request::is('/') ? 'nav-active' : '' }}">Home</a>
 
                     <div class="relative group h-full flex items-center">
@@ -287,11 +235,12 @@
                             <a href="{{ route('about') }}" class="block px-6 py-3 text-sm text-gray-600">Tentang Kami</a>
                             <a href="{{ route('gallery.index') }}" class="block px-6 py-3 text-sm text-gray-600">Galeri Proyek</a>
                             <a href="{{ route('partners.index') }}" class="block px-6 py-3 text-sm text-gray-600">Mitra Industri</a>
+                            <a href="{{ route('testimonials.index') }}" class="block px-6 py-3 text-sm text-gray-600">Testimonial</a>
                         </div>
                     </div>
 
                     <a href="{{ route('products') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Produk</a>
-                    <a href="{{ route('news.index') }}" class="px-4 py-3 text-gray-700 font-bold uppercase {{ Request::is('news*') ? 'text-rbm-accent' : '' }}">Berita</a>
+                    <a href="{{ route('news.index') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Berita</a>
                     <a href="{{ route('facilities.index') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Fasilitas</a>
                     <a href="{{ route('kontak') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Kontak</a>
 
@@ -351,7 +300,6 @@
                             <li><a href="{{ route('about') }}" class="hover:text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Tentang Kami</a></li>
                             <li><a href="{{ route('news.index') }}" class="hover:text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Berita Terbaru</a></li>
                             <li><a href="{{ route('gallery.index') }}" class="hover:text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Galeri Proyek</a></li>
-                            <li><a href="{{ route('products') }}" class="hover:text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Produk Kami</a></li>
                         </ul>
                     </div>
 
@@ -377,11 +325,7 @@
                             </div>
                             <div class="flex gap-4 items-center">
                                 <i class="fas fa-envelope text-rbm-accent text-lg"></i>
-                                <a href="mailto:info@rbm.co.id" class="hover:text-white transition">project@rbmak.co.id</a>
-                            </div>
-                            <div class="flex gap-4 items-center">
-                                <i class="fas fa-phone-alt text-rbm-accent text-lg"></i>
-                                <span>+62 21 1234 5678</span>
+                                <a href="mailto:project@rbmak.co.id" class="hover:text-white transition">project@rbmak.co.id</a>
                             </div>
                         </div>
                     </div>
@@ -391,101 +335,19 @@
             <div class="border-t border-white/5 py-8 bg-black/20">
                 <div class="max-w-screen-xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-gray-500 font-medium tracking-wider">
                     <p class="uppercase">&copy; {{ date('Y') }} PT. RIZQALLAH BOER MAKMUR. All rights Reserved.</p>
-                    <div class="flex gap-8 uppercase">
-                        <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                        <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
-                        <a href="#" class="hover:text-white transition-colors">Cookies</a>
-                    </div>
                 </div>
             </div>
         </footer>
     </div>
-<script>
-    // ==============================
-    // SMART PRELOADER (ONLY IF SLOW)
-    // ==============================
 
-    const preloader = document.getElementById('preloader');
-    let showLoaderTimeout;
-    let loaderShown = false;
-
-    function isSlowConnection() {
-        if (!navigator.connection) return false;
-        const slowTypes = ['slow-2g', '2g', '3g'];
-        return slowTypes.includes(navigator.connection.effectiveType);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        if (isSlowConnection()) {
-            showLoaderTimeout = setTimeout(() => {
-                preloader.style.display = 'flex';
-                preloader.style.opacity = '1';
-                loaderShown = true;
-            }, 300);
-        } else {
-            showLoaderTimeout = setTimeout(() => {
-                preloader.style.display = 'flex';
-                preloader.style.opacity = '1';
-                loaderShown = true;
-            }, 600);
-        }
-    });
-
-    window.addEventListener('load', () => {
-        clearTimeout(showLoaderTimeout);
-        if (loaderShown) {
+    <script>
+        const preloader = document.getElementById('preloader');
+        window.addEventListener('load', () => {
             setTimeout(() => {
                 preloader.style.opacity = '0';
-                setTimeout(() => {
-                    preloader.style.display = 'none';
-                }, 500);
-            }, 400);
-        } else {
-            preloader.style.display = 'none';
-        }
-    });
-
-    // ==============================
-    // NETWORK STATUS HANDLER
-    // ==============================
-    const offlineToast = document.getElementById('offline-status');
-
-    window.addEventListener('offline', () => {
-        offlineToast.classList.remove('hidden');
-    });
-
-    window.addEventListener('online', () => {
-        offlineToast.style.backgroundColor = '#059669';
-        offlineToast.innerHTML = '<i class="fas fa-check-circle"></i> <span class="text-sm font-bold uppercase tracking-wide">Kembali Terhubung!</span>';
-
-        setTimeout(() => {
-            offlineToast.classList.add('hidden');
-            offlineToast.style.backgroundColor = '';
-            offlineToast.innerHTML = '<i class="fas fa-wifi-slash"></i> <span class="text-sm font-bold uppercase tracking-wide">Koneksi Terputus. Memeriksa jaringan...</span>';
-        }, 3000);
-    });
-
-    // ==============================
-    // PAGE TRANSITION (OPTIONAL)
-    // ==============================
-    document.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if (
-                href &&
-                href.startsWith('/') &&
-                !href.startsWith('#') &&
-                !e.ctrlKey &&
-                !e.shiftKey &&
-                !e.metaKey
-            ) {
-                preloader.style.display = 'flex';
-                preloader.style.opacity = '1';
-            }
+                setTimeout(() => { preloader.style.display = 'none'; }, 500);
+            }, 600);
         });
-    });
-</script>
-
+    </script>
 </body>
-
 </html>

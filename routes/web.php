@@ -89,7 +89,7 @@ Route::get('/search', function (Request $request) {
 
 // Katalog
 Route::get('/products', function () {
-    $items = Product::where('type', 'barang')->latest()->get();
+    $items = Product::latest()->get();
     return view('pages.products.products', compact('items'));
 })->name('products');
 
