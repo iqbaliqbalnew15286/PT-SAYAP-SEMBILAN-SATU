@@ -3,9 +3,8 @@
 @section('content')
     @php
         $hasImages = isset($mainImages) && $mainImages->isNotEmpty();
-        // Definisi warna tema agar mudah diubah jika perlu
-        $themeDark = '#2C3E50'; // Biru Tua Tower
-        $themeAccent = '#FF7518'; // Oranye
+        $themeDark = '#161f36'; 
+        $themeAccent = '#FF7518'; 
     @endphp
 
     <style>
@@ -14,14 +13,58 @@
         .text-tower-accent { color: {{ $themeAccent }}; }
         .bg-tower-accent { background-color: {{ $themeAccent }}; }
         .border-tower-accent { border-color: {{ $themeAccent }}; }
+        
+        /* Modern Hover Effect - Tanpa Shadow */
+        .history-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Garis highlight saat di hover */
+        .history-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: {{ $themeAccent }};
+            transition: width 0.5s ease;
+        }
+
+        .history-card:hover {
+            border-color: {{ $themeAccent }};
+            background-color: {{ $themeDark }};
+        }
+
+        .history-card:hover::after {
+            width: 100%;
+        }
+
+        /* Efek Icon saat di hover */
+        .history-card:hover .icon-box {
+            transform: scale(1.1) rotate(10deg);
+            background-color: {{ $themeAccent }};
+            color: white;
+        }
+
+        .history-card:hover h3 {
+            color: white;
+        }
+
+        .history-card:hover p {
+            color: #9ca3af;
+        }
     </style>
 
     <div>
         {{-- Hero Section / Slider --}}
-        <section class="relative max-w-screen">
+        <section class="relative max-w-screen overflow-hidden">
             @if ($hasImages)
                 <div x-data="{ activeSlide: 1, totalSlides: {{ $mainImages->count() }} }" x-init="setInterval(() => { activeSlide = activeSlide % totalSlides + 1 }, 5000)">
-                    <div class="relative w-full h-[350px] overflow-hidden">
+                    <div class="relative w-full h-[400px] lg:h-[500px] overflow-hidden">
                         @foreach ($mainImages as $image)
                             <div x-show="activeSlide === {{ $loop->iteration }}"
                                 x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
@@ -30,143 +73,113 @@
                                 class="absolute inset-0">
                                 <img src="{{ Storage::url($image->path) }}"
                                     alt="{{ $image->description ?? $image->filename }}" class="w-full h-full object-cover">
-                                {{-- Overlay agar teks breadcrumb nantinya kontras --}}
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-{{ $themeDark }} to-transparent opacity-80"></div>
                             </div>
                         @endforeach
+                        
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                            <span class="text-tower-accent font-black tracking-[0.5em] text-xs uppercase mb-4">Established Excellence</span>
+                            <h1 class="text-white text-5xl lg:text-7xl font-black uppercase tracking-tighter">
+                                OUR <span class="text-tower-accent">HISTORY</span>
+                            </h1>
+                        </div>
                     </div>
                 </div>
             @else
-                <div class="relative h-[300px] overflow-hidden bg-tower-dark flex items-center justify-center">
-                    <i class="fas fa-building text-white/10 text-[200px] absolute"></i>
-                    <h1 class="text-white text-4xl font-black relative z-10">HISTORY</h1>
+                <div class="relative h-[300px] bg-tower-dark flex items-center justify-center">
+                    <h1 class="text-white text-5xl font-black tracking-tighter">HISTORY</h1>
                 </div>
             @endif
         </section>
 
-        {{-- Breadcrumb Section --}}
-        <div class="bg-tower-dark border-b border-white/10">
-            <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="h-full flex items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm uppercase tracking-widest">
-                            <li class="inline-flex items-center">
-                                <a href="/" class="font-bold text-gray-400 hover:text-tower-accent transition-colors">
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-gray-500 text-[10px]"></i>
-                                    <a href="{{ route('about') }}" class="ml-2 font-bold text-gray-400 hover:text-tower-accent md:ml-3 transition-colors">About</a>
-                                </div>
-                            </li>
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-tower-accent text-[10px]"></i>
-                                    <span class="ml-2 font-black md:ml-3 text-white">History</span>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
+        {{-- Breadcrumb Clean --}}
+        <div class="bg-white border-b border-gray-100">
+            <div class="max-w-screen-xl h-[60px] mx-auto px-8">
+                <nav class="h-full flex items-center">
+                    <ol class="flex items-center space-x-3 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                        <li><a href="/" class="hover:text-tower-accent transition-colors">Home</a></li>
+                        <li><span class="w-1 h-1 bg-gray-300 rounded-full"></span></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-tower-accent transition-colors">About</a></li>
+                        <li><span class="w-1 h-1 bg-tower-accent rounded-full"></span></li>
+                        <li class="text-tower-dark">History</li>
+                    </ol>
+                </nav>
             </div>
         </div>
 
         {{-- Main History Content --}}
-        <section class="bg-[#F8FAFC] py-16 sm:py-24">
-            <div class="container mx-auto max-w-5xl px-6 lg:px-8">
-
-                <div class="text-center mb-16">
-                    <span class="bg-orange-100 text-tower-accent px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">Company Journey</span>
-                    <h2 class="mt-4 text-4xl font-black tracking-tight text-tower-dark sm:text-5xl">
-                        Sejarah Perusahaan
-                    </h2>
-                    <div class="mt-4 w-24 h-1.5 bg-tower-accent mx-auto rounded-full"></div>
-                    <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
-                        Membangun infrastruktur masa depan dengan dedikasi, integritas, dan inovasi berkelanjutan.
+        <section class="bg-white py-24">
+            <div class="container mx-auto max-w-6xl px-6">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                    <div class="max-w-xl">
+                        <h2 class="text-4xl lg:text-5xl font-black text-tower-dark uppercase leading-none mb-6">
+                            Sejarah <br><span class="text-tower-accent">Perusahaan</span>
+                        </h2>
+                        <div class="w-20 h-1.5 bg-tower-accent rounded-full"></div>
+                    </div>
+                    <p class="text-gray-500 max-w-lg leading-relaxed font-medium">
+                        PT. RIZQALLAH BOER MAKMUR merupakan badan usaha pembangunan yang berbasis di Kota Jakarta Selatan, Indonesia. Berdiri sejak lama, kini dikenal sebagai salah satu pemimpin di area development.
                     </p>
                 </div>
 
-                {{-- Timeline Style --}}
-                <div class="space-y-16">
-
-                    {{-- Section 1 --}}
-                    <div class="relative flex flex-col md:flex-row items-center md:items-start gap-8 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-                        <div class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-tower-dark text-tower-accent shadow-lg shadow-blue-900/20">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-0 border-collapse">
+                    {{-- Card 1 --}}
+                    <div class="history-card bg-white p-12 group">
+                        <div class="icon-box w-16 h-16 bg-gray-50 text-tower-accent rounded-2xl flex items-center justify-center mb-10 transition-all duration-500">
                             <i class="fas fa-rocket text-2xl"></i>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-black text-tower-dark uppercase tracking-tight">
-                                Awal Mula & Visi
-                            </h3>
-                            <p class="mt-3 text-base leading-7 text-gray-600">
-                                Berawal dari semangat untuk memberikan solusi infrastruktur terbaik, perusahaan didirikan dengan fokus pada kualitas dan ketepatan waktu. Kami percaya bahwa setiap menara yang kami bangun adalah pondasi bagi konektivitas bangsa.
-                            </p>
-                        </div>
+                        <h3 class="text-xl font-black text-tower-dark uppercase mb-5 transition-colors duration-500">Awal Mula & Visi</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed transition-colors duration-500">
+                            Berawal dari semangat untuk memberikan solusi infrastruktur terbaik, perusahaan didirikan dengan fokus pada kualitas dan ketepatan waktu. Kami percaya bahwa setiap menara yang kami bangun adalah pondasi bagi konektivitas bangsa.
+                        </p>
                     </div>
 
-                    {{-- Section 2 --}}
-                    <div class="relative flex flex-col md:flex-row items-center md:items-start gap-8 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-                        <div class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-tower-accent text-white shadow-lg shadow-orange-500/20">
+                    {{-- Card 2 --}}
+                    <div class="history-card bg-white p-12 group border-x-0 md:border-x-1">
+                        <div class="icon-box w-16 h-16 bg-gray-50 text-tower-accent rounded-2xl flex items-center justify-center mb-10 transition-all duration-500">
                             <i class="fas fa-broadcast-tower text-2xl"></i>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-black text-tower-dark uppercase tracking-tight">
-                                Ekspansi & Inovasi
-                            </h3>
-                            <p class="mt-3 text-base leading-7 text-gray-600">
-                                Seiring berjalannya waktu, kami memperluas jangkauan layanan mulai dari fabrikasi baja hingga penyediaan unit Transportable BTS (Combat). Inovasi menjadi mesin utama pertumbuhan kami di industri telekomunikasi.
-                            </p>
-                        </div>
+                        <h3 class="text-xl font-black text-tower-dark uppercase mb-5 transition-colors duration-500">Ekspansi & Inovasi</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed transition-colors duration-500">
+                            Seiring berjalannya waktu, kami memperluas jangkauan layanan mulai dari fabrikasi baja hingga penyediaan unit Transportable BTS (Combat). Inovasi menjadi mesin utama pertumbuhan kami di industri telekomunikasi.
+                        </p>
                     </div>
 
-                    {{-- Section 3 --}}
-                    <div class="relative flex flex-col md:flex-row items-center md:items-start gap-8 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-                        <div class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-tower-dark text-tower-accent shadow-lg shadow-blue-900/20">
+                    {{-- Card 3 --}}
+                    <div class="history-card bg-white p-12 group">
+                        <div class="icon-box w-16 h-16 bg-gray-50 text-tower-accent rounded-2xl flex items-center justify-center mb-10 transition-all duration-500">
                             <i class="fas fa-shield-alt text-2xl"></i>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-black text-tower-dark uppercase tracking-tight">
-                                Komitmen Terhadap Kualitas
-                            </h3>
-                            <p class="mt-3 text-base leading-7 text-gray-600">
-                                Keamanan dan ketahanan produk adalah prioritas utama. Melalui proses Engineering Design yang presisi, kami memastikan setiap struktur mampu menghadapi tantangan lingkungan yang ekstrim sekalipun.
-                            </p>
-                        </div>
+                        <h3 class="text-xl font-black text-tower-dark uppercase mb-5 transition-colors duration-500">Komitmen Kualitas</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed transition-colors duration-500">
+                            Keamanan dan ketahanan produk adalah prioritas utama. Melalui proses Engineering Design yang presisi, kami memastikan setiap struktur mampu menghadapi tantangan lingkungan yang ekstrim sekalipun.
+                        </p>
                     </div>
-
                 </div>
             </div>
         </section>
 
         {{-- Detail Content Section --}}
-        <section class="bg-white py-16 sm:py-24 border-t border-slate-100">
-            <div class="max-w-5xl mx-auto px-6 lg:px-8">
-
+        <section class="bg-gray-50 py-24">
+            <div class="max-w-4xl mx-auto px-8">
                 <div class="flex items-center gap-4 mb-12">
-                    <div class="w-2 h-10 bg-tower-accent rounded-full"></div>
-                    <h2 class="text-3xl font-black text-tower-dark tracking-tight">
-                        Detail Perjalanan Kami
-                    </h2>
+                    <span class="w-12 h-[2px] bg-tower-accent"></span>
+                    <h2 class="text-2xl font-black text-tower-dark uppercase tracking-tight">Detail Perjalanan Kami</h2>
                 </div>
-
-                @if ($historyContent)
-                    <article class="prose prose-lg prose-slate max-w-none
-                        prose-headings:text-tower-dark prose-headings:font-black
-                        prose-strong:text-tower-dark prose-a:text-tower-accent">
-                        {!! $historyContent->content !!}
-                    </article>
-                @else
-                    <div class="text-center py-20 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
-                        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                            <i class="fas fa-file-alt text-slate-300 text-3xl"></i>
+                
+                <div class="bg-white p-10 md:p-16 border border-gray-100 rounded-3xl">
+                    @if ($historyContent)
+                        <article class="prose prose-lg prose-slate max-w-none 
+                            prose-headings:text-tower-dark prose-headings:font-black
+                            prose-p:text-gray-600 prose-strong:text-tower-accent">
+                            {!! $historyContent->content !!}
+                        </article>
+                    @else
+                        <div class="text-center py-10 italic text-gray-400 font-medium">
+                            Konten sedang diperbarui...
                         </div>
-                        <h3 class="text-lg font-bold text-tower-dark">Konten Sedang Disiapkan</h3>
-                        <p class="mt-2 text-slate-500">Informasi detail mengenai sejarah perusahaan akan segera hadir.</p>
-                    </div>
-                @endif
-
+                    @endif
+                </div>
             </div>
         </section>
     </div>

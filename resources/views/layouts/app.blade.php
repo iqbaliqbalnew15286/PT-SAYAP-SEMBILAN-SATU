@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
-     <link rel="icon" type="image/png" href="{{ asset('assets/img/image.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/image.png') }}">
 
     <title>@yield('title', 'PT. Rizqallah Boer Makmur - Tower Infrastructure')</title>
 
@@ -238,15 +238,20 @@
                                 :class="{ 'rotate-180': open }"></i>
                         </button>
                         <div x-show="open" x-transition class="bg-gray-50 rounded-xl mx-2 my-1 overflow-hidden">
-                            <a href="{{ route('about') }}" class="block px-6 py-3 text-sm text-gray-600">Tentang Kami</a>
-                            <a href="{{ route('gallery.index') }}" class="block px-6 py-3 text-sm text-gray-600">Galeri Proyek</a>
-                            <a href="{{ route('partners.index') }}" class="block px-6 py-3 text-sm text-gray-600">Mitra Industri</a>
+                            <a href="{{ route('about') }}" class="block px-6 py-3 text-sm text-gray-600">Tentang
+                                Kami</a>
+                            <a href="{{ route('gallery.index') }}"
+                                class="block px-6 py-3 text-sm text-gray-600">Galeri Proyek</a>
+                            <a href="{{ route('partners.index') }}"
+                                class="block px-6 py-3 text-sm text-gray-600">Mitra Industri</a>
                         </div>
                     </div>
 
                     <a href="{{ route('products') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Produk</a>
-                    <a href="{{ route('news.index') }}" class="px-4 py-3 text-gray-700 font-bold uppercase {{ Request::is('news*') ? 'text-rbm-accent' : '' }}">Berita</a>
-                    <a href="{{ route('facilities.index') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Fasilitas</a>
+                    <a href="{{ route('news.index') }}"
+                        class="px-4 py-3 text-gray-700 font-bold uppercase {{ Request::is('news*') ? 'text-rbm-accent' : '' }}">Berita</a>
+                    <a href="{{ route('facilities.index') }}"
+                        class="px-4 py-3 text-gray-700 font-bold uppercase">Fasilitas</a>
                     <a href="{{ route('kontak') }}" class="px-4 py-3 text-gray-700 font-bold uppercase">Kontak</a>
 
                     <a href="https://wa.me/{{ $whatsappNumber }}"
@@ -282,10 +287,16 @@
             <div class="max-w-screen-xl mx-auto px-6 sm:px-8 lg:px-8 pb-16">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
                     <div class="space-y-6">
-                        <img src="{{ asset('assets/img/image.png') }}" alt="Logo PT Rizqallah Boer Makmur"
-                            class="h-14 brightness-0 invert opacity-90">
-                        <p class="text-rbm-light-text text-sm leading-relaxed">Berdedikasi untuk memberikan layanan
-                            konstruksi dan suplai material kualitas tinggi di seluruh wilayah Indonesia.</p>
+                        <div class="inline-block bg-white p-3 rounded-xl shadow-sm">
+                            <img src="{{ asset('assets/img/image.png') }}" alt="Logo PT Rizqallah Boer Makmur"
+                                class="h-10 w-auto object-contain block">
+                        </div>
+
+                        <p class="text-rbm-light-text text-sm leading-relaxed">
+                            Berdedikasi untuk memberikan layanan konstruksi dan suplai material kualitas tinggi di
+                            seluruh wilayah Indonesia.
+                        </p>
+
                         <div class="flex gap-4">
                             @foreach (['facebook-f', 'instagram', 'linkedin-in', 'youtube'] as $icon)
                                 <a href="#"
@@ -308,16 +319,20 @@
                             </li>
                             <li><a href="{{ route('about') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Tentang Kami</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Tentang
+                                    Kami</a></li>
                             <li><a href="{{ route('news.index') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Berita Terbaru</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Berita
+                                    Terbaru</a></li>
                             <li><a href="{{ route('gallery.index') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Galeri Proyek</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Galeri
+                                    Proyek</a></li>
                             <li><a href="{{ route('products') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Produk Kami</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Produk
+                                    Kami</a></li>
                         </ul>
                     </div>
 
@@ -329,13 +344,16 @@
                         <ul class="space-y-4 text-sm text-rbm-light-text font-medium">
                             <li><a href="{{ route('faq') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Pertanyaan Umum (FAQ)</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Pertanyaan
+                                    Umum (FAQ)</a></li>
                             <li><a href="{{ route('kontak') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Hubungi Kami</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Hubungi
+                                    Kami</a></li>
                             <li><a href="{{ route('syaratketentuan') }}"
                                     class="hover:text-white transition-colors flex items-center gap-2"><i
-                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Syarat & Ketentuan</a></li>
+                                        class="fa-solid fa-chevron-right text-[10px] text-rbm-accent"></i> Syarat &
+                                    Ketentuan</a></li>
                         </ul>
                     </div>
 
@@ -347,12 +365,14 @@
                         <div class="space-y-5 text-sm text-rbm-light-text">
                             <div class="flex gap-4">
                                 <i class="fas fa-map-marker-alt text-rbm-accent text-lg"></i>
-                                <span class="leading-relaxed">Jl. Sudirman No. 12, Jakarta Selatan, Indonesia</span>
+                                <span class="leading-relaxed">Menara Palma Lantai 12
+                                    Jl. HR. Rasuna Said Kav. 6 Blok X-2
+                                    Jakarta Selatan 12950</span>
                             </div>
                             <div class="flex gap-4 items-center">
                                 <i class="fas fa-envelope text-rbm-accent text-lg"></i>
                                 <a href="mailto:info@rbm.co.id"
-                                    class="hover:text-white transition">info@rbm.co.id</a>
+                                    class="hover:text-white transition">project@rbmak.co.id</a>
                             </div>
                             <div class="flex gap-4 items-center">
                                 <i class="fas fa-phone-alt text-rbm-accent text-lg"></i>
